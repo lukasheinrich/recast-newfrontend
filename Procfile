@@ -1,1 +1,1 @@
-web: python boo.py
+web: pip install -e . && recast-frontend server
