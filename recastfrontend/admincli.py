@@ -14,7 +14,7 @@ def dbshell(config):
   from recastfrontend.server import app
   with app.app_context():
     from recastfrontend.server import db
-    import recastfrontend.models as models
+    import recastdb.models as models
     print "models and db modules are available"
     IPython.embed()
 

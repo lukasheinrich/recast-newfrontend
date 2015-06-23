@@ -8,8 +8,8 @@ import asynctasks
 from flask import Flask, redirect, jsonify, session, request, url_for, render_template
 from flask.ext import login as login
 from frontendconfig import config as frontendconf
-from database import db
-import recastfrontend.models as dbmodels
+from recastdb.database import db
+import recastdb.models as dbmodels
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 

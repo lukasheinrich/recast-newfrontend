@@ -16,7 +16,8 @@ setup(
     'pyyaml',
     'celery',
     'redis',
-    'IPython'
+    'IPython',
+    'recast-database'
   ],
   entry_points = {
     'console_scripts': [
@@ -24,4 +25,7 @@ setup(
       'recast-frontend-admin = recastfrontend.admincli:admincli',
     ]
   },
+  dependency_links = [
+    'https://github.com/recast-hep/recast-database/tarball/master#egg=recast-database-0.0.1',
+  ]
 )
