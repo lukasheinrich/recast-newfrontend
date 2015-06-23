@@ -89,4 +89,12 @@ def unauthorized():
 @app.route("/profile")
 @login.login_required
 def profile():
-  return render_template('profile.html')
+  user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
+  assert len(user_query)
+  return render_template('profile.html', db_user = user_query[0])
+
+@app.route("/analyses")
+def analyses():
+  analyses = dbmodels.Analysis.query.all()
+  return render_template('analyses.html', analyses = analyses)
+

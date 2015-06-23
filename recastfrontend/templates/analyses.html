@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='col-md-10'>
+
+<h1>All Analyses</h1>
+Hello we got {{analyses|length}} Analyses
+
+<ul>
+    {% for analysis in analyses %}
+    <li>
+        <ul>
+            <li>description: {{analysis.description_of_original_analysis}}</li>
+            <li>owner: {{analysis.owner_id}}</li>
+        </ul>
+    </li>
+    {% endfor %}
+</ud>
+
+</div>
+
+{% endblock %}
