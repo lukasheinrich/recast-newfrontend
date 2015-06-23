@@ -21,3 +21,11 @@ def celery(config):
     os.environ['RECASTCONTROLCENTER_CONFIG'] = config
   from frontendconfig import config as frontendconf
   subprocess.call(['celery','worker','-A',frontendconf['CELERYAPP'],'-I','recastfrontend.asynctasks','-l','debug'])
+
+@frontendcli.command()
+@click.option('--config','-c')
+def rest_api(config):
+  if config:
+    os.environ['RECASTCONTROLCENTER_CONFIG'] = config
+  from rest_server import app
+  app.run()
