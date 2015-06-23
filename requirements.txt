@@ -17,11 +17,9 @@ anyjson==0.3.3
 billiard==3.3.0.20
 celery==3.1.18
 click==4.0
-distribute==0.6.24
 ipython==3.2.0
 itsdangerous==0.24
 kombu==3.0.26
-mcviz==0.1
 pymongo==2.8.1
 pytz==2015.4
 recast-database==0.0.1
