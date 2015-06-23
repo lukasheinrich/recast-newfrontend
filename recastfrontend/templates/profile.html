@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block container %}
+profile page for user: {{current_user.name()}}
+
+<ul>
+    <li>Basic User info from ORCID</li>
+    <li>all my analysis subscriptions</li>
+    <li>all my request subscriptions</li>
+</ul>
+{% endblock %}

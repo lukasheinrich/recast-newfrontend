@@ -1,0 +1,3 @@
+recursive-include recastfrontend/templates *
+recursive-include recastfrontend/static *
+recursive-include recastfrontend/resources *

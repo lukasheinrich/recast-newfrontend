@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+All Users
+<ul>
+{% for user in user_data %}
+    <li>{{user.name}}: {{user.email}}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
