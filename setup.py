@@ -17,7 +17,8 @@ setup(
     'celery',
     'redis',
     'IPython',
-    'recast-database'
+    'recast-database',
+    'requests'
   ],
   entry_points = {
     'console_scripts': [
