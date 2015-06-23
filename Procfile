@@ -1,1 +1,1 @@
-web: pip install -e . && recast-frontend server
+web: gunicorn boo:app
