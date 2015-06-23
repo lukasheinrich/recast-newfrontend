@@ -32,3 +32,7 @@ run redis
 run async worker
 
     recast-frontend celery --config ../runserver/myconfig.yaml
+
+run REST API server
+
+	recast-frontend rest_api --config ../runserver/myconfig.yaml
