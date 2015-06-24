@@ -18,7 +18,8 @@ setup(
     'redis',
     'IPython',
     'recast-database',
-    'requests'
+    'requests',
+    'psycopg2'
   ],
   entry_points = {
     'console_scripts': [
