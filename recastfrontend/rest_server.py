@@ -13,7 +13,7 @@ registerSchema('Analysis')(recastdb.models.Analysis)
 
 SETTINGS = {
     'DEBUG': True,
-    'SQLALCHEMY_DATABASE_URI':  'sqlite:///'+frontendconf['DBPATH'],
+    'SQLALCHEMY_DATABASE_URI':  frontendconf['DBPATH'],
     'DOMAIN': {
         'User': recastdb.models.User._eve_schema['User'],
         'Analysis': recastdb.models.Analysis._eve_schema['Analysis'],
