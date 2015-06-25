@@ -5,11 +5,13 @@ import asynctasks
 
 
 
-from flask import Flask, redirect, jsonify, session, request, url_for, render_template
+from flask import Flask, redirect, jsonify, session, request, url_for, render_template, flash
 from flask.ext import login as login
 from frontendconfig import config as frontendconf
 from recastdb.database import db
 import recastdb.models as dbmodels
+import forms
+
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 
@@ -69,9 +71,6 @@ def login_user():
   
   return redirect(url_for('home'))
 
-
-import forms
-from flask import flash
 @app.route("/form", methods=('GET', 'POST'))
 def form():
   myform = forms.AnalysisSubmitForm()
@@ -79,8 +78,7 @@ def form():
     flash('success! form validated and was processed','success')
   elif myform.is_submitted():
     flash('failure! form did not validate and was not processed','danger')
-  else:
-    print "no submission"
+
   return render_template('form.html', form = myform)
     
 @app.route("/logout")

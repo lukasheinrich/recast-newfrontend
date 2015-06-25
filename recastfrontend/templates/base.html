@@ -38,6 +38,7 @@
             <li><a href="/about">About</a></li>
             <li><a href="/analyses">Analysis Catalogue</a></li>
             <li><a href="/">Recast Requests</a></li>
+            <li><a href="/form">Submit</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if current_user and not current_user.is_anonymous() %}
@@ -51,6 +52,18 @@
       </div><!-- /.container-fluid -->
     </nav>
 </header>
+
+<div class="container-fluid">
+    <div class="row col-md-12">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category,message in messages %}
+                <div class="alert alert-{{category}}" role="alert">{{message}}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+</div>
 
 <div class="container-fluid">
     {% block container %}
