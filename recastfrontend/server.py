@@ -1,8 +1,9 @@
 import json
 import requests
 import importlib
-import asynctasks
 
+import asynctasks
+import synctasks
 
 
 from flask import Flask, redirect, jsonify, session, request, url_for, render_template, flash
@@ -75,6 +76,7 @@ def login_user():
 def form():
   myform = forms.AnalysisSubmitForm()
   if myform.validate_on_submit():
+    synctasks.createAnalysisFromForm(app,myform,login.current_user)
     flash('success! form validated and was processed','success')
   elif myform.is_submitted():
     flash('failure! form did not validate and was not processed','danger')
@@ -107,5 +109,6 @@ def profile():
 @app.route("/analyses")
 def analyses():
   analyses = dbmodels.Analysis.query.all()
-  return render_template('analyses.html', analyses = analyses)
+  tuples = [(dbmodels.User.query.filter(dbmodels.User.id == a.owner_id)[0],a) for a in analyses]
+  return render_template('analyses.html', analyses = tuples)
 
