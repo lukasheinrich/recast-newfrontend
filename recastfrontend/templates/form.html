@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='col-md-10'>
+
+<h1>Forms</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for category,message in messages %}
+        <div class="alert alert-{{category}}" role="alert">{{message}}</div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="/form">
+    {{ form.hidden_tag() }}
+    {{ form.analysis_name.label }} {{ form.analysis_name(size=20) }}</br>
+    {{ form.analysis_description.label }} {{ form.analysis_description(size=20) }}</br>
+    <input type="submit" value="Go">
+</form>
+
+</div>
+
+{% endblock %}

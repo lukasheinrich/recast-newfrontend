@@ -12,6 +12,7 @@ setup(
     'Flask',
     'Flask-Login',
     'Flask-SQLAlchemy',
+    'Flask-WTF',
     'click',
     'pyyaml',
     'celery',

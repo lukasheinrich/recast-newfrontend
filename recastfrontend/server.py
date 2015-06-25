@@ -69,6 +69,19 @@ def login_user():
   
   return redirect(url_for('home'))
 
+
+import forms
+from flask import flash
+@app.route("/form", methods=('GET', 'POST'))
+def form():
+  myform = forms.AnalysisSubmitForm()
+  if myform.validate_on_submit():
+    flash('success! form validated and was processed','success')
+  elif myform.is_submitted():
+    flash('failure! form did not validate and was not processed','danger')
+  else:
+    print "no submission"
+  return render_template('form.html', form = myform)
     
 @app.route("/logout")
 @login.login_required
