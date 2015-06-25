@@ -73,6 +73,7 @@ def login_user():
   return redirect(url_for('home'))
 
 @app.route("/form", methods=('GET', 'POST'))
+@login.login_required
 def form():
   myform = forms.AnalysisSubmitForm()
   if myform.validate_on_submit():
