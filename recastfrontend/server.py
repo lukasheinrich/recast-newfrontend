@@ -76,10 +76,16 @@ def login_user():
 @login.login_required
 def form():
   myform = forms.AnalysisSubmitForm()
+  
+  run_conditions = dbmodels.RunCondition.query.all()
+  
+  myform.run_condition_choice.choices = [(str(rc.id),rc.title) for rc in run_conditions]
+
   if myform.validate_on_submit():
     synctasks.createAnalysisFromForm(app,myform,login.current_user)
     flash('success! form validated and was processed','success')
   elif myform.is_submitted():
+    print myform.errors
     flash('failure! form did not validate and was not processed','danger')
 
   return render_template('form.html', form = myform)

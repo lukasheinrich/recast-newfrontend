@@ -8,6 +8,9 @@ def createAnalysisFromForm(app,form,current_user):
     
 
     analysis = dbmodels.Analysis(owner_id = user_query[0].id,
-        description_of_original_analysis = form.analysis_description.data)
+        description_of_original_analysis = form.analysis_description.data,
+        run_condition_id = int(form.run_condition_choice.data)
+        )
+
     db.session.add(analysis)
     db.session.commit()
