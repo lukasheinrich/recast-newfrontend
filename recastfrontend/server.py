@@ -110,6 +110,5 @@ def profile():
 @app.route("/analyses")
 def analyses():
   analyses = dbmodels.Analysis.query.all()
-  tuples = [(dbmodels.User.query.filter(dbmodels.User.id == a.owner_id)[0],a) for a in analyses]
-  return render_template('analyses.html', analyses = tuples)
+  return render_template('analyses.html', analyses = analyses)
 

@@ -8,11 +8,11 @@
 Hello we got {{analyses|length}} Analyses
 
 <ul>
-    {% for owner,analysis in analyses %}
+    {% for analysis in analyses %}
     <li>
         <ul>
             <li>description: {{analysis.description_of_original_analysis}}</li>
-            <li>owner: {{owner.name}}</li>
+            <li>owner: {{analysis.user.name}}</li>
         </ul>
     </li>
     {% endfor %}
