@@ -142,7 +142,6 @@ def scan_request_form():
   scan_request_form = forms.ScanRequestSubmitForm()
   
   analysis  = dbmodels.Analysis.query.all()
-  #scan_request_form.analysis_choice.choices = [(str(a.id), a.description_of_original_analysis) for a in analysis]
   scan_request_form.analysis_choice.choices = [(str(a.id), a.id) for a in analysis]
 
   models = dbmodels.Model.query.all()
@@ -197,56 +196,6 @@ def basic_request_form():
 
   return render_template('form.html', form = basic_request_form)
 
-@app.route("/scanresponseform", methods=('GET', 'POST'))
-@login.login_required
-def scan_response_form():
-  scan_response_form = forms.ScanResponseSubmitForm()
-  
-  scan_requests = dbmodels.ScanRequest.query.all()
-  scan_response_form.scan_request_choice.choices = [(str(s.id), s.id) for s in scan_requests]
-  
-  models = dbmodels.Model.query.all()
-  scan_response_form.model_choice.choices = [(str(m.id), m.description_of_model) for m in models]
-    
-  if scan_response_form.validate_on_submit():
-    synctasks.createScanResponseFromForm(app, scan_response_form, login.current_user)
-    flash('succes!', 'success')
-  elif scan_response_form.is_submitted():
-    print scan_response_form.errors
-    flash('failure!', 'failure')
-    
-  return render_template('form.html', form = scan_response_form)
-
-@app.route("/pointresponseform", methods=('GET', 'POST'))
-@login.login_required
-def point_response_form():
-  point_response_form = forms.PointResponseSubmitForm()
-  
-  if point_response_form.validate_on_submit():
-    synctasks.createPointResponseFromForm(app, point_response_form, login.current_user)
-    flash('success!', 'success')
-  elif point_response_form.is_submitted():
-    print point_response_form.errors
-    flash('failure!', 'failure')
-
-  return render_template('form.html', form = point_response_form)
-
-
-@app.route("/basicresponseform", methods=('GET', 'POST'))
-@login.login_required
-def basic_response_form():
-  basic_response_form = forms.BasicResponseSubmitForm()
-  
-  if basic_response_form.validate_on_submit():
-    synctasks.createBasicResponseFromForm(app, basic_response_form, login.current_user)
-    flash('success!', 'success')
-  elif basic_response_form.is_submitted():
-    print basic_response_form.errors
-    flash('failure!', 'failure')
-    
-    
-  return render_template('form.html', form = basic_response_form)
-
 # Views -------------------------------------------------------------------------------------
 @app.route("/analyses")
 @login.login_required
@@ -277,13 +226,6 @@ def scan_requests():
   scanrequests = rows_to_dict(query)
   return render_template('viewer.html', rows = scanrequests, title= dbmodels.ScanRequest.__table__)
 
-@app.route("/requestsnotifications")
-@login.login_required
-def request_notifications():
-  query = db.session.query(dbmodels.RequestNotification).all()
-  requestsnotification = rows_to_dict(query)
-  return render_template('viewer.html', rows = requestsnotification, title= dbmodels.RequestNotification.__table__)
-
 @app.route("/pointrequests")
 @login.login_required
 def point_requests():
@@ -297,55 +239,6 @@ def basic_requests():
   query = db.session.query(dbmodels.BasicRequest).all()
   basicrequests = rows_to_dict(query)
   return render_template('viewer.html', rows = basicrequests, title = dbmodels.BasicRequest.__table__)
-
-@app.route("/scanresponses")
-@login.login_required
-def scan_responses():
-  query = db.session.query(dbmodels.ScanResponse).all()
-  scanresponses = rows_to_dict(query)
-  return render_template('viewer.html', rows = scanresponses, title = dbmodels.ScanResponse.__table__)
-
-@app.route("/pointresponses")
-@login.login_required
-def point_responses():
-  query = db.session.query(dbmodels.PointResponse).all()
-  pointresponses = rows_to_dict(query)
-  return render_template('viewer.html', rows = pointresponses, title = dbmodels.PointResponse.__table__)
-
-@app.route("/basicresponses")
-@login.login_required
-def basic_responses():
-  query = db.session.query(dbmodels.BasicResponse).all()
-  basicresponses = rows_to_dict(query)
-  return render_template('viewer.html', rows = basicresponses, title = dbmodels.BasicResponse.__table__)
-
-@app.route("/parameters")
-@login.login_required
-def parameters():
-  query = db.session.query(dbmodels.Parameters).all()
-  parameters = rows_to_dict(query)
-  return render_template('viewer.html', rows = parameters, title = dbmodels.Parameters.__table__)
-
-@app.route("/parameterpoints")
-@login.login_required
-def parameter_points():
-  query = db.session.query(dbmodels.ParameterPoint).all()
-  parameter_points = rows_to_dict(query)
-  return render_template('viewer.html', rows = parameter_points, title = dbmodels.ParameterPoint.__table__)
-
-@app.route("/lhefiles")
-@login.login_required
-def lhe_files():
-  query = db.session.query(dbmodels.LHEFile).all()
-  lhe_files = rows_to_dict(query)
-  return render_template('viewer.html', rows = lhe_files, title = dbmodels.LHEFile.__table__)
-  
-@app.route("/histograms")
-@login.login_required
-def histograms():
-  query = db.session.query(dbmodels.Histogram).all()
-  lhe_files = rows_to_dict(query)
-  return render_template('viewer.html', rows = lhe_files, title = dbmodels.Histogram.__table__)
 
 @app.route("/links")
 @login.login_required
