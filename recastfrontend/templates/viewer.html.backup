@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='col-md-10'>
+
+<h1>{{ title }}</h1>
+Hello we got {{rows|length}} rows
+<table borde="2">
+  {% for row in rows %}
+  
+  <tr>
+    {% for k in row.keys() %}
+    <th> {{ k }}
+    </th>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+
+    {% for row in rows %}
+    <tr>
+      <!-- <li> 
+
+      {% for k in row.keys() %}
+      <ul>
+	  
+            <li>{{ k }} : {{ row[k] }}</li>
+	    
+        </ul>
+
+	{% endfor %}
+
+    </li>
+      --->
+      <tr>
+      {% for k in row.keys() %}
+
+	<td>
+	  {{ k }} : {{ row[k] }}
+	<td>
+  
+    {% endfor %}
+      </tr>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='col-md-10'>
+
+  <h1>{{ title }}</h1>
+  Hello we got {{rows|length}} rows
+  <ul>
+    {% for row in rows %}
+    <li>
+      <ul>
+      {% for k in row.keys() %}
+      <li>
+	{{ k }} : {{ row[k] }}
+      </li>
+      {% endfor %}
+      
+      </ul>
+    </li>
+    <hr>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}
