@@ -72,6 +72,8 @@ def login_user():
   
   return redirect(url_for('home'))
 
+# Forms --------------------------------------------------------------------------------
+
 @app.route("/form", methods=('GET', 'POST'))
 @login.login_required
 def form():
@@ -89,6 +91,166 @@ def form():
     flash('failure! form did not validate and was not processed','danger')
 
   return render_template('form.html', form = myform)
+
+
+@app.route("/userform", methods=('GET', 'POST'))
+def user_form():
+  userform = forms.UserSubmitForm()
+
+  if userform.validate_on_submit():
+    synctasks.createUserFromForm(app,userform)
+    flash('success! form validated and was processed', 'success')
+  elif userform.is_submitted():
+    print userform.errors
+    flash('failure! form did not validate and was not processed', 'danger')
+    
+  return render_template('form.html', form=userform)
+
+
+@app.route("/modelform", methods=('POST', 'GET'))
+@login.login_required
+def model_form():
+  model_form = forms.ModelSubmitForm()
+
+  if model_form.validate_on_submit():
+    synctasks.createModelFromForm(app,model_form,login.current_user)
+    flash('success! Model form validated and was processed', 'success')
+    
+  elif model_form.is_submitted():
+    print model_form.errors
+    flash('failure! Model form did not validate and was not processed', 'danger')
+    
+  return render_template('form.html', form=model_form)
+             
+@app.route("/runform", methods=('GET', 'POST'))
+@login.login_required
+def run_condition_form():
+  run_condition_form = forms.RunConditionSubmitForm()
+
+  if run_condition_form.validate_on_submit():
+    synctasks.createRunConditionFromForm(app, run_condition_form, login.current_user)
+    flash('success! run condition added to db', 'success')
+  elif run_condition_form.is_submitted():
+    print run_condition_form.errors
+    flash('failure! run condition not added', 'failure')
+    
+  return render_template('form.html', form=run_condition_form)
+
+@app.route("/scanrequestform", methods=('GET', 'POST'))
+@login.login_required
+def scan_request_form():
+  scan_request_form = forms.ScanRequestSubmitForm()
+  
+  analysis  = dbmodels.Analysis.query.all()
+  scan_request_form.analysis_choice.choices = [(str(a.id), a.id) for a in analysis]
+
+  models = dbmodels.Model.query.all()
+  scan_request_form.model_choice.choices = [(str(m.id), m.description_of_model) for m in models]
+  
+  requesters = dbmodels.User.query.all()
+  scan_request_form.requester_choice.choices = [(str(r.id), r.name) for r in requesters]
+
+  
+  if scan_request_form.validate_on_submit():
+    synctasks.createScanRequestFromForm(app, scan_request_form, login.current_user)
+    flash('success!', 'success')
+  elif scan_request_form.is_submitted():
+    print scan_request_form.errors
+    flash('failure!', 'failure')
+    
+  return render_template('form.html', form=scan_request_form)
+
+@app.route("/pointrequestform", methods=('GET', 'POST'))
+@login.login_required
+def point_request_form():
+  point_request_form = forms.PointRequestSubmitForm()
+  
+  models = dbmodels.Model.query.all()
+  point_request_form.model_choice.choices = [(str(m.id), m.description_of_model) for m in models]
+  
+  scan_requests = dbmodels.ScanRequest.query.all()
+  point_request_form.scan_request_choice.choices = [(str(s.id), s.id) for s in scan_requests]
+
+  if point_request_form.validate_on_submit():
+    synctasks.createPointRequestFromForm(app, point_request_form, login.current_user)
+    flash('success!', 'success')
+  elif point_request_form.is_submitted():
+    print point_request_form.errors
+    flash('failure!', 'failure')
+    
+    
+  return render_template('form.html', form = point_request_form)
+
+@app.route("/basicrequestform", methods=('GET', 'POST'))
+@login.login_required
+def basic_request_form():
+  basic_request_form = forms.BasicRequestSubmitForm()
+  
+  
+  if basic_request_form.validate_on_submit():
+    synctasks.createBasicRequestFromForm(app, basic_request_form, login.current_user)
+    flash('success!', 'success')
+  elif basic_request_form.is_submitted():
+    print basic_request_form.errors
+    flash('failure!', 'failure')
+
+  return render_template('form.html', form = basic_request_form)
+
+# Views -------------------------------------------------------------------------------------
+@app.route("/analyses")
+@login.login_required
+def analyses():
+  query = db.session.query(dbmodels.Analysis).all()
+  analyses = rows_to_dict(query)
+  return render_template('viewer.html', rows = analyses, title= dbmodels.Analysis.__table__)
+
+@app.route("/users")
+@login.login_required
+def users():
+  query = db.session.query(dbmodels.User).all()
+  users = rows_to_dict(query)
+  return render_template('viewer.html', rows = users, title= dbmodels.User.__table__)
+
+
+@app.route("/models")
+@login.login_required
+def models():
+  query = db.session.query(dbmodels.Model).all()
+  models = rows_to_dict(query)
+  return render_template('viewer.html', rows = models, title= dbmodels.Model.__table__)
+
+@app.route("/scanrequests")
+@login.login_required
+def scan_requests():
+  query = db.session.query(dbmodels.ScanRequest).all()
+  scanrequests = rows_to_dict(query)
+  return render_template('viewer.html', rows = scanrequests, title= dbmodels.ScanRequest.__table__)
+
+@app.route("/pointrequests")
+@login.login_required
+def point_requests():
+  query = db.session.query(dbmodels.PointRequest).all()
+  pointrequests = rows_to_dict(query)
+  return render_template('viewer.html', rows = pointrequests, title = dbmodels.PointRequest.__table__)
+
+@app.route("/basicrequests")
+@login.login_required
+def basic_requests():
+  query = db.session.query(dbmodels.BasicRequest).all()
+  basicrequests = rows_to_dict(query)
+  return render_template('viewer.html', rows = basicrequests, title = dbmodels.BasicRequest.__table__)
+
+@app.route("/links")
+@login.login_required
+def display_links():
+  return render_template('links.html')
+
+@app.route("/userstories")
+@login.login_required
+def display_user_stories():
+  return render_template('userstories.html')
+
+# Other functions ---------------------------------------------------------------------------
     
 @app.route("/logout")
 @login.login_required
@@ -113,8 +275,14 @@ def profile():
   assert len(user_query)
   return render_template('profile.html', db_user = user_query[0])
 
-@app.route("/analyses")
-def analyses():
-  analyses = dbmodels.Analysis.query.all()
-  return render_template('analyses.html', analyses = analyses)
 
+def rows_to_dict(rows):
+  d = []
+  for row in rows:
+    new_dict = {}
+    for column in row.__table__.columns:
+      new_dict[column.name] = getattr(row, column.name)
+
+    d.append(new_dict)
+  
+  return d
