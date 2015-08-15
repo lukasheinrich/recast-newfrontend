@@ -14,6 +14,8 @@ setup(
     'Flask-SQLAlchemy',
     'Flask-WTF',
     'click',
+    'eve',
+    'Eve-SQLAlchemy',
     'pyyaml',
     'celery',
     'redis',
