@@ -35,4 +35,10 @@ run async worker
 
 run REST API server
 
-	recast-frontend rest_api --config ../runserver/myconfig.yaml
+    recast-frontend rest_api --config ../runserver/myconfig.yaml
+
+deploying on Heroku
+	
+    mv Procfile.<x> Procfile 
+    git commit
+    git push heroku master
