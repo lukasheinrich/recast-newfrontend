@@ -40,5 +40,6 @@ run REST API server
 deploying on Heroku
 	
     mv Procfile.<x> Procfile 
-    git commit
+    git add Procfile
+    git commit -m 'bla'
     git push heroku master
