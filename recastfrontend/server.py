@@ -74,23 +74,24 @@ def login_user():
 
 # Forms --------------------------------------------------------------------------------
 
-@app.route("/form", methods=('GET', 'POST'))
+@app.route("/analysis_form", methods=['GET', 'POST'])
 @login.login_required
 def form():
+  #Analysis stuff
   myform = forms.AnalysisSubmitForm()
-  
-  run_conditions = dbmodels.RunCondition.query.all()
-  
-  myform.run_condition_choice.choices = [(str(rc.id),rc.title) for rc in run_conditions]
+  run_condition_form = forms.RunConditionSubmitForm()
 
+  collaborations = ['-None-', 'ATLAS', 'D0', 'CDF', 'CMS', 'ALEPH']
+  myform.collaboration.choices = [(str(c), c) for i, c in enumerate(collaborations)]
+  
   if myform.validate_on_submit():
-    synctasks.createAnalysisFromForm(app,myform,login.current_user)
+    synctasks.createAnalysisFromForm(app,myform,login.current_user, run_condition_form)
     flash('success! form validated and was processed','success')
   elif myform.is_submitted():
     print myform.errors
     flash('failure! form did not validate and was not processed','danger')
 
-  return render_template('form.html', form = myform)
+  return render_template('analysis_form.html', form = myform, run_condition_form = run_condition_form)
 
 
 @app.route("/userform", methods=('GET', 'POST'))
@@ -160,6 +161,25 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
+@app.route("/request_form", methods=['GET', 'POST'])
+@login.login_required
+def request_form():
+  request_form = forms.RequestSubmitForm()
+  
+  analysis = dbmodels.Analysis.query.all()
+  request_form.analysis.choices = [(str(a.id), a.title) for a in analysis]
+  
+  parameter_point_form = forms.RequestParameterPointsSubmitForm()
+  
+  if request_form.validate_on_submit():
+    flash('success!', 'success')
+    synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
+  elif request_form.is_submitted():
+    print request_form.errors
+    flash('failure!', 'failure')
+  
+  return render_template('request_form.html', form=request_form, parameter_points_form=parameter_point_form)
+  
 @app.route("/pointrequestform", methods=('GET', 'POST'))
 @login.login_required
 def point_request_form():
@@ -197,12 +217,31 @@ def basic_request_form():
   return render_template('form.html', form = basic_request_form)
 
 # Views -------------------------------------------------------------------------------------
+@app.route("/analysis/<int:id>", methods=['GET', 'POST'])
+def analysis(id):
+  query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  print id
+  print query[0].title
+  return render_template('analysis.html', analysis=query[0])
+
 @app.route("/analyses")
 @login.login_required
 def analyses():
   query = db.session.query(dbmodels.Analysis).all()
-  analyses = rows_to_dict(query)
-  return render_template('viewer.html', rows = analyses, title= dbmodels.Analysis.__table__)
+  return render_template('analyses_views.html', analyses = query)
+
+
+@app.route('/requests', methods=['GET', 'POST'])
+@login.login_required
+def requests_views():
+  query = db.session.query(dbmodels.ScanRequest).all()
+  return render_template('request_views.html', requests = query)
+
+@app.route('/request/<int:id>', methods=['GET', 'POST'])
+@login.login_required
+def request(id):
+  query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
+  return render_template('request.html', request = query[0])
 
 @app.route("/users")
 @login.login_required

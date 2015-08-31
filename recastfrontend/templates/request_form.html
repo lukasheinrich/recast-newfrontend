@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='container'>
+
+<h1>Submit new request</h1> 
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ parameter_points_form.hidden_tag() }}
+  {% for field in form if not field.id == 'csrf_token' %}
+  <div class="form-group">
+        <label for="{{field.id}}">{{ field.label }}</label>
+        {{ field(class='form-control') }}
+  </div>
+      
+  {% endfor %}
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">  Request Parameter Points </div>
+      <div class="panel-content">
+	
+
+	{% for field in parameter_points_form if not field.id == 'csrf_token' %}
+  
+
+	  {% if not field.id == 'lhe_file' %}
+	<div class="form-group">
+	  <label for="{{field.id}}"> {{ field.label }} </label>
+	  {{ field(class='form-control') }}
+	</div>
+	{% endif %}
+	{% if field.id == 'lhe_file' %}
+
+	  <label for="{{ field.id}}"> {{ field.label }} </label>
+	  {{ field }} <button type="button" class="btn btn-info">Upload file </button>
+
+	  {% endif %}
+	{% endfor %}
+      </div>
+  </div>
+
+      <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+</div>
+
+{% endblock %}
+
