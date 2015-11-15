@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, SelectField, IntegerField, TextAreaField, FormField, SubmitField, FieldList, FileField
+from wtforms import StringField, SelectField, IntegerField, TextAreaField, FormField, SubmitField, FieldList, FileField, RadioField
 from wtforms.validators import DataRequired
 
 class RunConditionSubmitForm(Form):
@@ -48,3 +48,8 @@ class RequestParameterPointsSubmitForm(Form):
     lhe_file = FileField('LHE file', validators=[DataRequired()])
     number_events = IntegerField('# of events')
     reference_cross_section = StringField('Reference cross section')
+
+class SubscribeSubmitForm(Form):
+    subscription_type= RadioField('Subscription Type', choices=[('value', 'Provider'), ('value_two', 'Observer')])
+    description = TextAreaField('Description')
+    requirements = TextAreaField('Requirements')

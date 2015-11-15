@@ -216,6 +216,21 @@ def basic_request_form():
 
   return render_template('form.html', form = basic_request_form)
 
+
+@app.route("/subscribe", methods=['GET', 'POST'])
+@login.login_required
+def subscribe():
+  subscribe_form = forms.SubscribeSubmitForm()
+  
+  if subscribe_form.validate_on_submit():
+    flash('success!', 'success')
+  elif subscribe_form.is_submitted():
+    flash('failure!', 'failure')
+
+  return render_template('subscribe.html', form=subscribe_form)
+  
+
+
 # Views -------------------------------------------------------------------------------------
 @app.route("/analysis/<int:id>", methods=['GET', 'POST'])
 def analysis(id):
@@ -239,7 +254,7 @@ def requests_views():
 
 @app.route('/request/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def request(id):
+def request_view(id):
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
   return render_template('request.html', request = query[0])
 
