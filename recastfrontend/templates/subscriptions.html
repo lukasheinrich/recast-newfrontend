@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container">
+<h3> My Subscriptions </h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Analysis</th>
+      <th>Subscription Type</th>
+      <th>Edit</th>
+    </tr>
+    </thead>
+    <tbody>
+      {% for subscription in subscriptions %}
+      
+      <tr class="active">
+	<td> <a href="{{ url_for('.analysis', id=subscription.analysis_id) }}"> {{ subscription.analysis.title }} </a> </td>
+	<td> {{ subscription.subscription_type }} </td>
+	<td> <a href="#">edit</a> </td>
+      </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+</div>
+
+{% endblock %}
+      
