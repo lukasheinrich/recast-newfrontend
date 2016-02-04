@@ -2,47 +2,86 @@
 
 {% block container %}
 
-<div class='container'>
+<div class="container">
 
 <h1>Submit new request</h1> 
 
-<form method="POST">
+<form method="POST" class="form-horizontal" role="form">
   {{ form.hidden_tag() }}
   {{ parameter_points_form.hidden_tag() }}
-  {% for field in form if not field.id == 'csrf_token' %}
+
   <div class="form-group">
-        <label for="{{field.id}}">{{ field.label }}</label>
-        {{ field(class='form-control') }}
+    <label class="control-label col-md-4" for="Analysis"> Analysis: </label>
+    <div class="col-md-6">
+      <input class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled>
+    </div>
   </div>
-      
-  {% endfor %}
-  
-  <div class="panel panel-info">
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
+    <div class="col-md-6">
+      {{ form.model_name(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.reason_for_request.id }}"> {{ form.reason_for_request.label }} </label>
+    <div class="col-md-6">
+      {{ form.reason_for_request(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.additional_information.id }}"> {{ form.additional_information.label }} </label>
+    <div class="col-md-6">
+      {{ form.additional_information(class='form-control') }}
+    </div>
+  </div>
+
+    <div class="panel panel-info col-md-offset-2">
     <div class="panel-heading">  Request Parameter Points </div>
-      <div class="panel-content">
-	
+      <div class="panel-content col-md-offset-1">
+	<!-- Request Parameter Point form --> 
 
-	{% for field in parameter_points_form if not field.id == 'csrf_token' %}
-  
-
-	  {% if not field.id == 'lhe_file' %}
 	<div class="form-group">
-	  <label for="{{field.id}}"> {{ field.label }} </label>
-	  {{ field(class='form-control') }}
+	  <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label }} </label>
+	  <div class="col-md-6">
+	    {{ parameter_points_form.parameter_point(class='form-control') }}
+	  </div>
 	</div>
-	{% endif %}
-	{% if field.id == 'lhe_file' %}
 
-	  <label for="{{ field.id}}"> {{ field.label }} </label>
-	  {{ field }} <button type="button" class="btn btn-info">Upload file </button>
+	<div class="form-group">
+	  <label class="control-label col-md-4" for="{{ parameter_points_form.lhe_file.id }} "> {{ parameter_points_form.lhe_file.label }} </label>
+	  <div class="col-md-6">
+	    {{ parameter_points_form.lhe_file }} <button type="button" class="btn btn-info">Upload file</button>
+	  </div>
+	</div>
+     
+	<div class="form-group">
+	  <label class="control-label col-md-4" for="{{ parameter_points_form.number_events.id }}"> {{ parameter_points_form.number_events.label }} </label>
+	  <div class="col-md-6">
+	    {{ parameter_points_form.number_events(class='form-control')}}
+	  </div>
+	</div>
 
-	  {% endif %}
-	{% endfor %}
+	<div class="form-group">
+	  <label class="control-label col-md-4" for="{{ parameter_points_form.reference_cross_section.id }}"> {{ parameter_points_form.reference_cross_section.label }} </label>
+	  <div class="col-md-6">
+	    {{ parameter_points_form.reference_cross_section(class='form-control') }}
+	  </div>
+	</div>
+
       </div>
-  </div>
+    </div>
+    
+    <div>
+      <div class="col-md-offset-6">
+	<button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
 
-      <button type="submit" class="btn btn-default">Submit</button>
 </form>
+  
 
 </div>
 

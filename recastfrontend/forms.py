@@ -1,6 +1,7 @@
 from flask_wtf import Form
-from wtforms import StringField, SelectField, IntegerField, TextAreaField, FormField, SubmitField, FieldList, FileField, RadioField
+from wtforms import StringField, SelectField, IntegerField, TextAreaField, FormField, SubmitField, FieldList, RadioField, SelectMultipleField, widgets, BooleanField
 from wtforms.validators import DataRequired
+from flask_wtf.file import FileField
 
 class RunConditionSubmitForm(Form):
     name  = StringField('Title of run condition', validators=[DataRequired()])
@@ -38,18 +39,25 @@ class BasicRequestSubmitForm(Form):
     conditions_description = IntegerField("Conditions description")
 
 class RequestSubmitForm(Form):
-    analysis = SelectField('Analysis', validators=[DataRequired()])
+    analysis_id = IntegerField('Analysis')
     model_name = StringField('Model Name', validators=[DataRequired()])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
 
 class RequestParameterPointsSubmitForm(Form):
     parameter_point = StringField('Parameter Point 1', validators=[DataRequired()])
-    lhe_file = FileField('LHE file', validators=[DataRequired()])
+    lhe_file = FileField('LHE file')
     number_events = IntegerField('# of events')
     reference_cross_section = StringField('Reference cross section')
 
+class MultipleCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
 class SubscribeSubmitForm(Form):
-    subscription_type= RadioField('Subscription Type', choices=[('value', 'Provider'), ('value_two', 'Observer')])
+    subscription_type= RadioField('Subscription Type', choices=[('Provider', 'Provider'), ('Provider', 'Observer')], validators=[DataRequired()])
     description = TextAreaField('Description')
     requirements = TextAreaField('Requirements')
+    notifications = MultipleCheckboxField('Notifications', choices=[('Recast Requests', 'Recast Requests'), ('Recast Responses', 'Recast Responses'), ('New Subscribers to Analysis', 'New Subscribers to Analysis')])
+    authoritative = BooleanField('Authoritative')
+    analysis_id = IntegerField('Analysis')

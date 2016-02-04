@@ -6,32 +6,58 @@
 
 <h1>Subscribe</h1> 
 
-<form method="POST" action=".">
+<form class="form-horizontal" method="POST" role="form">
   {{ form.hidden_tag() }}
 
-  
-
-
-
-  {% for field in form if not field.id == 'csrf_token' %}
   <div class="form-group">
-        <label for="{{field.id}}">{{ field.label }}</label>
-
-	{% if not field.id == 'subscription_type' %}
-        {{ field(class='form-control') }}
-	{% endif %}
-	
-	{% if field.id == 'subscription_type' %}
-	{{ field }}
-	{% endif %}
-	
+    <label class="control-label col-md-4" for="Analysis"> Analysis: </label>
+    <div class="col-md-6">
+      <input class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled >
+      </div>
   </div>
-      
-      {% endfor %}
 
-      <button type="submit" class="btn btn-default">Submit</button>
+  <div class="form-group">    
+    <label class="control-label col-md-4" for="{{ form.subscription_type.id }}"> {{ form.subscription_type.label }} </label>
+    <div class="col-md-6">
+      {{ form.subscription_type }}
+    </div>
+  </div>
+    
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.authoritative.id }}"> {{ form.authoritative.label }} </label>
+    <div class="col-md-6">
+      {{ form.authoritative }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.description.id }}"> {{ form.description.label }}</label>
+    <div class="col-md-5">
+      {{ form.description(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.requirements.id }}"> {{ form.requirements.label }}</label>
+    <div class="col-md-5">
+      {{ form.requirements(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.notifications.id }}"> {{ form.notifications.label }}</label>
+    <div class="col-md-6">
+      {{ form.notifications }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-md-offset-6">
+      <button type="submit" class="btn btn-default">Submit</button>      
+    </div>
+  </div>
+  
 </form>
-
 </div>
 
 {% endblock %}
