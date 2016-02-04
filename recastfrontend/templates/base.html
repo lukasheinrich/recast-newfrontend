@@ -42,11 +42,20 @@
             <li><a href="/analyses">Analysis Catalogue</a></li>
             <li><a href="/requests">Recast Requests</a></li>
 	    {% if current_user and not current_user.is_anonymous %}
-	    <li><a href="#">My Subscriptions</a></li>
+	    <li><a href="/subscriptions">My Subscriptions</a></li>
 	    {% endif %}
+	    <!--
 	    <li><a href="/links">Links</a></li>
 	    <li><a href="/userstories">User Stories</a></li>
+	    <li><a href="/testing">Testing</a></li> 
+	    -->
           </ul>
+	  <form class="navbar-form navbar-left" role="search">
+	    <div class="form-group">
+	      <input type="text" class="form-control" placeholder="Search for...">
+	      </div>
+	    <button type="submit" class="btn btn-primary">Submit</button>
+	  </form>
           <ul class="nav navbar-nav navbar-right">
 	    <!--- current_user -->
 	    {% if current_user and not current_user.is_anonymous %}

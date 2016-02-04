@@ -5,10 +5,11 @@
 
 <div class="container">
 <h3> Requests </h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Requester</th>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+	<th>Requester</th>
         <th>Analysis</th>
         <th>Collaboration</th>
 	<th>View Request</th>
@@ -26,8 +27,8 @@
       </tr>
       {% endfor %}
     </tbody>
-</table>
-
+  </table>
+</div>
 <!-- <a href="request_form" class="btn btn-info" role="button">New Request</a> -->
 </div>
 {% endblock %}

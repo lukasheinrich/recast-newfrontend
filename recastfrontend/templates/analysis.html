@@ -3,8 +3,40 @@
 {% block container %}
 
 <div class='container'>
+ 
 
-<h1> Analysis </h1>
+<div class="col-md-3">
+  <h1>&nbsp;</h1> <!-- to have the panel go a bit down -->
+  
+
+  <div class="panel panel-info">
+    <div class="pannel-content">
+      
+      <ul class="nav nav-pills nav-stacked">
+	
+	<li class="active"><a href="{{ url_for('.analysis', id=analysis.id) }}">View</a></li>
+	<li><a href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a></li>
+	<li><a href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a></li>
+	<li class="disabled"><a href="#">Edit</a></li>
+	<li class="disabled"><a href="#">List Subscriptions</a></li>
+	<li class="disabled"><a href="#">List Requests</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!--
+  <div class="list-group">
+    	<a class="list-group-item active" href="{{ url_for('.analysis', id=analysis.id) }}"> View</a>
+	<a class="list-group-item" href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a>
+	<a class="list-group-item" href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a>
+	<a class="list-group-item" href="#">Edit</a>
+	<a class="list-group-item" href="#">List Subscriptions</a>
+	<a class="list-group-item" href="#">List Requests</a>
+  </div>
+  -->
+</div>
+<div class="col-md-9">
+  <h1> Analysis </h1>
   <dl class="dl-horizontal">
     <dt> Title </dt>
     <dd> {{ analysis.title }}</dd>
@@ -40,7 +72,8 @@
 	</dl>
       </div>
   </div>
-      
+</div>
+     
 			      
 </div>
 

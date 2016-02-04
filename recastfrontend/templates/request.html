@@ -4,6 +4,20 @@
 
 <div class='container'>
 
+<div class="col-md-3">
+  <h1>&nbsp;</h1>
+  
+  <div class="panel panel-info">
+    <div class="panel-content">
+      <ul class="nav nav-pills nav-stacked">
+	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
+	<li class="disabled"><a href="">Contact Requester</a></li>
+    </div>
+  </div>
+
+</div>
+
+<div class="col-md-9">
 <h1> Request #  {{ request.id }} </h1>
   <dl class="dl-horizontal">
     <dt> Analysis Title </dt>
@@ -66,7 +80,7 @@
     </div>  
   {% endif %}
   <hr>
-
+</div>
   
 			      
 </div>

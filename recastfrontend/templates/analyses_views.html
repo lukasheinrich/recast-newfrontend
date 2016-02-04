@@ -5,9 +5,10 @@
 
 <div class="container">
 <h3> Analyses / <a href="analysis_form" class="btn btn-info" role="button">New Analysis</a></h3>
-<table class="table">
-  <thead>
-    <tr>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
         <th>Title</th>
         <th>Collaboration</th>
         <th>Owner</th>
@@ -24,7 +25,7 @@
       </tr>
       {% endfor %}
     </tbody>
-</table>
-
+  </table>
+</div>
 </div>
 {% endblock %}
