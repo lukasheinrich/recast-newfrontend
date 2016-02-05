@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class='container'>
+
+<div class="col-md-3">
+  <h1>&nbsp;</h1>
+  
+  <div class="panel panel-info">
+    <div class="panel-content">
+      <ul class="nav nav-pills nav-stacked">
+	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
+	<li class="disabled"><a href="">Contact Requester</a></li>
+    </div>
+  </div>
+
+</div>
+
+<div class="col-md-9">
+<h1> Request #  {{ request.id }} </h1>
+  <dl class="dl-horizontal">
+    <dt> Analysis Title </dt>
+    <dd> {{ request.analysis.title }}</dd>
+
+    <dt> Requester </dt>
+    <dd> {{ request.requester.name }}</dd>
+    
+    <dt> Model Name </dt>
+    <dd> {{ request.description_of_model }}</dd>
+    
+  </dl>
+
+    <div class="panel panel-info">
+      <div class="panel-heading">Request Description and Potential</div>
+      <div class="panel-content">
+	<dl class="dl-horizontal">
+	<dt> Reason for request </dt>
+	<dd> {{ request.reason_for_request }}</dd>
+
+	<dt> Additional information </dt>
+	<dd> {{ request.additional_information }}</dd>
+	</dl>
+      </div>
+    </div>
+
+  <hr>
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">  Run Condition </div>
+      <div class="panel-content">
+
+  
+	<dl class="dl-horizontal">
+	  <dt> Title </dt>
+	  <dd> {{ request.analysis.run_condition.name }}</dd>
+	  <dt> Description </dt>
+	  <dd> {{ request.analysis.run_condition.description }}</dd>
+	</dl>
+      </div>
+  </div>
+  
+  {% if request.scan_points[0].parameter_points[0] is defined  and request.scan_points[0] is defined and request.scan_points[0].requests[0] is defined and request.scan_points[0].requests[0].file_name[0] is defined %}
+  <div class="panel panel-info">
+    <div class="panel-heading">  Request Parameter Points </div>
+    <div class="panel-content">
+      <dl class="dl-vertical">
+	<dt> Parameter Point1: </dt>
+	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
+	<dt> LHE File: </dt>
+	
+	<dd> {{ request.scan_points[0].requests[0].file_name[0].file_name }}</dd>
+	<dt> # of events </dt> 
+	<dd> {{ request.scan_points[0].requests[0].number_of_events }}</dd>
+	
+	<dt> Reference cross section </dt>
+	<dd> {{ request.scan_points[0].requests[0].reference_cross_section }}</dd>
+	</dl>
+      </div>
+    </div>  
+  {% endif %}
+  <hr>
+</div>
+  
+			      
+</div>
+
+{% endblock %}

@@ -12,6 +12,8 @@ from frontendconfig import config as frontendconf
 from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
+from werkzeug import secure_filename
+#from flask.ext.paginate import Pagination
 
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
@@ -70,27 +72,34 @@ def login_user():
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
   
+  #user = dbmodels.User('Christian Bora', 'borachristian@gmail.com')
+  #db.session.add(user)
+  #db.session.commit()
+  
   return redirect(url_for('home'))
 
 # Forms --------------------------------------------------------------------------------
 
-@app.route("/form", methods=('GET', 'POST'))
+@app.route("/analysis_form", methods=['GET', 'POST'])
 @login.login_required
 def form():
+  #Analysis stuff
   myform = forms.AnalysisSubmitForm()
-  
-  run_conditions = dbmodels.RunCondition.query.all()
-  
-  myform.run_condition_choice.choices = [(str(rc.id),rc.title) for rc in run_conditions]
+  run_condition_form = forms.RunConditionSubmitForm()
 
+  collaborations = ['-None-', 'ATLAS', 'D0', 'CDF', 'CMS', 'ALEPH']
+  myform.collaboration.choices = [(str(c), c) for i, c in enumerate(collaborations)]
+  
   if myform.validate_on_submit():
-    synctasks.createAnalysisFromForm(app,myform,login.current_user)
+    synctasks.createAnalysisFromForm(app,myform,login.current_user, run_condition_form)
     flash('success! form validated and was processed','success')
+    return redirect(url_for('analyses'))
+
   elif myform.is_submitted():
     print myform.errors
     flash('failure! form did not validate and was not processed','danger')
 
-  return render_template('form.html', form = myform)
+  return render_template('analysis_form.html', form = myform, run_condition_form = run_condition_form)
 
 
 @app.route("/userform", methods=('GET', 'POST'))
@@ -160,6 +169,30 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
+@app.route("/request_form", methods=('GET', 'POST'), defaults={'analysis_id':1})
+@login.login_required
+def request_form(analysis_id):
+  request_form = forms.RequestSubmitForm()
+  
+  parameter_point_form = forms.RequestParameterPointsSubmitForm()
+  
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
+  request_form.analysis_id.data = analysis_id
+  
+  if request_form.validate_on_submit():
+    flash('success!', 'success')
+    synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
+    #filename = secure_filename(parameter_point_form.lhe_file.data.filename)
+    #parameter_point_form.lhe_file.data.save('./' + filename)
+    return redirect(url_for('analyses'))
+  
+  elif request_form.is_submitted():
+    print request_form.errors
+    flash('failure!', 'failure')
+    filename = None
+    
+  return render_template('request_form.html', form=request_form, parameter_points_form=parameter_point_form, analysis = analysis[0])
+  
 @app.route("/pointrequestform", methods=('GET', 'POST'))
 @login.login_required
 def point_request_form():
@@ -177,15 +210,13 @@ def point_request_form():
   elif point_request_form.is_submitted():
     print point_request_form.errors
     flash('failure!', 'failure')
-    
-    
+      
   return render_template('form.html', form = point_request_form)
 
 @app.route("/basicrequestform", methods=('GET', 'POST'))
 @login.login_required
 def basic_request_form():
   basic_request_form = forms.BasicRequestSubmitForm()
-  
   
   if basic_request_form.validate_on_submit():
     synctasks.createBasicRequestFromForm(app, basic_request_form, login.current_user)
@@ -196,13 +227,53 @@ def basic_request_form():
 
   return render_template('form.html', form = basic_request_form)
 
+@app.route("/subscribe", methods=['GET', 'POST'], defaults={'analysis_id': 1})
+@login.login_required
+def subscribe(analysis_id):
+  subscribe_form = forms.SubscribeSubmitForm()
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
+  subscribe_form.analysis_id.data = analysis_id
+
+  if subscribe_form.validate_on_submit():
+    synctasks.createSubscriptionFromForm(app, subscribe_form, login.current_user)
+    flash('success! You have been subscribed', 'success')
+    return redirect(url_for('analyses'))
+  elif subscribe_form.is_submitted():
+    flash('failure!', 'failure')
+
+  return render_template('subscribe.html', form=subscribe_form, analysis = analysis[0])
+  
+
 # Views -------------------------------------------------------------------------------------
+@app.route("/analysis/<int:id>", methods=['GET', 'POST'])
+def analysis(id):
+  query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  return render_template('analysis.html', analysis=query[0])
+
 @app.route("/analyses")
 @login.login_required
 def analyses():
   query = db.session.query(dbmodels.Analysis).all()
-  analyses = rows_to_dict(query)
-  return render_template('viewer.html', rows = analyses, title= dbmodels.Analysis.__table__)
+  return render_template('analyses_views.html', analyses = query)
+
+
+@app.route('/requests', methods=['GET', 'POST'])
+@login.login_required
+def requests_views():
+  query = db.session.query(dbmodels.ScanRequest).all()
+  return render_template('request_views.html', requests = query)
+
+@app.route('/request/<int:id>', methods=['GET', 'POST'])
+@login.login_required
+def request_view(id):
+  query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
+  return render_template('request.html', request = query[0])
+
+@app.route('/subscriptions')
+@login.login_required
+def subscriptions():
+  query = db.session.query(dbmodels.Subscription).all()
+  return render_template('subscriptions.html', subscriptions = query)
 
 @app.route("/users")
 @login.login_required
@@ -250,13 +321,41 @@ def display_links():
 def display_user_stories():
   return render_template('userstories.html')
 
+@app.route("/testing", defaults={'page': 1})
+@app.route('/testing/page/<int:page>')
+@login.login_required
+def display_testing(page):
+  query = db.session.query(dbmodels.Analysis).all()
+  count = len(query)
+  new_query = get_elements_for_page(page, 5, count, query)
+  
+  if not new_query and page != 1:
+    abort(404)
+  
+  pagination = Pagination(page=page, total=count)
+  return render_template('testing.html', analyses = new_query, pagination = pagination)
+
+
+def get_elements_for_page(page, PER_PAGE, count, obj):
+  first_index = (page - 1) * PER_PAGE
+  last_index = first_index + PER_PAGE
+  return obj[first_index:last_index]
+
+
+def url_for_other_page(page):
+  args = request.view_args.copy
+  args['page'] = page
+  return url_for(request.endpoint, **args)
+
+app.jinja_env.globals['url_for_other_pages'] = url_for_other_page
+  
 # Other functions ---------------------------------------------------------------------------
     
 @app.route("/logout")
 @login.login_required
 def logout():
     login.logout_user()
-    return redirect('/')  
+    return redirect('/')
 
 @login_manager.user_loader
 def load_user(userid):

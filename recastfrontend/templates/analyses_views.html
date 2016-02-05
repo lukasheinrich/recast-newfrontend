@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+
+{% block container %}
+
+<div class="container">
+<h3> Analyses / <a href="analysis_form" class="btn btn-info" role="button">New Analysis</a></h3>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Collaboration</th>
+        <th>Owner</th>
+	<th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for analysis in analyses %}
+      <tr class="active">
+	<td>    <a href ="{{ url_for('.analysis', id=analysis.id) }}"> {{ analysis.title }}</a> </td>
+	<td> {{ analysis.collaboration }} </td>
+	<td> {{ analysis.user.name }} </td>
+	<td> <a href="{{ url_for('.analysis', id=analysis.id) }}">&nbsp;view&nbsp;</a>|<a href="{{ url_for('.subscribe', id=analysis.id) }}">&nbsp;subscribe&nbsp;</a>|<a href="{{ url_for('.request_form', id=analysis.id) }}">&nbsp;add&nbsp;request</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+{% endblock %}

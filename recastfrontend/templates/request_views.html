@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+
+{% block container %}
+
+<div class="container">
+<h3> Requests </h3>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+	<th>Requester</th>
+        <th>Analysis</th>
+        <th>Collaboration</th>
+	<th>View Request</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for request in requests %}
+      
+      <tr class="active">
+	<td> {{ request.requester.name }} </td>
+	
+	<td>    <a href ="{{ url_for('.analysis', id=request.analysis.id) }}"> {{ request.analysis.title }}</a> </td>
+	<td> {{ request.analysis.collaboration }} </td>
+	<td> <a href = "{{ url_for('.request_view', id =request.id) }}"> view </a> </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<!-- <a href="request_form" class="btn btn-info" role="button">New Request</a> -->
+</div>
+{% endblock %}
