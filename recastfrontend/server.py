@@ -71,6 +71,8 @@ def login_user():
 
   print "login: {}".format(login_details)
   print login.current_user
+  print login.current_user.is_anonymous
+  print login.current_user.use_name()
   print "----"
   
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
