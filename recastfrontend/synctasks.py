@@ -60,7 +60,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     scan_request = dbmodels.ScanRequest(requester_id = user_query[0].id,
                                         reason_for_request = request_form.reason_for_request.data,
                                         additional_information = request_form.additional_information.data,
-                                        analysis_id = request_form.analysis.data
+                                        analysis_id = request_form.analysis_id.data
                                         )
 
     db.session.add(scan_request)
@@ -140,4 +140,20 @@ def createBasicRequestFromForm(app, form, current_user):
                                           requester_id = user_query[0].id
                                           )
     db.session.add(basic_request)
+    db.session.commit()
+
+
+def createSubscriptionFromForm(app, form, current_user):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) == 1
+
+    subscription = dbmodels.Subscription(subscription_type = form.subscription_type.data,
+                                          description = form.description.data,
+                                          requirements = form.requirements.data,
+                                          notifications = '\n'.join(form.notifications.data),
+                                          subscriber_id = user_query[0].id,
+                                          analysis_id = form.analysis_id.data
+                                          )
+    db.session.add(subscription)
     db.session.commit()

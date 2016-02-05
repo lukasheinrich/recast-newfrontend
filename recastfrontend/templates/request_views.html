@@ -5,10 +5,11 @@
 
 <div class="container">
 <h3> Requests </h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Requester</th>
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+	<th>Requester</th>
         <th>Analysis</th>
         <th>Collaboration</th>
 	<th>View Request</th>
@@ -22,12 +23,12 @@
 	
 	<td>    <a href ="{{ url_for('.analysis', id=request.analysis.id) }}"> {{ request.analysis.title }}</a> </td>
 	<td> {{ request.analysis.collaboration }} </td>
-	<td> <a href = "{{ url_for('.request', id =request.id) }}"> view </a> </td>
+	<td> <a href = "{{ url_for('.request_view', id =request.id) }}"> view </a> </td>
       </tr>
       {% endfor %}
     </tbody>
-</table>
-
-<a href="request_form" class="btn btn-info" role="button">New Request</a>
+  </table>
+</div>
+<!-- <a href="request_form" class="btn btn-info" role="button">New Request</a> -->
 </div>
 {% endblock %}
