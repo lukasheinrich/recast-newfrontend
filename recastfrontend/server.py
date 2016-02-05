@@ -69,12 +69,11 @@ def login_user():
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
 
+  print "login: {}".format(login_details)
+
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
   
-  #user = dbmodels.User('Christian Bora', 'borachristian@gmail.com')
-  #db.session.add(user)
-  #db.session.commit()
   
   return redirect(url_for('home'))
 
