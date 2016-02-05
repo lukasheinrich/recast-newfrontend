@@ -74,10 +74,6 @@
   </div>
 </header>
 
-{{current_user}}
-{{current_user.is_anonymous()}}
-{{current_user.name()}}
-
 <div class="container-fluid">
     <div class="row col-md-12">
         {% with messages = get_flashed_messages(with_categories=true) %}
