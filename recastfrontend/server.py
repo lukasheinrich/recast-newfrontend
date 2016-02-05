@@ -68,12 +68,6 @@ def login_user():
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
-
-  print "login: {}".format(login_details)
-  print login.current_user
-  print login.current_user.is_anonymous
-  print login.current_user.use_name()
-  print "----"
   
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
