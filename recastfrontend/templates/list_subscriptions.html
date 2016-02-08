@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container">
+<h3> Subscriptions </h3>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+	<th>Subscriber</th>
+	<th>Subscription Type</th>
+	<th>Post date</th>
+	<th>Edit link</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for subscription in subscriptions %}
+      
+      <tr class="active">
+	<td> {{ subscription.subscriber.name }} </td>
+	<td> {{ subscription.subscription_type }} </td>
+	<td> </td>
+	<td> </td>
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+</div>
+{% endblock %} 
+      
