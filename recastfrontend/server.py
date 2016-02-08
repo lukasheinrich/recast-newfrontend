@@ -38,6 +38,7 @@ def create_app():
   #app.config.from_object(frontendconf['FLASKCONFIG'])
   heroku = Heroku(app)
   db.init_app(app)
+  db.create_all()
   return app
   
 app = create_app()
