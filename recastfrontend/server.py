@@ -169,15 +169,16 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
-@app.route("/request_form", methods=('GET', 'POST'), defaults={'analysis_id':1})
+@app.route("/request_form", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route('/request_form/<int:id>')
 @login.login_required
-def request_form(analysis_id):
+def request_form(id):
   request_form = forms.RequestSubmitForm()
   
   parameter_point_form = forms.RequestParameterPointsSubmitForm()
   
-  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
-  request_form.analysis_id.data = analysis_id
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  request_form.analysis_id.data = analysis[0].id
   
   if request_form.validate_on_submit():
     flash('success!', 'success')
@@ -227,12 +228,13 @@ def basic_request_form():
 
   return render_template('form.html', form = basic_request_form)
 
-@app.route("/subscribe", methods=['GET', 'POST'], defaults={'analysis_id': 1})
+@app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route('/subscribe/<int:id>')
 @login.login_required
-def subscribe(analysis_id):
+def subscribe(id):
   subscribe_form = forms.SubscribeSubmitForm()
-  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
-  subscribe_form.analysis_id.data = analysis_id
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  subscribe_form.analysis_id.data = analysis[0].id
 
   if subscribe_form.validate_on_submit():
     synctasks.createSubscriptionFromForm(app, subscribe_form, login.current_user)
@@ -243,6 +245,16 @@ def subscribe(analysis_id):
 
   return render_template('subscribe.html', form=subscribe_form, analysis = analysis[0])
   
+@app.route("/contact", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route('/contact/<int:id>')
+@login.login_required
+def contact(id):
+  contact_form = forms.ContactSubmitForm()
+  user = db.session.query(dbmodels.User).filter(dbmodels.User.name == login.current_user.name()).all()
+  contact_form.responder.data = user[0].name
+  contact_form.responder_email.data = user[0].email
+
+  return render_template('contact.html', form = contact_form)
 
 # Views -------------------------------------------------------------------------------------
 @app.route("/analysis/<int:id>", methods=['GET', 'POST'])
@@ -332,8 +344,25 @@ def display_testing(page):
   if not new_query and page != 1:
     abort(404)
   
-  pagination = Pagination(page=page, total=count)
-  return render_template('testing.html', analyses = new_query, pagination = pagination)
+  #pagination = Pagination(page=page, total=count)
+  #return render_template('testing.html', analyses = new_query, pagination = pagination)
+  return render_template('testing.html', analyses = new_query)
+
+@app.route("/list_subscriptions", defaults={'analysis_id': 1})
+@app.route("/list_subscriptions/analysis/<int:analysis_id>")
+@login.login_required
+def list_subscriptions(analysis_id):
+  query = db.session.query(dbmodels.Subscription).filter(dbmodels.Subscription.analysis_id == analysis_id).all()
+  
+  return render_template('list_subscriptions.html', subscriptions = query)
+
+@app.route("/list_requests", defaults={'analysis_id': 1})
+@app.route("/list_requests/analysis/<int:analysis_id>")
+@login.login_required
+def list_requests(analysis_id):
+  query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.analysis_id == analysis_id).all()
+
+  return render_template('list_requests.html', requests = query)
 
 
 def get_elements_for_page(page, PER_PAGE, count, obj):

@@ -61,3 +61,12 @@ class SubscribeSubmitForm(Form):
     notifications = MultipleCheckboxField('Notifications', choices=[('Recast Requests', 'Recast Requests'), ('Recast Responses', 'Recast Responses'), ('New Subscribers to Analysis', 'New Subscribers to Analysis')])
     authoritative = BooleanField('Authoritative')
     analysis_id = IntegerField('Analysis')
+
+class ContactSubmitForm(Form):
+    name = StringField('Your name', validators=[DataRequired()])
+    email = StringField('Your e-mail address', validators=[DataRequired()])
+    responder = StringField('To')
+    responder_email = StringField('To (email)')
+    subject = StringField('Subject')
+    message = TextAreaField('Message', validators=[DataRequired()])
+

@@ -18,22 +18,12 @@
 	<li><a href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a></li>
 	<li><a href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a></li>
 	<li class="disabled"><a href="#">Edit</a></li>
-	<li class="disabled"><a href="#">List Subscriptions</a></li>
-	<li class="disabled"><a href="#">List Requests</a></li>
+	<li><a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">List Subscriptions</a></li>
+	<li><a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">List Requests</a></li>
       </ul>
     </div>
   </div>
 
-  <!--
-  <div class="list-group">
-    	<a class="list-group-item active" href="{{ url_for('.analysis', id=analysis.id) }}"> View</a>
-	<a class="list-group-item" href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a>
-	<a class="list-group-item" href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a>
-	<a class="list-group-item" href="#">Edit</a>
-	<a class="list-group-item" href="#">List Subscriptions</a>
-	<a class="list-group-item" href="#">List Requests</a>
-  </div>
-  -->
 </div>
 <div class="col-md-9">
   <h1> Analysis </h1>
