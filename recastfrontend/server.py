@@ -13,6 +13,7 @@ from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
+from flask.ext.heroku import Heroku
 #from flask.ext.paginate import Pagination
 
 
@@ -34,7 +35,8 @@ class User(login.UserMixin):
 
 def create_app():
   app = Flask(__name__)
-  app.config.from_object(frontendconf['FLASKCONFIG'])
+  #app.config.from_object(frontendconf['FLASKCONFIG'])
+  heroku = Heroku(app)
   db.init_app(app)
   return app
   
