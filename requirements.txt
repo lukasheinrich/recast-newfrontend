@@ -21,7 +21,6 @@ psycopg2==2.6.1
 ptyprocess==0.5.1
 pytz==2015.7
 PyYAML==3.11
-recast-database==0.0.1
 -e git+https://github.com/cbora/recast-newfrontend.git@bde342e2dd1f689465818f17ec6bff8cf5465f60#egg=recast_newfrontend
 redis==2.10.5
 requests==2.9.1
