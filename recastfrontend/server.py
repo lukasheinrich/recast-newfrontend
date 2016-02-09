@@ -101,7 +101,7 @@ def form():
   return render_template('analysis_form.html', form = myform, run_condition_form = run_condition_form)
 
 
-@app.route("/userform", methods=('GET', 'POST'))
+@app.route("/userform", methods=['GET', 'POST'])
 def user_form():
   userform = forms.UserSubmitForm()
 
