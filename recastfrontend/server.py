@@ -168,7 +168,7 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
-@app.route("/request_form", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route("/request_form", methods=['GET', 'POST'], defaults={'id': 1})
 @app.route('/request_form/<int:id>')
 @login.login_required
 def request_form(id):
