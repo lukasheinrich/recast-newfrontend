@@ -13,7 +13,6 @@ from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
-#from flask.ext.paginate import Pagination
 
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
