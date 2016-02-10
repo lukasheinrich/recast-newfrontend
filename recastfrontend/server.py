@@ -168,7 +168,7 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
-@app.route("/request_form", methods=['GET', 'POST'], defaults={'id': 1})
+@app.route("/request_form", methods=['GET','POST'], defaults={'id': 1})
 @app.route('/request_form/<int:id>')
 @login.login_required
 def request_form(id):
@@ -179,17 +179,18 @@ def request_form(id):
   analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   request_form.analysis_id.data = analysis[0].id
   
-  if request_form.validate_on_submit():
-    flash('success!', 'success')
-    synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
+  if request.method == 'POST':
+    if request_form.validate_on_submit():
+      flash('success!', 'success')
+      synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
     #filename = secure_filename(parameter_point_form.lhe_file.data.filename)
     #parameter_point_form.lhe_file.data.save('./' + filename)
-    return redirect(url_for('analyses'))
+      return redirect(url_for('analyses'))
   
-  elif request_form.is_submitted():
-    print request_form.errors
-    flash('failure!', 'failure')
-    filename = None
+    elif request_form.is_submitted():
+      print request_form.errors
+      flash('failure!', 'failure')
+      filename = None
     
   return render_template('request_form.html', form=request_form, parameter_points_form=parameter_point_form, analysis = analysis[0])
   
