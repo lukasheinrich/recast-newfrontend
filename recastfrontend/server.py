@@ -14,7 +14,6 @@ import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
 
-
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 
 ORCID_APPID = frontendconf['ORCID_APPID']
