@@ -70,15 +70,24 @@ def login_user():
 
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
-  
-  #user = dbmodels.User('Christian Bora', 'borachristian@gmail.com')
-  #db.session.add(user)
-  #db.session.commit()
-  
+
   return redirect(url_for('home'))
 
 # Forms --------------------------------------------------------------------------------
 
+def isUserInDB(user):
+  user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).all()
+  assert len(user_query) < 2
+
+  if (len(user_query)==0):
+    new_user = User(name=user.name, email=None)
+    db.session.add(new_user)
+    db.session.commit()
+    return False
+  else :
+     return (not user_query[0].email == None)  
+    
+  
 @app.route("/analysis_form", methods=['GET', 'POST'])
 @login.login_required
 def form():

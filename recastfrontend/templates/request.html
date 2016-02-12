@@ -11,7 +11,7 @@
     <div class="panel-content">
       <ul class="nav nav-pills nav-stacked">
 	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
-	<li><a href="{{ url_for('.contact', id=request.requester.id) }}">Contact Requester</a></li>
+	<li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
     </div>
   </div>
 
@@ -22,6 +22,9 @@
   <dl class="dl-horizontal">
     <dt> Analysis Title </dt>
     <dd> {{ request.analysis.title }}</dd>
+    
+    <dt> Status </dt>
+    <dd> {{ request.status }}</dd>
 
     <dt> Requester </dt>
     <dd> {{ request.requester.name }}</dd>
@@ -81,8 +84,42 @@
   {% endif %}
   <hr>
 </div>
-  
-			      
+
+<div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="myModalLabel">Contact Requester</h3>
+      </div>
+
+      <div class="modal-body">
+	<form class="form-horizontal col-md-12" role="form">
+	  <div class="form-group">
+	    <label>Subject</label>
+	    <input class="form-control" type="text">
+	  </div>
+	  <div class="form-group">
+	    <label>Message</label>
+	    <textarea class="form-control" placeholder="Your message here.."></textarea>
+	  </div>
+	  <div class="form-group">
+	    <label>E-mail</label>
+	    <input class="form-control" placeholder="email@you.com" data-placement="top" type="text">
+	  </div>
+	  <div class="form-group">
+	    <button type="submit" class="btn btn-success pull-right">Send</button>
+	  </div>
+	</form>
+      </div>
+      <div class="modal-footer">
+	<button class="btn" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </div>
 
 {% endblock %}

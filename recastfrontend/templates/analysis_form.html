@@ -4,35 +4,97 @@
 
 <div class="container">
 
-<h1>Create new analysis</h1> 
-
-<form method="POST">
+<form method="POST" class="form-horizontal">
   {{ form.hidden_tag() }}
   {{ run_condition_form.hidden_tag() }}
-  {% for field in form if not field.id == 'csrf_token' %}
-  <div class="form-group">
-        <label for="{{field.id}}">{{ field.label }}</label>
-        {{ field(class='form-control') }}
-  </div>
-      
-  {% endfor %}
-
-  <div class="panel panel-info">
-    <div class="panel-heading">  Run Condition </div>
-      <div class="panel-content">
-
-	{% for field in run_condition_form if not field.id == 'csrf_token' %}
   
-	<div class="form-group">
-	  <label for="{{field.id}}"> {{ field.label }} </label>
-	  {{ field(class='form-control') }}
-	</div>
 
-	{% endfor %}
+  <div class="panel panel-info col-md-offset-2">
+    <div class="panel-heading">Create new analysis</div>
+    <div class="panel-content col-md-offset-1">
+
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.title.id }}">{{ form.title.label }}</label>
+	<div class="col-md-6">
+	  {{ form.title(class='form-control') }}
+	</div>
       </div>
+
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.collaboration.id }}">{{ form.collaboration.label }}</label>
+	<div class="col-md-6">
+	  {{ form.collaboration(class='form-control') }}
+	</div>
+      </div>
+
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.e_print.id }}">{{ form.e_print.label }}</label>
+	<div class="col-md-6">
+	  {{ form.e_print(class='form-control') }}
+	</div>
+      </div>
+  
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.journal.id }}">{{ form.journal.label }}</label>
+	<div class="col-md-6">
+	  {{ form.journal(class='form-control') }}
+	</div>
+      </div>
+  
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.doi.id }}">{{ form.doi.label }}</label>
+	<div class="col-md-6">
+	  {{ form.doi(class='form-control') }}
+	</div>
+      </div>
+
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.inspire_URL.id }}">{{ form.inspire_URL.label }}</label>
+	<div class="col-md-6">
+	  {{ form.inspire_URL(class='form-control') }}
+	</div>
+      </div>
+      
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.description.id }}">{{ form.description.label }}</label>
+	<div class="col-md-6">
+	  {{ form.description(class='form-control') }}
+	</div>
+      </div>
+
+    </div>
   </div>
-      <button type="submit" class="btn btn-default">Submit</button>
+  
+  
+  <!-- Run condition stuff -->
+  <div class="panel panel-info col-md-offset-2">
+    <div class="panel-heading">Run Condition</div>
+    <div class="panel-content col-md-offset-1">
+      
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ run_condition_form.name.id }}">{{ run_condition_form.name.label }}</label>
+	<div class="col-md-6">
+	  {{ run_condition_form.name(class='form-control') }}
+	</div>
+      </div>
+      
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ run_condition_form.description.id }}">{{ run_condition_form.description.label }}</label>
+	<div class="col-md-6">
+	  {{ run_condition_form.description(class='form-control') }}
+	</div>
+      </div>
+      
+    </div>
+  </div>
+  <!-- End of Run condition -->
+  <div class="col-md-offset-6">
+    <button type="submit" class="btn btn-default">Submit</button>
+  </div>
+  
+  
 </form>
+
 
 </div>
 

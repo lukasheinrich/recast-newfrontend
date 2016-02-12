@@ -1,5 +1,6 @@
 import recastdb.models as dbmodels
 from recastdb.database import db
+import datetime
 
 def createAnalysisFromForm(app,form,current_user, run_condition_form):
   with app.app_context():
@@ -60,7 +61,8 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     scan_request = dbmodels.ScanRequest(requester_id = user_query[0].id,
                                         reason_for_request = request_form.reason_for_request.data,
                                         additional_information = request_form.additional_information.data,
-                                        analysis_id = request_form.analysis_id.data
+                                        analysis_id = request_form.analysis_id.data,
+                                        post_date = datetime.date.today()
                                         )
 
     db.session.add(scan_request)
