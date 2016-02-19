@@ -40,3 +40,14 @@ def mk_config(output):
   with open(output,'w') as outfile:
      outfile.write(yaml.dump(config_data,default_flow_style=False))
   
+@admincli.command()
+@click.option('--config', '-c')
+def test(config):
+  if config:
+    os.environ['RECASTCONTROLCENTER_CONFIG'] = config
+  import unittest  
+  tests = unittest.TestLoader().discover('tests')
+  unittest.TextTestRunner(verbosity=2).run(tests)
+
+
+  

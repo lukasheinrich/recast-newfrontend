@@ -29,3 +29,4 @@ SQLAlchemy==1.0.11
 traitlets==4.1.0
 Werkzeug==0.11.3
 WTForms==2.1
+coverage==4.0.3
