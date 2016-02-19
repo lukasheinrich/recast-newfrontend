@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config.from_object(frontendconf['FLASKCONFIG'])
 app.app_context().push()
 db.init_app(app)
-db.drop_all()
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 user1 = models.User('Christian Bora', 'borachristian@gmail.com')
 user2 = models.User('Lukas Heinrich', 'lukas.heinrich@cern.ch')
@@ -18,6 +18,13 @@ db.session.add(user1)
 db.session.add(user2)
 db.session.add(user3)
 db.session.commit()
+
+#Add some tokens for API Auth
+#token1 = models.AccessToken(token='a', user_id=user1.id)
+#token2 = models.AccessToken(token="abcdefg", user_id=user2.id)
+#db.session.add(token1)
+#db.session.add(token2)
+#db.session.commit()
 
 run_condition1 = models.RunCondition(name='7TeV', description='2.2/fb')
 db.session.add(run_condition1)
