@@ -350,7 +350,8 @@ def display_testing(page):
   new_query = get_elements_for_page(page, 5, count, query)
   
   if not new_query and page != 1:
-    abort(404)
+    #abort(404)
+    pass
   
   #pagination = Pagination(page=page, total=count)
   #return render_template('testing.html', analyses = new_query, pagination = pagination)
