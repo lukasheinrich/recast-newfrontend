@@ -10,4 +10,4 @@ install:
 
 #script: tests/run_test.sh
 script:
-  - pyflakes .
+  - tests/run_test.sh
