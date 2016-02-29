@@ -1,4 +1,4 @@
-# recast-newfrontend  https://travis-ci.org/cbora/recast-newfrontend.svg?branch=master
+# recast-newfrontend  
 attempt at a new frontend for RECAST live at: http://recast-frontend.herokuapp.com/
 
 
