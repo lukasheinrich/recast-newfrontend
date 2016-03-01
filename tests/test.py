@@ -1,30 +1,71 @@
 import os
 
 import unittest
+import recastfrontend.server
 from recastfrontend.server import create_app
 from recastfrontend.server import db
 import recastdb.models
 from flask import url_for
-
+import json
 
 class FlaskClientTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
+        self.app.testing = True
         self.app_context = self.app.app_context()
         self.app_context.push()
-        db.create_all()
-        self.client = self.app.test_client(use_cookies=True)
+        
+        with self.app.app_context():
+            db.create_all()
+        self.client = self.app.test_client()
         
     def tearDown(self):
         db.session.remove()
         self.app_context.pop()
-        
 
+    def test_setup(self):
+        self.assertTrue(self.app is not None)
+        self.assertTrue(self.client is not None)
+        
     def test_home_page(self):
-        #response = self.client.get(url_for('./'))
+        response = self.client.get('/')
+        self.assertTrue(response.status_code == 200)
+        #json_response = json.loads(response.data.decode('utf-8'))
         #self.assetTrue('Stranger' in response.get_data(as_text=True))
         #print self.client.get(url_for('about'))
         pass
+
+    def test_about_page(self):
+        response = self.client.get('/about')
+        self.assertTrue(response.status_code == 200)
+
+    def test_analysis_page(self):
+        response = self.client.get('/analyses')
+        self.assertTrue(response.status_code == 200)
+        
+    def test_show_last_analysis(self):
+        query = recastdb.models.Analysis.query.all()
+        self.assertTrue(len(query) > 0)
+        response = self.client.get('/analysis/'+str(len(query)))
+        self.assertTrue(response.status_code == 200)
+
+    def test_requests(self):
+        response = self.client.get('/requests')
+        self.assertTrue(response.status_code == 200)
+        
+    def test_subscriptions(self):
+        response = self.client.get('/subscriptions')
+        self.assertTrue(response.status_code == 200)
+
+    def test_analysis_form(self):
+        response = self.client.get('analysis_form')
+        self.assertTrue(response.status_code == 200)
+        
+    def test_show_last_request(self):
+        query = recastdb.models.ScanRequest.query.all()
+        self.assertTrue(len(query) > 0)
+        response = self.client.get('request_form/'+str(len(query)))
+        self.assertTrue(response.status_code == 200)
 
     def test_db(self):
         user = recastdb.models.User(name="Test User", email="test@email.com")

@@ -29,6 +29,6 @@ setup(
     ]
   },
   dependency_links = [
-    'https://github.com/recast-hep/recast-database/tarball/master#egg=recast-database-0.0.2',
+    'https://github.com/recast-hep/recast-database/tarball/master#egg=recast-database-0.0.1',
   ]
 )
