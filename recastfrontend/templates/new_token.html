@@ -4,25 +4,28 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-9 col-sm-12">
+    <div class="col-md-8 col-sm-12">
       <div class="panel panel-default profile-panel">
 	<div class="panel-body">
 	  <h3>Your access token</h3>
-	  <p>Use the the access token as the password, and orcid_id as the name</p>
+	  <p>To access the API use the ORCID ID as the username and the access token as the password. Please save the access token safely as it will not be shown again.</p>
 	  <table class="table table-responsive">
-	    <tbody>
-	      <tr>
-		<td><strong>ORCID ID: </strong></td>
-		<td>{{orcid}}</td>
-	      </tr>
-	      <tr>
-		<td><strong>Access Token: </strong></td>
-		<td>{{token}}</td>
-	      </tr>
-	      <tr>
-		<td><strong>Name: </strong></td>
-		<td></td>
-	    </tbody>
+	    <form action="/token" method="POST">
+	      <tbody>
+		<tr>
+		  <td><strong>ORCID ID: </strong></td>
+		  <td>{{orcid}}</td>
+		</tr>
+		<tr>
+		  <td><strong>Access Token: </strong></td>
+		  <td>{{token}}</td>
+		</tr>
+		<tr>
+		  <td><strong>Name: </strong></td>
+		  <td><input type="text" name="name" placeholder="please enter text to help you remember this token" /></td>
+	      </tbody>
+	      <button type="submit" class="btn btn-primary pull-right">Save</button>
+	    </form>
 	</div>
       </div>
     </div>
