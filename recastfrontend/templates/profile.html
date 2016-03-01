@@ -1,9 +1,45 @@
 {% extends "base.html" %}
 
 {% block container %}
-profile page for user: <strong>{{current_user.name()}}</strong>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <div class="panel panel-default profile-panel">
+	<div class="panel-body">
+	  <div class="col-sm-9 col-xs-12 user-info-box">
+	    <h3 class="user-name">{{current_user.name()}}</h3>
+	    <p><strong><i class="fa fa-envelope"></i>E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
+	    <p><strong><i class="fa fa-bars"></i>ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
+	  </div>
+	</div>
+      </div>
 
-<ul>
-    <li>from the database we got this email: {{db_user.email}}</li>
-</ul>
+      <div class="panel panel-default">
+	<div class="panel-body">
+	  <form action="/token" method="POST">
+	    <h3><i></i>Tokens<button type="submit" class="btn btn-success pull-right">Generate new token</button></h3>    
+	  </form>
+	  <hr class="colorgraph">
+	  <table class="table table-hover table-responsive">
+	    <thead>
+	      <tr>
+		<th>#</th>
+		<th>Token Name</th>
+		<th>Action</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for token in tokens %}
+	      <td>1</td>
+	      <td>{{ token.name }}</td>
+	      <td><form action="/profile" method="DELETE"><button type="submit" name="delete" value="delete" class="btn btn-danger">Delete</button></form></td>
+	      {% endfor %}
+	    </tbody>  
+	  </table>	  
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+	  
 {% endblock %}

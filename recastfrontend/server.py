@@ -65,7 +65,10 @@ def login_user():
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
+  print r
+  print r.content
   login_details = json.loads(r.content)
+  
 
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
@@ -405,13 +408,39 @@ def load_user(userid):
 def unauthorized():
   return redirect(url_for('login_user'))
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST", "DELETE"])
 @login.login_required
 def profile():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
-  return render_template('profile.html', db_user = user_query[0])
 
+  if request.method == 'DELETE':
+    return render_template('new_token.html', token=user_query[0].access_tokens[0])
+    
+  return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
+
+@app.route("/token", methods=["GET", "POST"])
+@login.login_required
+def show_token():
+  query = dbmodels.AccessToken.query.filter(dbmodels.User.name == login.current_user.name()).all()
+  #print request.args.get('code')
+  if not request.args.has_key('code'):
+    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
+    ORCID_APPID,
+    'http://recast-frontend.herokuapp.com/token'
+  ))
+  
+  #    ORCID_REDIRECT_URI
+  auth_code = request.args.get('code')
+  data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
+
+  r = requests.post('https://pub.orcid.org/oauth/token', data = data)
+  print r
+  print r.content
+  login_details = json.loads(r.content)
+  new_token = login_details['access_token']
+
+  return render_template('new_token.html', token=new_token, orcid=login_details['orcid'])
 
 def rows_to_dict(rows):
   d = []
