@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-9 col-sm-12">
+      <div class="panel panel-default profile-panel">
+	<div class="panel-body">
+	  <h3>Your access token</h3>
+	  <p>Use the the access token as the password, and orcid_id as the name</p>
+	  <table class="table table-responsive">
+	    <tbody>
+	      <tr>
+		<td>ORCID ID</td>
+		<td>{{orcid}}</td>
+	      </tr>
+	      <tr>
+		<td>Access token</td>
+		<td>{{token}}</td>
+	      </tr>
+	    </tbody>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+	
+
+	    
+       
