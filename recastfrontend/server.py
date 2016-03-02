@@ -424,17 +424,20 @@ def profile():
 
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
-token_name = "nothing"
 @app.route("/token", methods=['GET', 'POST'])
 @login.login_required
 def show_token():  
-  if request.method == 'POST':
-    login.current_user.token = request.form['tokenname']
-    print "from requests"
-
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
-
+  
+  if request.method == 'POST':
+    new_token = dbmodels.AccessToken(token_name=request.form['tokenname'], user_id=user_query[0])
+    db.session.add(new_token)
+    db.session.commit()
+  elif request.method == 'GET':
+    tokens = db.session.query(dbmodels.AccessToken).all()
+    new_token = tokens[len(tokens)]
+                                     
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
     ORCID_APPID,
@@ -453,7 +456,7 @@ def show_token():
     db.session.add(user_query[0])
     db.session.commit()
   
-  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=login.current_user.token, user_id=user_query[0].id)
+  new_token.token = login.details['access_token']
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
