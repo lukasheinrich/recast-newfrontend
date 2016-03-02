@@ -453,7 +453,7 @@ def show_token():
     db.session.add(user_query[0])
     db.session.commit()
   
-  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name, user_id=user_query[0].id)
+  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=login.current_user.token, user_id=user_query[0].id)
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
