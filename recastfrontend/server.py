@@ -424,6 +424,10 @@ def profile():
 @app.route("/token", methods=['GET', 'POST'])
 @login.login_required
 def show_token():
+  token_name = "None assigned"
+  if request.method == 'POST':
+    token_name = request.form['tokenname']
+  
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
 
@@ -443,10 +447,6 @@ def show_token():
     user_query[0].orcid_id = login_details['orcid']
     db.session.add(user_query[0])
     db.session.commit()
-
-  token_name = "None assigned"
-  if request.method == 'POST':
-    token_name = request.form['tokenname']
   
   new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name, user_id=user_query[0].id)
   db.session.add(new_token)
