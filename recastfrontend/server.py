@@ -19,7 +19,7 @@ celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 ORCID_APPID = frontendconf['ORCID_APPID']
 ORCID_REDIRECT_URI = frontendconf['ORCID_REDIRECT_URI']
 ORCID_SECRET = frontendconf['ORCID_SECRET']
-
+ORCID_TOKEN_REDIRECT_URI = frontendconf['ORCID_TOKEN_REDIRECT_URI']
 
 class User(login.UserMixin):
   def __init__(self,**kwargs):
