@@ -408,15 +408,17 @@ def load_user(userid):
 def unauthorized():
   return redirect(url_for('login_user'))
 
-@app.route("/profile", methods=["GET", "POST", "DELETE"])
+@app.route("/profile", methods=['GET', 'POST'])
 @login.login_required
 def profile():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
 
-  if request.method == 'DELETE':
-    return render_template('new_token.html', token=user_query[0].access_tokens[0])
-    
+  if request.method == 'POST':
+    token = dbmodels.AccessToken.query.filter(dbmodels.AccessToken.id == request.form['delete']).one()
+    db.session.delete(token)
+    db.session.commit()
+
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
 @app.route("/token", methods=['POST'])
@@ -424,6 +426,7 @@ def profile():
 def show_token():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
+
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
     ORCID_APPID,
@@ -436,7 +439,7 @@ def show_token():
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
 
-  if user_query[0].orcid_id == 'None':
+  if not user_query[0].orcid_id:
     user_query[0].orcid_id = login_details['orcid']
     db.session.add(user_query[0])
     db.session.commit()
@@ -444,9 +447,8 @@ def show_token():
   token_name = "None assigned"
   if request.method == 'POST':
     token_name = request.form['tokenname']
-    print "***************", request.form['tokenname']
-
-  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name)
+  
+  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name, user_id=user_query[0].id)
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])

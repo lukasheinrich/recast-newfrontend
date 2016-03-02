@@ -28,9 +28,11 @@
 	    </thead>
 	    <tbody>
 	      {% for token in tokens %}
-	      <td>1</td>
-	      <td>{{ token.name }}</td>
-	      <td><form action="/profile" method="DELETE"><button type="submit" name="delete" value="delete" class="btn btn-danger">Delete</button></form></td>
+	      <tr>
+		<td>{{ loop.index0 }}</td>
+		<td>{{ token.token_name }}</td>
+		<td><form action="/profile" method="post"><button type="text" name="delete" value="{{ token.id }}" class="btn btn-danger">Delete</button></form></td>
+	      </tr>
 	      {% endfor %}
 	    </tbody>  
 	  </table>	  
@@ -41,7 +43,7 @@
 	<div class="panel-body">
 	  <h3> Generate New Token </h3>
 	  <hr class="colograph">
-	  <form action="/token" method="POST" class="form-inline">
+	  <form action="/token" method="post" class="form-inline">
 	    <a name="newToken"></a>
 	    <label for="name"><strong>Name: </strong></label>	    
 	    <input type="text" name="tokenname" class="form-control" placeholder="Name your token"/>
