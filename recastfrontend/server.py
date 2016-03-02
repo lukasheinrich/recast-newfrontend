@@ -419,9 +419,9 @@ def profile():
     
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
-@app.route("/token", methods=["GET", "POST"], defaults={'token_name': 'None assigned'})
+@app.route("/token", methods=["GET", "POST"])
 @login.login_required
-def show_token(token_name=None):
+def show_token():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
   if not request.args.has_key('code'):
@@ -436,7 +436,17 @@ def show_token(token_name=None):
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
 
+  if user_query[0].orcid_id == 'None':
+    user_query[0].orcid_id = login_details['orcid']
+    db.session.commit()
+
+  token_name = "None assigned"
+  if request.POST['name']:
+    token_name = request.POST['name']
+
   new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name)
+  db.session.add(new_token)
+  db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
 
 def rows_to_dict(rows):
