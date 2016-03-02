@@ -431,7 +431,7 @@ def show_token():
   assert len(user_query)
   
   if request.method == 'POST':
-    new_token = dbmodels.AccessToken(token_name=request.form['tokenname'], user_id=user_query[0])
+    new_token = dbmodels.AccessToken(token="", token_name=request.form['tokenname'], user_id=user_query[0])
     db.session.add(new_token)
     db.session.commit()
   elif request.method == 'GET':
