@@ -421,26 +421,22 @@ def profile():
 
 @app.route("/token", methods=["GET", "POST"])
 @login.login_required
-def show_token():
-  query = dbmodels.AccessToken.query.filter(dbmodels.User.name == login.current_user.name()).all()
-  #print request.args.get('code')
+def show_token(token_name=None):
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
     ORCID_APPID,
-    'http://recast-frontend.herokuapp.com/token'
+    ORCID_TOKEN_REDIRECT_URI
   ))
   
-  #    ORCID_REDIRECT_URI
   auth_code = request.args.get('code')
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
-  print r
-  print r.content
   login_details = json.loads(r.content)
-  new_token = login_details['access_token']
 
-  return render_template('new_token.html', token=new_token, orcid=login_details['orcid'])
+  user_query = dbmodels.AccessToken.query.filter(dbmodels.User.name == login.current_user.name()).all()
+  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name)
+  return render_template('new_token.html', token=new_token, user=user_query[0])
 
 def rows_to_dict(rows):
   d = []

@@ -16,9 +16,7 @@
 
       <div class="panel panel-default">
 	<div class="panel-body">
-	  <form action="/token" method="POST">
-	    <h3><i></i>Tokens<button type="submit" class="btn btn-success pull-right">Generate new token</button></h3>    
-	  </form>
+	  <h3><i></i>Tokens<a href="#newToken"><button id="upperNewToken" onclick="hideshow()" type="text" class="btn btn-success pull-right">Generate new token</button></a></h3>    
 	  <hr class="colorgraph">
 	  <table class="table table-hover table-responsive">
 	    <thead>
@@ -38,8 +36,32 @@
 	  </table>	  
 	</div>
       </div>
+      
+      <div class="panel panel-default">
+	<div class="panel-body">
+	  <h3> Generate New Token </h3>
+	  <hr class="colograph">
+	  <form action="/token" method="POST" class="form-inline">
+	    <a name="newToken"></a>
+	    <label for="name"><strong>Name: </strong></label>
+	    
+	    <input type="text" name="name" class="form-control" placeholder="Name your token"/>
+	    <button type="submit" name="delete" value="delete" class="btn btn-success pull-right">Generate new token</button>
+	  </form>
+	</div>
+      </div>
+
+
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  
+  function hideshow() {
+     document.getElementById('upperNewToken').classList.add('hide');
+  }
+</script>  
+  
 	  
 {% endblock %}
