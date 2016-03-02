@@ -441,8 +441,8 @@ def show_token():
     db.session.commit()
 
   token_name = "None assigned"
-  if request.POST['name']:
-    token_name = request.POST['name']
+  if request.method == 'POST':
+    token_name = request.form['name']
 
   new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name)
   db.session.add(new_token)
