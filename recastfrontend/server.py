@@ -438,7 +438,7 @@ def show_token():
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&token={}&'.format(
     ORCID_APPID,
-    ORCID_REDIRECT_URI,
+    ORCID_TOKEN_REDIRECT_URI,
     token_name
   ))
   
