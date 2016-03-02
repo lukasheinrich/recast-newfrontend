@@ -456,7 +456,7 @@ def show_token():
     db.session.add(user_query[0])
     db.session.commit()
   
-  new_token.token = login.details['access_token']
+  new_token.token = login_details['access_token']
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
