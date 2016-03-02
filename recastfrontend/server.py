@@ -436,7 +436,7 @@ def show_token():
     db.session.commit()
   elif request.method == 'GET':
     tokens = db.session.query(dbmodels.AccessToken).all()
-    new_token = tokens[len(tokens)]
+    new_token = tokens[len(tokens)-1]
                                      
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
