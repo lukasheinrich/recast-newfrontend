@@ -421,7 +421,7 @@ def profile():
 
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
-@app.route("/token", methods=['POST'])
+@app.route("/token", methods=['GET', 'POST'])
 @login.login_required
 def show_token():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
