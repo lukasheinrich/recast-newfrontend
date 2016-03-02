@@ -429,17 +429,16 @@ token_name = "nothing"
 @login.login_required
 def show_token():  
   if request.method == 'POST':
-    token_name = request.form['tokenname']
+    login.current_user.token = request.form['tokenname']
     print "from requests"
 
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
 
   if not request.args.has_key('code'):
-    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&token={}&'.format(
+    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
     ORCID_APPID,
-    ORCID_TOKEN_REDIRECT_URI,
-    token_name
+    ORCID_TOKEN_REDIRECT_URI
   ))
   
   auth_code = request.args.get('code')
