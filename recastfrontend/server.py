@@ -25,10 +25,13 @@ class User(login.UserMixin):
   def __init__(self,**kwargs):
     self.orcid = kwargs.get('orcid','no-orcid')
     self.fullname = kwargs.get('fullname','no-name')
+    self.token = 'None assigned'
   def get_id(self):
     return self.orcid
   def name(self):
     return self.fullname
+  def get_token(self):
+    return self.token
 
 def create_app():
   app = Flask(__name__)
@@ -423,32 +426,34 @@ def profile():
 
 @app.route("/token", methods=['GET', 'POST'])
 @login.login_required
-def show_token():
-  token_name = "None assigned"
+def show_token():  
   if request.method == 'POST':
     token_name = request.form['tokenname']
-  
+    print "from requests"
+
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
 
   if not request.args.has_key('code'):
-    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
+    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}?token={}'.format(
     ORCID_APPID,
-    ORCID_TOKEN_REDIRECT_URI
+    ORCID_TOKEN_REDIRECT_URI,
+    token_name
   ))
   
   auth_code = request.args.get('code')
-  data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
+  data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code, 'redirect_uri':ORCID_TOKEN_REDIRECT_URI}
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
+
 
   if not user_query[0].orcid_id:
     user_query[0].orcid_id = login_details['orcid']
     db.session.add(user_query[0])
     db.session.commit()
   
-  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name, user_id=user_query[0].id)
+  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=login.current_user.token, user_id=user_query[0].id)
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
