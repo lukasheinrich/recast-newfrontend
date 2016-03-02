@@ -424,6 +424,7 @@ def profile():
 
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
+token_name = "nothing"
 @app.route("/token", methods=['GET', 'POST'])
 @login.login_required
 def show_token():  
@@ -435,13 +436,12 @@ def show_token():
   assert len(user_query)
 
   if not request.args.has_key('code'):
-    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&token={}'.format(
+    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&token={}&'.format(
     ORCID_APPID,
-    ORCID_TOKEN_REDIRECT_URI,
+    ORCID_REDIRECT_URI,
     token_name
   ))
   
-  token_name = request.args.get('token')
   auth_code = request.args.get('code')
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code, 'redirect_uri':ORCID_TOKEN_REDIRECT_URI}
 
