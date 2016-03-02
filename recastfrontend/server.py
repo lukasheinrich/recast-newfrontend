@@ -422,7 +422,7 @@ def profile():
 @app.route("/token", methods=["GET", "POST"], defaults={'token_name': 'None assigned'})
 @login.login_required
 def show_token(token_name=None):
-  user_query = dbmodels.AccessToken.query.filter(dbmodels.User.name == login.current_user.name()).all()
+  user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
   if not request.args.has_key('code'):
     return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
