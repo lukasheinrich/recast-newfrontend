@@ -419,7 +419,7 @@ def profile():
     
   return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
 
-@app.route("/token", methods=["GET", "POST"], defaults={'token_name': 'None assigned')
+@app.route("/token", methods=["GET", "POST"], defaults={'token_name': 'None assigned'})
 @login.login_required
 def show_token(token_name=None):
   if not request.args.has_key('code'):
