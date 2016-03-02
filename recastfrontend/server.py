@@ -438,9 +438,11 @@ def show_token():
 
   if user_query[0].orcid_id == 'None':
     user_query[0].orcid_id = login_details['orcid']
+    db.session.add(user_query[0])
     db.session.commit()
 
   token_name = "None assigned"
+  print '**********************************', request.form['name']
   if request.method == 'POST':
     token_name = request.form['name']
 
