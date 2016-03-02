@@ -441,6 +441,7 @@ def show_token():
     token_name
   ))
   
+  token_name = request.args.get('token')
   auth_code = request.args.get('code')
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code, 'redirect_uri':ORCID_TOKEN_REDIRECT_URI}
 
@@ -453,7 +454,7 @@ def show_token():
     db.session.add(user_query[0])
     db.session.commit()
   
-  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=login.current_user.token, user_id=user_query[0].id)
+  new_token = dbmodels.AccessToken(token=login_details['access_token'], token_name=token_name, user_id=user_query[0].id)
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
