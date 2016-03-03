@@ -7,7 +7,7 @@
       <div class="panel panel-default profile-panel">
 	<div class="panel-body">
 	  <div class="col-sm-9 col-xs-12 user-info-box">
-	    <h3 class="user-name">{{current_user.name()}}</h3>
+	    <h3 class="user-name">{{ db_user.name }}</h3>
 	    <p><strong><i class="fa fa-envelope"></i>E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
 	    <p><strong><i class="fa fa-bars"></i>ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
 	  </div>
@@ -46,7 +46,7 @@
 	  <a name="newToken"></a>
 	  <form action="/token" method="post" class="form-inline">
 	    <label for="name"><strong>Name: </strong></label>	    
-	    <input type="text" name="tokenname" class="form-control" placeholder="Name your token"/>
+	    <input type="text" name="tokenname" class="form-control" onfocus="hideshow()" placeholder="Name your token"/>
 	    <button type="submit" name="delete" value="delete" class="btn btn-success pull-right">Generate new token</button>
 	  </form>
 	</div>
