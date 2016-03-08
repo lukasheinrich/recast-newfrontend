@@ -33,8 +33,6 @@
 		<td>{{ token.token_name }}</td>
 		<td><form action="/profile" method="post"><button type="text" name="delete" value="{{ token.id }}" class="btn btn-danger">Delete</button></form></td>
 	      </tr>
-	      {% empty %}
-	      <p> No results found.</p>
 	      {% endfor %}
 	    </tbody>  
 	  </table>	  
