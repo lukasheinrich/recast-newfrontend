@@ -62,6 +62,8 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
                                         reason_for_request = request_form.reason_for_request.data,
                                         additional_information = request_form.additional_information.data,
                                         analysis_id = request_form.analysis_id.data,
+                                        zenodo_deposition_id = request_form.zenodo_deposition_id.data,
+                                        uuid = request_form.uuid.data,
                                         post_date = datetime.date.today()
                                         )
 
@@ -91,9 +93,10 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     db.session.add(parameter_point)
     db.session.commit()
 
-
-    lhe_file = dbmodels.LHEFile(file_name = parameter_points_form.lhe_file.data,
+    lhe_file = dbmodels.LHEFile(file_name = parameter_points_form.uuid.data,
                                 path = './',
+                                zenodo_file_id = parameter_points_form.zenodo_file_id.data,
+                                original_file_name = parameter_points_form.lhe_file.name,
                                 basic_request_id = basic_request.id
                                 )
     db.session.add(lhe_file)

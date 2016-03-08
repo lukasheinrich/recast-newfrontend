@@ -37,6 +37,6 @@ def rest_api(config):
 def fill_db(config):
   if config:
     os.environ['RECASTCONTROLCENTER_CONFIG'] = config
-  from populate_db import app
-  port = int(os.environ.get("PORT", 5000))
-  app.run(host='0.0.0.0', port=port)
+  import populate_db
+  from recastfrontend.server import db
+  click.secho('filled database at: {}'.format(db.engine.url), fg='green')
