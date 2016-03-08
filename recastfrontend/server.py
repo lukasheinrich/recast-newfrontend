@@ -212,6 +212,8 @@ def request_form(id):
           aws_access_key_id=AWS_ACCESS_KEY_ID,
           aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 
+        print "******************************************: \t", AWS_ACCESS_KEY_ID
+        print "\n \t ", AWS_SECRET_ACCESS_KEY
         lhe_file.save(lhe_file.filename)
         s3 = session.resource('s3')
         data = open(secure_filename(lhe_file.filename), 'rb')
