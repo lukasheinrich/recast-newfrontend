@@ -6,7 +6,7 @@
 
 <h1>Submit new request</h1> 
 
-<form method="POST" class="form-horizontal">
+<form method="post" class="form-horizontal" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   {{ parameter_points_form.hidden_tag() }}
 

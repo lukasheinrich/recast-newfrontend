@@ -36,7 +36,7 @@ def rest_api(config):
 @click.option('--config', '-c')
 def fill_db(config):
   if config:
-    os.environ['REACASTCONTROLCENTER_CONFIG'] = config
+    os.environ['RECASTCONTROLCENTER_CONFIG'] = config
   from populate_db import app
   port = int(os.environ.get("PORT", 5000))
   app.run(host='0.0.0.0', port=port)

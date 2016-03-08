@@ -20,6 +20,8 @@ setup(
     'IPython',
     'recast-database',
     'requests',
+    'boto3',
+    'elasticsearch',
     'psycopg2'
   ],
   entry_points = {

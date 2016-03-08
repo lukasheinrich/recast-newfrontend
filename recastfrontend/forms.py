@@ -43,12 +43,16 @@ class RequestSubmitForm(Form):
     model_name = StringField('Model Name', validators=[DataRequired()])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
+    zenodo_deposition_id = StringField('Zenodo id')
+    uuid = StringField('UUUID')
 
 class RequestParameterPointsSubmitForm(Form):
     parameter_point = StringField('Parameter Point 1', validators=[DataRequired()])
     lhe_file = FileField('LHE file')
     number_events = IntegerField('# of events')
     reference_cross_section = StringField('Reference cross section')
+    zenodo_file_id = StringField('Zenodo file id')
+    uuid = StringField('UUID')
 
 class MultipleCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)

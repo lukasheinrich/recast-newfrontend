@@ -1,10 +1,10 @@
 import json
 import requests
 import importlib
+from boto3.session import Session
 
 import asynctasks
 import synctasks
-
 
 from flask import Flask, redirect, jsonify, session, request, url_for, render_template, flash
 from flask.ext import login as login
@@ -14,24 +14,31 @@ import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
 
+import uuid
+
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 
 ORCID_APPID = frontendconf['ORCID_APPID']
 ORCID_REDIRECT_URI = frontendconf['ORCID_REDIRECT_URI']
 ORCID_SECRET = frontendconf['ORCID_SECRET']
 ORCID_TOKEN_REDIRECT_URI = frontendconf['ORCID_TOKEN_REDIRECT_URI']
+AWS_ACCESS_KEY_ID = frontendconf['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = frontendconf['AWS_SECRET_ACCESS_KEY']
+ZENODO_CLIENT_ID = frontendconf['ZENODO_CLIENT_ID']
+ZENODO_CLIENT_SECRET = frontendconf['ZENODO_CLIENT_SECRET']
+ZENODO_ACCESS_TOKEN = frontendconf['ZENODO_ACCESS_TOKEN']
+AWS_S3_BUCKET_NAME = 'recast'
+
+ALLOWED_EXTENSIONS = set(['zip', 'txt'])
 
 class User(login.UserMixin):
   def __init__(self,**kwargs):
     self.orcid = kwargs.get('orcid','no-orcid')
     self.fullname = kwargs.get('fullname','no-name')
-    self.token = 'None assigned'
   def get_id(self):
     return self.orcid
   def name(self):
     return self.fullname
-  def get_token(self):
-    return self.token
 
 def create_app():
   app = Flask(__name__)
@@ -183,7 +190,7 @@ def scan_request_form():
   return render_template('form.html', form=scan_request_form)
 
 @app.route("/request_form", methods=['GET','POST'], defaults={'id': 1})
-@app.route('/request_form/<int:id>')
+@app.route('/request_form/<int:id>', methods=['GET', 'POST'])
 @login.login_required
 def request_form(id):
   request_form = forms.RequestSubmitForm()
@@ -192,13 +199,66 @@ def request_form(id):
   
   analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   request_form.analysis_id.data = analysis[0].id
-  
+
   if request.method == 'POST':
     if request_form.validate_on_submit():
-      flash('success!', 'success')
+      lhe_file = request.files['lhe_file']
+      if lhe_file:
+
+        request_uuid = uuid.uuid1()
+        file_uuid = uuid.uuid1()
+
+        session = Session(
+          aws_access_key_id=AWS_ACCESS_KEY_ID,
+          aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+
+        lhe_file.save(lhe_file.filename)
+        s3 = session.resource('s3')
+        data = open(secure_filename(lhe_file.filename), 'rb')
+        s3.Bucket(AWS_S3_BUCKET_NAME).put_object(Key=str(file_uuid), Body=data)
+        
+        #Upload to Zenodo test
+        url = "https://zenodo.org/api/deposit/depositions/?access_token={}".\
+            format(ZENODO_ACCESS_TOKEN)
+        headers = {"Content-Type": "application/json"}
+        description = "RECAST_request: {} \n Requester: {} ORCID: {} \n Request_description {}".\
+            format(request_uuid, login.current_user.name(),
+                   login.current_user.get_id(),
+                   request_form.reason_for_request.data)
+
+        deposition_data = {"metadata":
+                       {
+            "access_right": "embargoed",
+            "upload_type": "dataset",
+            "creators": [{"name": "Bora, Christian"}],
+            "description": description,
+            "title": "Sample title"
+            }
+                }
+            
+        print url
+        print data
+        response = requests.post(url, data=json.dumps(deposition_data), headers=headers)
+        print response
+        print response.content
+        deposition_id = response.json()['id']
+        
+        url_deposition_file ="https://zenodo.org/api/deposit/depositions/{}/files?access_token={}".\
+            format(deposition_id, ZENODO_ACCESS_TOKEN)
+        json_data_file = {"filename": file_uuid}
+        files = {'file': open(secure_filename(lhe_file.filename), 'rb')}
+        response_file = requests.post(url_deposition_file, data=json_data_file, files=files)
+        print response_file.content
+        print response
+        deposition_file_id = response_file.json()['id']
+
+        request_form.zenodo_deposition_id.data = deposition_id
+        request_form.uuid.data = request_uuid
+        parameter_point_form.zenodo_file_id.data = deposition_file_id
+        parameter_point_form.uuid.data = str(file_uuid)
+
       synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
-    #filename = secure_filename(parameter_point_form.lhe_file.data.filename)
-    #parameter_point_form.lhe_file.data.save('./' + filename)
+      flash('success!', 'success')
       return redirect(url_for('analyses'))
   
     elif request_form.is_submitted():
@@ -206,7 +266,8 @@ def request_form(id):
       flash('failure!', 'failure')
       filename = None
     
-  return render_template('request_form.html', form=request_form, parameter_points_form=parameter_point_form, analysis = analysis[0])
+  return render_template('request_form.html', form=request_form,
+                         parameter_points_form=parameter_point_form, analysis = analysis[0])
   
 @app.route("/pointrequestform", methods=('GET', 'POST'))
 @login.login_required
@@ -276,7 +337,7 @@ def analysis(id):
   query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   return render_template('analysis.html', analysis=query[0])
 
-@app.route("/analyses")
+@app.route("/analyses", methods=['GET', 'POST'])
 @login.login_required
 def analyses():
   query = db.session.query(dbmodels.Analysis).all()
