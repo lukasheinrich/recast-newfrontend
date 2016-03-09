@@ -265,7 +265,7 @@ def request_form(id):
   
     elif request_form.is_submitted():
       print request_form.errors
-      flash('failure!', 'failure')
+      flash(request_form.errors, 'failure')
       filename = None
     
   return render_template('request_form.html', form=request_form,

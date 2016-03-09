@@ -53,7 +53,10 @@
 	<div class="form-group">
 	  <label class="control-label col-md-4" for="{{ parameter_points_form.lhe_file.id }} "> {{ parameter_points_form.lhe_file.label }} </label>
 	  <div class="col-md-6">
-	    {{ parameter_points_form.lhe_file }} <button type="button" class="btn btn-info">Upload file</button>
+	    {{ parameter_points_form.lhe_file }}
+	    <!--
+	    <button type="button" class="btn btn-info">Upload file</button>
+	    -->
 	  </div>
 	</div>
      
@@ -84,6 +87,38 @@
   
 
 </div>
+
+<script type="text/javascript">
+  
+  var validFileExtension = "zip";
+  var validFileSize = 1000000;
+  
+  document.getElementById('lhe_file').addEventListener('change', validateFile, false);
+
+  function validateExtension(e){
+        file = e.target.files;
+
+        var fileExtension = theFile.split('.')[theFile.split('.').length - 1].toLowerCase();
+        fileSize = file.size;
+
+        txt ="";
+  
+        if (!(fileExtension === validFileExtension)){
+            txt += "File type extension not allowed \n";
+            txt += "Only zip files are allowed"
+        }
+
+        if (fileSize > validFileSize){
+            txt += "File size must be less than"
+            txt += (validFileSize/1000)
+            txt += "MB"
+        }
+        alert(txt)
+  }
+
+</script>
+            
+  
 
 {% endblock %}
 

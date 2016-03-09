@@ -96,7 +96,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     lhe_file = dbmodels.LHEFile(file_name = parameter_points_form.uuid.data,
                                 path = './',
                                 zenodo_file_id = parameter_points_form.zenodo_file_id.data,
-                                original_file_name = parameter_points_form.lhe_file.name,
+                                original_file_name = parameter_points_form.lhe_file.data.filename,
                                 basic_request_id = basic_request.id
                                 )
     db.session.add(lhe_file)

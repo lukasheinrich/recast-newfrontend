@@ -40,7 +40,7 @@ class BasicRequestSubmitForm(Form):
 
 class RequestSubmitForm(Form):
     analysis_id = IntegerField('Analysis')
-    model_name = StringField('Model Name', validators=[DataRequired()])
+    model_name = StringField('Model Name', validators=[DataRequired(message="Model Name required")])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
     zenodo_deposition_id = StringField('Zenodo id')
