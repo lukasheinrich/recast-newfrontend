@@ -540,7 +540,7 @@ def search():
   else:
     search_data = ""
 
-  return render_template('search.html', search_data=json.dumps(search_data))
+  return render_template('search.html', search_data=json.dumps(search_data['hits']['hits']))
 
 def es_add_data_search(search_term):
   es = ElasticSearch(ELASTIC_SEARCH_URL)
