@@ -13,6 +13,8 @@ from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
+from pyelasticsearch import ElasticSearch
+from pyelasticsearch.exceptions import IndexAlreadyExistsError
 
 import uuid
 
@@ -27,6 +29,8 @@ AWS_SECRET_ACCESS_KEY = frontendconf['AWS_SECRET_ACCESS_KEY']
 ZENODO_CLIENT_ID = frontendconf['ZENODO_CLIENT_ID']
 ZENODO_CLIENT_SECRET = frontendconf['ZENODO_CLIENT_SECRET']
 ZENODO_ACCESS_TOKEN = frontendconf['ZENODO_ACCESS_TOKEN']
+ELASTIC_SEARCH_URL = frontendconf['ELASTIC_SEARCH_URL']
+
 AWS_S3_BUCKET_NAME = 'recast'
 
 ALLOWED_EXTENSIONS = set(['zip', 'txt'])
@@ -523,6 +527,53 @@ def show_token():
   db.session.add(new_token)
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+  q = request.args.get('q')
+
+  if request.method == 'POST':
+    q = request.form['q']
+    #search_data = es_add_data_search(q)
+    es = ElasticSearch(ELASTIC_SEARCH_URL)
+    search_data = es.search(q)
+  else:
+    search_data = ""
+
+  return render_template('search.html', search_data=json.dumps(search_data))
+
+def es_add_data_search(search_term):
+  es = ElasticSearch(ELASTIC_SEARCH_URL)
+
+  try:
+    es.create_index('recast')
+  except IndexAlreadyExistsError, e:
+    pass
+
+  r = requests.get(ELASTIC_SEARCH_URL)
+  i =1
+  while r.status_code == 200:
+    url = 'http://recast-rest-api.herokuapp.com/users/{}'.format(i)
+    r = requests.get(url)
+    if not r.status_code == 200:
+      break
+    
+    data = cleanJson(r.content)
+    es.index('recast', 'users', json.dumps(data))
+    i = i + 1
+    
+  search_data = es.search(search_term)
+  return search_data
+  
+def cleanJson(json_data):
+  data = json.loads(json_data)
+  del data['_updated']
+  del data['_created']
+  del data['_links']
+  del data['_id']
+  
+  return data
+
 
 def rows_to_dict(rows):
   d = []
