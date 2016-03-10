@@ -21,7 +21,6 @@ setup(
     'recast-database',
     'requests',
     'boto3',
-    'elasticsearch',
     'pyelasticsearch',
     'psycopg2'
   ],
