@@ -83,7 +83,6 @@ def login_user():
   print r.content
   login_details = json.loads(r.content)
   
-
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
 
@@ -96,12 +95,32 @@ def isUserInDB(user):
   assert len(user_query) < 2
 
   if (len(user_query)==0):
-    new_user = User(name=user.name, email=None)
+    new_user = User(name=user.name, email=None, orcid_id=user.id)
     db.session.add(new_user)
     db.session.commit()
     return False
   else :
      return (not user_query[0].email == None)  
+
+def checkEmail(user):
+  try: 
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
+    if not user_query.email:
+      return False
+  except MultipleResultsFound, e:
+    pass
+  except NoResultFound, e:
+    pass
+  
+  return true
+
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+  form = forms.SignupSubmitForm()
+  if request.method == 'POST':
+    pass
+    
+  return render_template('signup.html', form=form)
     
   
 @app.route("/analysis_form", methods=['GET', 'POST'])
@@ -206,57 +225,28 @@ def request_form(id):
 
   if request.method == 'POST':
     if request_form.validate_on_submit():
-      lhe_file = request.files['lhe_file']
-      if lhe_file:
+      zip_file = request.files['zip_file']
+      if zip_file:
 
         request_uuid = uuid.uuid1()
         file_uuid = uuid.uuid1()
 
-        session = Session(
-          aws_access_key_id=AWS_ACCESS_KEY_ID,
-          aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-
-        print "******************************************: \t", AWS_ACCESS_KEY_ID
-        print "\n \t ", AWS_SECRET_ACCESS_KEY
-        lhe_file.save(lhe_file.filename)
-        s3 = session.resource('s3')
-        data = open(secure_filename(lhe_file.filename), 'rb')
-        s3.Bucket(AWS_S3_BUCKET_NAME).put_object(Key=str(file_uuid), Body=data)
-        
-        #Upload to Zenodo test
-        url = "https://zenodo.org/api/deposit/depositions/?access_token={}".\
-            format(ZENODO_ACCESS_TOKEN)
-        headers = {"Content-Type": "application/json"}
-        description = "RECAST_request: {} \n Requester: {} ORCID: {} \n Request_description {}".\
-            format(request_uuid, login.current_user.name(),
-                   login.current_user.get_id(),
-                   request_form.reason_for_request.data)
-
-        deposition_data = {"metadata":
-                       {
-            "access_right": "embargoed",
-            "upload_type": "dataset",
-            "creators": [{"name": "Bora, Christian"}],
-            "description": description,
-            "title": "Sample title"
-            }
-                }
-            
-        print url
-        print data
-        response = requests.post(url, data=json.dumps(deposition_data), headers=headers)
-        print response
-        print response.content
-        deposition_id = response.json()['id']
-        
-        url_deposition_file ="https://zenodo.org/api/deposit/depositions/{}/files?access_token={}".\
-            format(deposition_id, ZENODO_ACCESS_TOKEN)
-        json_data_file = {"filename": file_uuid}
-        files = {'file': open(secure_filename(lhe_file.filename), 'rb')}
-        response_file = requests.post(url_deposition_file, data=json_data_file, files=files)
-        print response_file.content
-        print response
-        deposition_file_id = response_file.json()['id']
+        zip_file.save(zip_file.filename)
+        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                              AWS_SECRET_ACCESS_KEY,
+                              AWS_S3_BUCKET_NAME,
+                              zip_file,
+                              file_uuid)
+        deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
+                                                   request_uuid,
+                                                   login.current_user,
+                                                   request_form.reason_for_request.data)
+        deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                      deposition_id,
+                                                      file_uuid,
+                                                      zip_file)
+        synctasks.publish(ZENODO_ACCESS_TOKEN,
+                          deposition_id)
 
         request_form.zenodo_deposition_id.data = deposition_id
         request_form.uuid.data = request_uuid
@@ -446,7 +436,6 @@ def list_requests(analysis_id):
 
   return render_template('list_requests.html', requests = query)
 
-
 def get_elements_for_page(page, PER_PAGE, count, obj):
   first_index = (page - 1) * PER_PAGE
   last_index = first_index + PER_PAGE
@@ -528,52 +517,25 @@ def show_token():
   db.session.commit()
   return render_template('new_token.html', token=new_token, user=user_query[0])
 
-@app.route("/search", methods=['GET', 'POST'])
+@app.route("/search", methods=['GET', 'POST', 'PUT'])
 def search():
   q = request.args.get('q')
 
   if request.method == 'POST':
     q = request.form['q']
-    #search_data = es_add_data_search(q)
     es = ElasticSearch(ELASTIC_SEARCH_URL)
+    if request.form['filter'] == 'Analysis':
+      search_data = es.search(q, index='recast', doc_type='analysis')
+    elif request.form['filter'] == 'Requests':
+      search_data = es.search(q, index='recast', doc_type='requests')
+    elif request.form['filter'] == 'User':
+      search_data = es.search(q, index='recast', doc_type='users')
+    
     search_data = es.search(q)
   else:
     search_data = ""
 
   return render_template('search.html', search_data=json.dumps(search_data['hits']['hits']))
-
-def es_add_data_search(search_term):
-  es = ElasticSearch(ELASTIC_SEARCH_URL)
-
-  try:
-    es.create_index('recast')
-  except IndexAlreadyExistsError, e:
-    pass
-
-  r = requests.get(ELASTIC_SEARCH_URL)
-  i =1
-  while r.status_code == 200:
-    url = 'http://recast-rest-api.herokuapp.com/users/{}'.format(i)
-    r = requests.get(url)
-    if not r.status_code == 200:
-      break
-    
-    data = cleanJson(r.content)
-    es.index('recast', 'users', json.dumps(data))
-    i = i + 1
-    
-  search_data = es.search(search_term)
-  return search_data
-  
-def cleanJson(json_data):
-  data = json.loads(json_data)
-  del data['_updated']
-  del data['_created']
-  del data['_links']
-  del data['_id']
-  
-  return data
-
 
 def rows_to_dict(rows):
   d = []

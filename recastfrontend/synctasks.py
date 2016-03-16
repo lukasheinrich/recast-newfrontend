@@ -1,6 +1,10 @@
 import recastdb.models as dbmodels
 from recastdb.database import db
 import datetime
+from boto3.session import Session
+from werkzeug import secure_filename
+import requests
+import json
 
 def createAnalysisFromForm(app,form,current_user, run_condition_form):
   with app.app_context():
@@ -78,9 +82,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     db.session.add(point_request)
     db.session.commit()
 
-    basic_request = dbmodels.BasicRequest(number_of_events = parameter_points_form.number_events.data,
-                                          reference_cross_section = parameter_points_form.reference_cross_section.data,
-                                          requester_id = user_query[0].id,
+    basic_request = dbmodels.BasicRequest(requester_id = user_query[0].id,
                                           point_request_id = point_request.id
                                           )
 
@@ -93,13 +95,13 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     db.session.add(parameter_point)
     db.session.commit()
 
-    lhe_file = dbmodels.LHEFile(file_name = parameter_points_form.uuid.data,
+    zip_file = dbmodels.ZipFile(file_name = parameter_points_form.uuid.data,
                                 path = './',
                                 zenodo_file_id = parameter_points_form.zenodo_file_id.data,
-                                original_file_name = parameter_points_form.lhe_file.data.filename,
+                                original_file_name = parameter_points_form.zip_file.data.filename,
                                 basic_request_id = basic_request.id
                                 )
-    db.session.add(lhe_file)
+    db.session.add(zip_file)
     db.session.commit()
                                 
     
@@ -139,9 +141,7 @@ def createBasicRequestFromForm(app, form, current_user):
     user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
     assert len(user_query) == 1
     
-    basic_request = dbmodels.BasicRequest(number_of_events = form.number_of_events.data,
-                                          reference_cross_section = form.reference_cross_section.data,
-                                          conditions_description = form.conditions_description.data,
+    basic_request = dbmodels.BasicRequest(conditions_description = form.conditions_description.data,
                                           requester_id = user_query[0].id
                                           )
     db.session.add(basic_request)
@@ -162,3 +162,54 @@ def createSubscriptionFromForm(app, form, current_user):
                                           )
     db.session.add(subscription)
     db.session.commit()
+
+def uploadToAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME, zip_file, file_uuid):
+  
+  session = Session(AWS_ACCESS_KEY_ID,
+                    AWS_SECRET_ACCESS_KEY)
+  s3 = session.resource('s3')
+  data = open(secure_filename(zip_file.filename), 'rb')
+  s3.Bucket(AWS_S3_BUCKET_NAME).put_object(Key=str(file_uuid), Body=data)
+
+def downloadFromAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, file_uuid):
+  pass
+
+def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, description):
+
+  url = "https://zenodo.org/api/deposit/depositions/?access_token={}".\
+      format(ZENODO_ACCESS_TOKEN)
+  headers = {"Content-Type": "application/json"}
+  description = "RECAST_request: {} Requester: {} ORCID: {} Request_description: {}".format(request_uuid, 
+             current_user.name(), 
+             current_user.get_id(),
+             description)
+      
+  deposition_data = {"metadata":
+                        {
+      "access_right": "embargoed",
+      "upload_type": "dataset",
+      "creators": [{"name": "Bora, Christian"}],
+      "description": description,
+      "title": "Sample title"
+      }
+                      }
+  response = requests.post(url, data=json.dumps(deposition_data), headers=headers)
+  deposition_id = response.json()['id']
+  return deposition_id
+
+def uploadToZenodo(ZENODO_ACCESS_TOKEN, deposition_id, file_uuid, zip_file):
+
+  url = "https://zenodo.org/api/deposit/depositions/{}/files?access_token={}".format(deposition_id,
+             ZENODO_ACCESS_TOKEN)
+  json_data_file = {"filename": file_uuid}
+  files = {'file': open(secure_filename(zip_file.filename), 'rb')}
+  response_file = requests.post(url, data=json_data_file, files=files)
+  deposition_file_id = response_file.json()['id']
+  return deposition_file_id
+  
+def publish(ZENODO_ACCESS_TOKEN, deposition_id):
+  url = "https://zenodo.org/api/deposit/depositions/{}/actions/publish?access_token={}".format(deposition_id, ZENODO_ACCESS_TOKEN)
+  response = requests.post(url)
+  
+          
+             

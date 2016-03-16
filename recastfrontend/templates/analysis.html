@@ -26,32 +26,35 @@
 
 </div>
 <div class="col-md-9">
-  <h1> Analysis </h1>
-  <dl class="dl-horizontal">
-    <dt> Title </dt>
-    <dd> {{ analysis.title }}</dd>
+  <div class="panel panel-primary">
+    <div class="panel-heading"> Analysis </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+	<dt> Title </dt>
+	<dd> {{ analysis.title }}</dd>
+	
+	<dt> Description </dt>
+	<dd> {{ analysis.description }}</dd>
+      
+	<dt> Collaboration </dt>
+	<dd> {{ analysis.collaboration }}</dd>
+	
+	<dt> E Print </dt>
+	<dd> {{ analysis.e_print }}</dd>
+	
+	<dt> Journal </dt>
+	<dd> {{ analysis.journal }}</dd>
 
-    <dt> Description </dt>
-    <dd> {{ analysis.description }}</dd>
-    
-    <dt> Collaboration </dt>
-    <dd> {{ analysis.collaboration }}</dd>
-    
-    <dt> E Print </dt>
-    <dd> {{ analysis.e_print }}</dd>
+	<dt> DOI </dt>
+	<dd> {{ analysis.doi }}</dd>
 
-    <dt> Journal </dt>
-    <dd> {{ analysis.journal }}</dd>
-
-    <dt> DOI </dt>
-    <dd> {{ analysis.doi }}</dd>
-
-    <dt> Owner </dt>
-    <dd> {{ analysis.user.name }}</dd>
-  </dl>
-
+	<dt> Owner </dt>
+	<dd> {{ analysis.user.name }}</dd>
+      </dl>
+    </div>
+  </div>
   <hr>
-  <div class="panel panel-info">
+  <div class="panel panel-primary">
     <div class="panel-heading">  RunCondition </div>
       <div class="panel-content">  
 	<dl class="dl-horizontal">

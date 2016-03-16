@@ -8,8 +8,8 @@
 	<div class="panel-body">
 	  <div class="col-sm-9 col-xs-12 user-info-box">
 	    <h3 class="user-name">{{ db_user.name }}</h3>
-	    <p><strong><i class="fa fa-envelope"></i>E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
-	    <p><strong><i class="fa fa-bars"></i>ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
+	    <p><strong><i class="fa fa-envelope"></i>&nbsp;E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
+	    <p><strong><i class="fa fa-bars"></i>&nbsp;ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
 	  </div>
 	</div>
       </div>
@@ -31,7 +31,7 @@
 	      <tr>
 		<td>{{ loop.index0 }}</td>
 		<td>{{ token.token_name }}</td>
-		<td><form action="/profile" method="post"><button type="text" name="delete" value="{{ token.id }}" class="btn btn-danger">Delete</button></form></td>
+		<td><form action="/profile" method="post"><button type="text" name="delete" value="{{ token.id }}" class="btn btn-danger"><i class="glyphicon glyphicon-trash">&nbsp;Delete</button></form></td>
 	      </tr>
 	      {% endfor %}
 	    </tbody>  

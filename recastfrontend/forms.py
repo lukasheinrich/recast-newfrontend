@@ -48,9 +48,7 @@ class RequestSubmitForm(Form):
 
 class RequestParameterPointsSubmitForm(Form):
     parameter_point = StringField('Parameter Point 1', validators=[DataRequired()])
-    lhe_file = FileField('LHE file')
-    number_events = IntegerField('# of events')
-    reference_cross_section = StringField('Reference cross section')
+    zip_file = FileField('Zip file')
     zenodo_file_id = StringField('Zenodo file id')
     uuid = StringField('UUID')
 
@@ -74,3 +72,5 @@ class ContactSubmitForm(Form):
     subject = StringField('Subject')
     message = TextAreaField('Message', validators=[DataRequired()])
 
+class SignupSubmitForm(Form):
+    email = StringField('Email address', validators=[DataRequired()])

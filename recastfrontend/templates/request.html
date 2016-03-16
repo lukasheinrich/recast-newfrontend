@@ -18,23 +18,25 @@
 </div>
 
 <div class="col-md-9">
-<h1> Request #  {{ request.id }} </h1>
-  <dl class="dl-horizontal">
-    <dt> Analysis Title </dt>
-    <dd> {{ request.analysis.title }}</dd>
-    
-    <dt> Status </dt>
-    <dd> {{ request.status }}</dd>
-
-    <dt> Requester </dt>
-    <dd> {{ request.requester.name }}</dd>
-    
-    <dt> Model Name </dt>
-    <dd> {{ request.description_of_model }}</dd>
-    
-  </dl>
-
-    <div class="panel panel-info">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><strong>Request</strong></div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+	<dt> Analysis Title </dt>
+	<dd><a href="{{ url_for('.analysis', id=request.analysis.id) }}">{{ request.analysis.title }}</a></dd>
+	
+	<dt> Status </dt>
+	<dd> {{ request.status }}</dd>
+	
+	<dt> Requester </dt>
+	<dd> {{ request.requester.name }}</dd>
+	
+	<dt> Model Name </dt>
+	<dd> {{ request.description_of_model }}</dd>
+      </dl>
+    </div>
+  </div>
+    <div class="panel panel-primary">
       <div class="panel-heading">Request Description and Potential</div>
       <div class="panel-content">
 	<dl class="dl-horizontal">
@@ -49,7 +51,7 @@
 
   <hr>
   
-  <div class="panel panel-info">
+  <div class="panel panel-primary">
     <div class="panel-heading">  Run Condition </div>
       <div class="panel-content">
 
@@ -64,20 +66,15 @@
   </div>
   
   {% if request.scan_points[0].parameter_points[0] is defined  and request.scan_points[0] is defined and request.scan_points[0].requests[0] is defined and request.scan_points[0].requests[0].file_name[0] is defined %}
-  <div class="panel panel-info">
+  <div class="panel panel-primary">
     <div class="panel-heading">  Request Parameter Points </div>
     <div class="panel-content">
-      <dl class="dl-vertical">
+      <dl class="dl-horizontal">
 	<dt> Parameter Point1: </dt>
 	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
-	<dt> LHE File: </dt>
+	<dt> Zip File: </dt>
 	
 	<dd> {{ request.scan_points[0].requests[0].file_name[0].file_name }}</dd>
-	<dt> # of events </dt> 
-	<dd> {{ request.scan_points[0].requests[0].number_of_events }}</dd>
-	
-	<dt> Reference cross section </dt>
-	<dd> {{ request.scan_points[0].requests[0].reference_cross_section }}</dd>
 	</dl>
       </div>
     </div>  
