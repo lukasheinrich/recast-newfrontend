@@ -110,7 +110,7 @@ def confirmUserInDB(user):
 
 def confirmOrcid(user_query):
   if not user_query.orcid_id:
-    user_query.orcid_id = user.get_id()
+    user_query.orcid_id = login.current_user.get_id()
     db.session.commit()
 
 def hasEmail(user):
