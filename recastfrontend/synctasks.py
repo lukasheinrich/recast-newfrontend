@@ -163,6 +163,14 @@ def createSubscriptionFromForm(app, form, current_user):
     db.session.add(subscription)
     db.session.commit()
 
+def createSignupFromForm(app, form, current_user):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) == 1
+    
+    user_query[0].email = form.email.data
+    db.session.commit()
+
 def uploadToAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME, zip_file, file_uuid):
   
   session = Session(AWS_ACCESS_KEY_ID,

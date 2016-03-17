@@ -15,6 +15,7 @@ import forms
 from werkzeug import secure_filename
 from pyelasticsearch import ElasticSearch
 from pyelasticsearch.exceptions import IndexAlreadyExistsError
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 import uuid
 
@@ -85,24 +86,34 @@ def login_user():
   
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
-
+  
+  confirmUserInDB(user)
+  if not hasEmail(user):
+    return redirect(url_for('signup'))
+  
   return redirect(url_for('home'))
+  
 
 # Forms --------------------------------------------------------------------------------
 
-def isUserInDB(user):
-  user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).all()
-  assert len(user_query) < 2
-
-  if (len(user_query)==0):
-    new_user = User(name=user.name, email=None, orcid_id=user.id)
+def confirmUserInDB(user):
+  try:
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
+    confirmOrcid(user_query)
+  except MultipleResultsFound, e:
+    pass
+  except NoResultFound, e:
+    new_user = dbmodels.User(name=user.name(), email=None, orcid_id=user.get_id())
     db.session.add(new_user)
-    db.session.commit()
-    return False
-  else :
-     return (not user_query[0].email == None)  
+    db.session.commit()    
+  return
 
-def checkEmail(user):
+def confirmOrcid(user_query):
+  if not user_query.orcid_id:
+    user_query.orcid_id = user.get_id()
+    db.session.commit()
+
+def hasEmail(user):
   try: 
     user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
     if not user_query.email:
@@ -111,14 +122,20 @@ def checkEmail(user):
     pass
   except NoResultFound, e:
     pass
-  
-  return true
+
+  return True
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
   form = forms.SignupSubmitForm()
   if request.method == 'POST':
-    pass
+    if form.validate_on_submit():
+      synctasks.createSignupFromForm(app, form, login.current_user)
+      flash('success! form validated and was processed', 'success')
+      return redirect(url_for('home'))
+    elif form.is_submitted():
+      print form.errors
+      flash('failure! form did not validate and was not processed', 'danger')
     
   return render_template('signup.html', form=form)
     

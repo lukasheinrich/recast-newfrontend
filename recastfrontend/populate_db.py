@@ -11,11 +11,7 @@ with app.app_context():
 app.app_context().push()
 
 user1 = models.User(name='Christian Bora', email='borachristian@gmail.com')
-user2 = models.User(name='Lukas Heinrich', email='lukas.heinrich@cern.ch')
-user3 = models.User(name='Kyle Cranmer', email='cranmer@cern.ch')
 db.session.add(user1)
-db.session.add(user2)
-db.session.add(user3)
 db.session.commit()
 
 
@@ -44,12 +40,12 @@ point_request2 = models.PointRequest(scan_request_id=request2.id, requester_id=u
 db.session.add(point_request2)
 db.session.commit()
 
-basic_request2 = models.BasicRequest(point_request_id=point_request2.id, requester_id=user1.id, number_of_events=100)
+basic_request2 = models.BasicRequest(point_request_id=point_request2.id, requester_id=user1.id)
 db.session.add(basic_request2)
 db.session.commit()
 
-lhe_file2 = models.LHEFile(basic_request_id=basic_request2.id)
-db.session.add(lhe_file2)
+zip_file2 = models.ZipFile(basic_request_id=basic_request2.id)
+db.session.add(zip_file2)
 db.session.commit()
 
 ##
@@ -69,12 +65,12 @@ point_request3 = models.PointRequest(scan_request_id=request3.id, requester_id=u
 db.session.add(point_request3)
 db.session.commit()
 
-basic_request3 = models.BasicRequest(point_request_id=point_request3.id, requester_id=user1.id, number_of_events=100)
+basic_request3 = models.BasicRequest(point_request_id=point_request3.id, requester_id=user1.id)
 db.session.add(basic_request3)
 db.session.commit()
 
-lhe_file = models.LHEFile(basic_request_id=basic_request3.id)
-db.session.add(lhe_file)
+zip_file = models.ZipFile(basic_request_id=basic_request3.id)
+db.session.add(zip_file)
 db.session.commit()
 
 ##
@@ -86,7 +82,7 @@ analysis4 = models.Analysis(title='Search for new physics with same-sign isolate
 db.session.add(analysis4)
 db.session.commit()
 
-request4 = models.ScanRequest(description_of_model='Sbottom -> Stop Cascade Decay', reason_for_request='Natural supersymmetry, which cancels the largest divergences in the Higgs mass in the Standard Model, favors spectra with light scalar top quarks. In particular, the left-handed scalar top is associated with the left-handed scalar bottom quark, which should also be light. Spectra with a decay chain sbottom -> stop + W followed by stop -> top + neutralino or gravitino can give rise to same-sign leptons. Thus, it would be worthwhile to reanalyze the same-sign lepton searches to understand how they can constrain natural supersymmetry. (See also request 1203.0026.)', additional_information='I will provide LHE files upon request', analysis_id=analysis4.id, requester_id=user1.id)
+request4 = models.ScanRequest(description_of_model='Sbottom -> Stop Cascade Decay', reason_for_request='Natural supersymmetry, which cancels the largest divergences in the Higgs mass in the Standard Model, favors spectra with light scalar top quarks. In particular, the left-handed scalar top is associated with the left-handed scalar bottom quark, which should also be light. Spectra with a decay chain sbottom -> stop + W followed by stop -> top + neutralino or gravitino can give rise to same-sign leptons. Thus, it would be worthwhile to reanalyze the same-sign lepton searches to understand how they can constrain natural supersymmetry. (See also request 1203.0026.)', additional_information='I will provide ZIP files upon request', analysis_id=analysis4.id, requester_id=user1.id)
 db.session.add(request4)
 db.session.commit()
 
@@ -94,12 +90,12 @@ point_request4 = models.PointRequest(scan_request_id=request4.id, requester_id=u
 db.session.add(point_request4)
 db.session.commit()
 
-basic_request4 = models.BasicRequest(point_request_id=point_request4.id, requester_id=user1.id, number_of_events=100)
+basic_request4 = models.BasicRequest(point_request_id=point_request4.id, requester_id=user1.id)
 db.session.add(basic_request4)
 db.session.commit()
 
-lhe_file4 = models.LHEFile(basic_request_id=basic_request4.id)
-db.session.add(lhe_file4)
+zip_file4 = models.ZipFile(basic_request_id=basic_request4.id)
+db.session.add(zip_file4)
 db.session.commit()
 
 request4_2 = models.ScanRequest(description_of_model='Naturally evasive SUSY', reason_for_request='Gluinos that result in classic large missing transverse momentum signatures at the LHC have been excluded by 2011 searches if they are lighter than around 800 GeV. This adds to the tension between experiment and supersymmetric solutions of the naturalness problem, since the gluino is required to be light if the electroweak scale is to be natural. Here, we examine natural scenarios where supersymmetry is present, but was hidden from 2011 searches due to violation of $R$-parity and the absence of a large missing transverse momentum signature. Naturalness suggests that third generation states should dominate gluino decays and we argue that this leads to a generic signature in the form of same-sign, flavour-ambivalent leptons, without large missing transverse momentum. As a result, searches in this channel are able to cover a broad range of scenarios with some generality and one should seek gluinos that decay in this way with masses below a TeV. We encourage the LHC experiments to tailor a search for supersymmetry in this form. We consider a specific case that is good at hiding: baryon number violation. The only light sparticles are right-handed stops and gluinos. ', additional_information='Request follows http://arxiv.org/abs/1202.6616', analysis_id=analysis4.id, requester_id=user1.id)
@@ -110,12 +106,12 @@ point_request4_2 = models.PointRequest(scan_request_id=request4_2.id, requester_
 db.session.add(point_request4_2)
 db.session.commit()
 
-basic_request4_2 = models.BasicRequest(point_request_id=point_request4_2.id, requester_id=user1.id, number_of_events=100)
+basic_request4_2 = models.BasicRequest(point_request_id=point_request4_2.id, requester_id=user1.id)
 db.session.add(basic_request4_2)
 db.session.commit()
 
-lhe_file4_2 = models.LHEFile(basic_request_id=basic_request4_2.id)
-db.session.add(lhe_file4_2)
+zip_file4_2 = models.ZipFile(basic_request_id=basic_request4_2.id)
+db.session.add(zip_file4_2)
 db.session.commit()
 
 ##
@@ -135,12 +131,12 @@ point_request5 = models.PointRequest(scan_request_id=request5.id, requester_id=u
 db.session.add(point_request5)
 db.session.commit()
 
-basic_request5 = models.BasicRequest(point_request_id=point_request5.id, requester_id=user1.id, number_of_events=100)
+basic_request5 = models.BasicRequest(point_request_id=point_request5.id, requester_id=user1.id)
 db.session.add(basic_request5)
 db.session.commit()
 
-lhe_file5 = models.LHEFile(basic_request_id=basic_request5.id)
-db.session.add(lhe_file5)
+zip_file5 = models.ZipFile(basic_request_id=basic_request5.id)
+db.session.add(zip_file5)
 
 request5_2 = models.ScanRequest(description_of_model='Naturally evasive SUSY', reason_for_request='Gluinos that result in classic large missing transverse momentum signatures at the LHC have been excluded by 2011 searches if they are lighter than around 800 GeV. This adds to the tension between experiment and supersymmetric solutions of the naturalness problem, since the gluino is required to be light if the electroweak scale is to be natural. Here, we examine natural scenarios where supersymmetry is present, but was hidden from 2011 searches due to violation of $R$-parity and the absence of a large missing transverse momentum signature. Naturalness suggests that third generation states should dominate gluino decays and we argue that this leads to a generic signature in the form of same-sign, flavour-ambivalent leptons, without large missing transverse momentum. As a result, searches in this channel are able to cover a broad range of scenarios with some generality and one should seek gluinos that decay in this way with masses below a TeV. We encourage the LHC experiments to tailor a search for supersymmetry in this form. We consider a specific case that is good at hiding: baryon number violation. The only light sparticles are right-handed stops and gluinos. ', additional_information='Request follows http://arxiv.org/abs/1202.6616', analysis_id=analysis5.id, requester_id=user1.id)
 db.session.add(request5_2)
@@ -150,12 +146,12 @@ point_request5_2 = models.PointRequest(scan_request_id=request5_2.id, requester_
 db.session.add(point_request5_2)
 db.session.commit()
 
-basic_request5_2 = models.BasicRequest(point_request_id=point_request5_2.id, requester_id=user1.id, number_of_events=100)
+basic_request5_2 = models.BasicRequest(point_request_id=point_request5_2.id, requester_id=user1.id)
 db.session.add(basic_request5_2)
 db.session.commit()
 
-lhe_file5_2 = models.LHEFile(basic_request_id=basic_request5_2.id)
-db.session.add(lhe_file5_2)
+zip_file5_2 = models.ZipFile(basic_request_id=basic_request5_2.id)
+db.session.add(zip_file5_2)
 db.session.commit()
 
 ##
@@ -175,12 +171,12 @@ point_request6 = models.PointRequest(scan_request_id=request6.id, requester_id=u
 db.session.add(point_request6)
 db.session.commit()
 
-basic_request6 = models.BasicRequest(point_request_id=point_request6.id, requester_id=user1.id, number_of_events=100)
+basic_request6 = models.BasicRequest(point_request_id=point_request6.id, requester_id=user1.id)
 db.session.add(basic_request6)
 db.session.commit()
 
-lhe_file6 = models.LHEFile(basic_request_id=basic_request6.id)
-db.session.add(lhe_file6)
+zip_file6 = models.ZipFile(basic_request_id=basic_request6.id)
+db.session.add(zip_file6)
 db.session.commit()
 
 request6_2 = models.ScanRequest(description_of_model='Cascade Decaying Squark Simplified Model', reason_for_request='Limits on light flavor squarks are now approaching 1 TeV. However, the limits should be greatly reduced if the spectrum is altered by including an intermediate particle in the decay chain. In this simplified model, only light flavor squarks are accessible and the gluinos are decoupled, and thus the main production mode is squark-antisquark pair-production. The squarks now decay to an intermediate particle, to a chargino/wino triplet, plus a jet. The chargino/wino then decays to a vector boson and a neutral state. This scenario can occur in the MSSM where the right handed squarks are decoupled from the left-handed ones, and in the NMSSM where the LSP is a singlino. It would be interesting to see the limits of the all-hadronic analyses to this challenging topology.', additional_information='No information available', analysis_id=analysis6.id, requester_id=user1.id)
@@ -191,12 +187,12 @@ point_request6_2 = models.PointRequest(scan_request_id=request6_2.id, requester_
 db.session.add(point_request6_2)
 db.session.commit()
 
-basic_request6_2 = models.BasicRequest(point_request_id=point_request6_2.id, requester_id=user1.id, number_of_events=100)
+basic_request6_2 = models.BasicRequest(point_request_id=point_request6_2.id, requester_id=user1.id)
 db.session.add(basic_request6_2)
 db.session.commit()
 
-lhe_file6_2 = models.LHEFile(basic_request_id=basic_request6_2.id)
-db.session.add(lhe_file6_2)
+zip_file6_2 = models.ZipFile(basic_request_id=basic_request6_2.id)
+db.session.add(zip_file6_2)
 db.session.commit()
 
 request6_3 = models.ScanRequest(description_of_model='Universal Extra Dimensions', reason_for_request='The Universal Extra Dimensions (UED) model is a viable picture for explaining the identity of dark matter, which leads to signatures of missing energy plus jets (the underlying process is production of Kaluza-Klein (KK) quarks and/or gluons which decay into the LKP (KK photon -- the dark matter) and colored SM particles). The SUSY searches for jets plus missing energy will thus directly place limits on the parameter space of the masses of the KK quarks (typically degenerate), KK gluon, and LKP.', additional_information='Useful initial results could assume that the LKP mass is much less than the KK squark or KK gluon masses. In this regime the bounds are roughly independent of the precise LKP mass. The production cross sections will be larger for the KK particles than for SUSY analogues, because they contain more spin degrees of freedom, and the efficiencies for detecting the signal events are likely to be somewhat different from SUSY analogues because of the differing spins. ', analysis_id=analysis6.id, requester_id=user1.id)
@@ -207,10 +203,10 @@ point_request6_3 = models.PointRequest(scan_request_id=request6_3.id, requester_
 db.session.add(point_request6_2)
 db.session.commit()
 
-basic_request6_3 = models.BasicRequest(point_request_id=point_request6_3.id, requester_id=user1.id, number_of_events=100)
+basic_request6_3 = models.BasicRequest(point_request_id=point_request6_3.id, requester_id=user1.id)
 db.session.add(basic_request6_3)
 db.session.commit()
 
-lhe_file6_3 = models.LHEFile(basic_request_id=basic_request6_3.id)
-db.session.add(lhe_file6_3)
+zip_file6_3 = models.ZipFile(basic_request_id=basic_request6_3.id)
+db.session.add(zip_file6_3)
 db.session.commit()
