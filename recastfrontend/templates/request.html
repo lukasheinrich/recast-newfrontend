@@ -74,7 +74,7 @@
 	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
 	<dt> Zip File: </dt>
 	
-	<dd> {{ request.scan_points[0].requests[0].file_name[0].file_name }}</dd>
+	<dd><a href="{{"https://s3.amazonaws.com/" + bucket_name +"/"+ request.scan_points[0].requests[0].file_name[0].file_name }}"> download</a></dd>
 	</dl>
       </div>
     </div>  
