@@ -367,7 +367,7 @@ def requests_views():
 @login.login_required
 def request_view(id):
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
-  return render_template('request.html', request = query[0])
+  return render_template('request.html', request = query[0], bucket_name=AWS_S3_BUCKET_NAME)
 
 @app.route('/subscriptions')
 @login.login_required

@@ -177,10 +177,15 @@ def uploadToAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME, zi
                     AWS_SECRET_ACCESS_KEY)
   s3 = session.resource('s3')
   data = open(secure_filename(zip_file.filename), 'rb')
-  s3.Bucket(AWS_S3_BUCKET_NAME).put_object(Key=str(file_uuid), Body=data)
+  s3.Bucket(AWS_S3_BUCKET_NAME).put_object(Key=str(file_uuid), Body=data, ACL='public-read')
 
-def downloadFromAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, file_uuid):
-  pass
+def downloadFromAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME, file_uuid, original_file_name):
+  
+  session = Session(AWS_ACCESS_KEY_ID,
+                    AWS_SECRET_ACCESS_KEY)
+  
+  s3 = session.resource('s3')
+  s3.Bucket(AWS_S3_BUCKET_NAME).download(Key=str(file_uuid), Filename=original_file_name)
 
 def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, description):
 
