@@ -95,7 +95,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     db.session.add(parameter_point)
     db.session.commit()
 
-    zip_file = dbmodels.ZipFile(file_name = parameter_points_form.uuid.data,
+    zip_file = dbmodels.RequestArchive(file_name = parameter_points_form.uuid.data,
                                 path = './',
                                 zenodo_file_id = parameter_points_form.zenodo_file_id.data,
                                 original_file_name = parameter_points_form.zip_file.data.filename,
