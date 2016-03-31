@@ -16,7 +16,6 @@ from werkzeug import secure_filename
 from pyelasticsearch import ElasticSearch
 from pyelasticsearch.exceptions import IndexAlreadyExistsError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-import psearch
 
 import uuid
 
@@ -125,6 +124,11 @@ def hasEmail(user):
     pass
 
   return True
+
+@app.route("/es")
+def es():
+  import psearch
+  return redirect(url_for('home'))
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
