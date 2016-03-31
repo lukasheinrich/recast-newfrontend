@@ -16,6 +16,7 @@ from werkzeug import secure_filename
 from pyelasticsearch import ElasticSearch
 from pyelasticsearch.exceptions import IndexAlreadyExistsError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+import psearch
 
 import uuid
 
