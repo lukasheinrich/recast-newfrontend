@@ -1,2 +1,2 @@
-web: sleep 10 && pip install -e . && recast-frontend-admin mk_config -o herokuconf.yaml && recast-frontend server --config herokuconf.yaml
-worker: curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.3.0/elasticsearch-2.3.0.tar.gz && tar -xvf elasticsearch-2.3.0.tar.gz && ./elasticsearch-2.3.0/bin/elasticsearch
+web: curl -L -O https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.3.0/elasticsearch-2.3.0.tar.gz && pip install -e . && recast-frontend-admin mk_config -o herokuconf.yaml && recast-frontend server --config herokuconf.yaml
+worker: sleep 10 && tar -xvf elasticsearch-2.3.0.tar.gz && ./elasticsearch-2.3.0/bin/elasticsearch
