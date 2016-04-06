@@ -1,0 +1,11 @@
+recastfrontend:
+  build: .
+  ports:
+   - "5000:5000"
+  volumes:
+   - .:/recast-newfrontend
+  links:
+   - cache
+
+cache:
+  image: redis
