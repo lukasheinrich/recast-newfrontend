@@ -5,6 +5,7 @@ from boto3.session import Session
 from werkzeug import secure_filename
 import requests
 import json
+from elasticsearch import Elasticsearch
 
 def createAnalysisFromForm(app,form,current_user, run_condition_form):
   with app.app_context():
@@ -223,6 +224,23 @@ def uploadToZenodo(ZENODO_ACCESS_TOKEN, deposition_id, file_uuid, zip_file):
 def publish(ZENODO_ACCESS_TOKEN, deposition_id):
   url = "https://zenodo.org/api/deposit/depositions/{}/actions/publish?access_token={}".format(deposition_id, ZENODO_ACCESS_TOKEN)
   response = requests.post(url)
+
+def search(ES_HOST_NAME, ES_AUTH, ES_INDEX, doc_type, query_string):
   
-          
-             
+  es = Elasticsearch([{'host': ES_HOST_NAME,
+                       'port': 443,
+                       'use_ssl': True,
+                       'http_auth': ES_AUTH}])
+  response = es.search(index=ES_INDEX, doc_type=doc_type, body={
+      "query": {
+        "filtered": {
+          "query": {
+            "query_string": {
+              "query": query_string
+              }
+            }
+          }
+        }
+      })
+
+  return response

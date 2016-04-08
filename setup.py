@@ -21,7 +21,7 @@ setup(
     'recast-database',
     'requests',
     'boto3',
-    'pyelasticsearch',
+    'elasticsearch',
     'psycopg2'
   ],
   entry_points = {

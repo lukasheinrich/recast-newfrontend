@@ -13,8 +13,6 @@ from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
-from pyelasticsearch import ElasticSearch
-from pyelasticsearch.exceptions import IndexAlreadyExistsError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 import uuid
@@ -31,7 +29,8 @@ ZENODO_CLIENT_ID = frontendconf['ZENODO_CLIENT_ID']
 ZENODO_CLIENT_SECRET = frontendconf['ZENODO_CLIENT_SECRET']
 ZENODO_ACCESS_TOKEN = frontendconf['ZENODO_ACCESS_TOKEN']
 ELASTIC_SEARCH_URL = frontendconf['ELASTIC_SEARCH_URL']
-
+ELASTIC_SEARCH_INDEX = frontendconf['ELASTIC_SEARCH_INDEX']
+ELASTIC_SEARCH_AUTH = frontendconf['ELASTIC_SEARCH_AUTH']
 AWS_S3_BUCKET_NAME = 'recast'
 
 ALLOWED_EXTENSIONS = set(['zip', 'txt'])
@@ -124,11 +123,6 @@ def hasEmail(user):
     pass
 
   return True
-
-@app.route("/es")
-def es():
-  import psearch
-  return redirect(url_for('home'))
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -233,6 +227,22 @@ def scan_request_form():
     flash('failure!', 'failure')
     
   return render_template('form.html', form=scan_request_form)
+
+@app.route("/editsubscription", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editsubscription/<int:id>", methods=['GET', 'POST'])
+def edit_subscription(id):
+  pass
+
+@app.route("/editanalysis", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editanalysis/<int:id>", methods=['GET', 'POST'])
+def edit_analysis(id):
+  pass
+
+
+@app.route("/editrequest", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editrequest/<int:id>", methods=['GET', 'POST'])
+def edit_request(id):
+  pass
 
 @app.route("/request_form", methods=['GET','POST'], defaults={'id': 1})
 @app.route('/request_form/<int:id>', methods=['GET', 'POST'])
@@ -545,15 +555,19 @@ def search():
 
   if request.method == 'POST':
     q = request.form['q']
-    es = ElasticSearch(ELASTIC_SEARCH_URL)
+    doc_type = None
     if request.form['filter'] == 'Analysis':
-      search_data = es.search(q, index='recast', doc_type='analysis')
+      doc_type = 'analysis'
     elif request.form['filter'] == 'Requests':
-      search_data = es.search(q, index='recast', doc_type='requests')
+      doc_type = 'requests'
     elif request.form['filter'] == 'User':
-      search_data = es.search(q, index='recast', doc_type='users')
+      doc_type = 'users'
     
-    search_data = es.search(q)
+    search_data = synctasks.search(ELASTIC_SEARCH_URL,
+                                   ELASTIC_SEARCH_AUTH,
+                                   ELASTIC_SEARCH_INDEX,
+                                   doc_type,
+                                   q)
   else:
     search_data = ""
 
