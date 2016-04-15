@@ -10,9 +10,10 @@
     <thead>
       <tr>
 	<th>Requester</th>
-        <th>Analysis</th>
-        <th>Collaboration</th>
 	<th>View Request</th>
+        <th>From Analysis</th>
+        <th>Collaboration</th>
+
 	<th>Post Date</th>
 	<th>Status</th>
       </tr>
@@ -23,9 +24,9 @@
       <tr class="active">
 	<td> {{ request.requester.name }} </td>
 	
+	<td> <a href = "{{ url_for('.request_view', id =request.id) }}"> view </a> </td>
 	<td>    <a href ="{{ url_for('.analysis', id=request.analysis.id) }}"> {{ request.analysis.title }}</a> </td>
 	<td> {{ request.analysis.collaboration }} </td>
-	<td> <a href = "{{ url_for('.request_view', id =request.id) }}"> view </a> </td>
 	<td> {{ request.post_date }} </td>
 	<td> {{ request.status }} </td>
       </tr>

@@ -4,7 +4,7 @@
 
 <div class="container">
 
-<form method="POST" class="form-horizontal">
+<form id="myForm" method="POST" class="form-horizontal">
   {{ form.hidden_tag() }}
   {{ run_condition_form.hidden_tag() }}
   
@@ -17,6 +17,7 @@
 	<label class="control-label col-md-4">Arxiv ID</label>
 	<div class="col-md-6">
 	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="">
+	  <p class="text-muted"><small>e.g. 12901.00001</small></p>
 	</div>
 	<br><br><br><br>
 	<div class="col-md-10">
@@ -126,7 +127,7 @@
 </form>
 
 <!-- Modal for arxiv import -->
-<div id="arxiv-data" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="modal-arxiv-data" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -134,8 +135,15 @@
 	<h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
       </div>
       <div class="modal-body">
-	<form
-
+	<p id="arxiv-response"> </p>
+      </div>
+      <div class="modal-footer">
+	<button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	<button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -143,12 +151,54 @@
 
 
 <script type="text/javascript">
-
+  
+  glo = "";
   $(document).ready(function () {
-  $('#btn-import-arxiv').click(function() {
-  alert("TEst");
+
+  $('#arxiv-id').on('change', function() {
+  id_arxiv = this.value;
+  console.log(id_arxiv);
   });
 
+
+  $('#btn-import-arxiv').click(function() {
+  var arxiv_id = id_arxiv;
+  var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
+  $.get(base_url, function( data ){
+  glo = data;
+  //var my_data = "<dl class='dl-horizontal'><br>";
+    //my_data += "<dt> Title: </dt>";
+    // my_data += "<dd>" + data.getElementsByTagName("title") + "</dd> <br>";
+    //my_data += "<dt> Description: </dt>";
+    //my_data += "<dd>" + data.getElementsByTagName("summary") + "</dd> <br>";
+    //my_data += "<dt> Authors: </dt>";
+    //my_data += "<dd>" + data.getElementsByTagName("author") + "</dd>";
+    //my_data += "<br></dl>";
+
+  //console.log(my_data);
+  
+  $('#arxiv-response').html("<dl class='dl-horizontal'><br>");
+  $('#arxiv-response').append("<dt> Title: </dt>");
+    $('#arxiv-response').append("<dd>");
+      $('#arxiv-response').append(data.getElementsByTagName("title")[1])
+      $('#arxiv-response').append("</dd><br><hr>");
+    $('#arxiv-response').append("<dt> Description: </dt>");
+    $('#arxiv-response').append("<dd>");
+      $('#arxiv-response').append(data.getElementsByTagName("summary"));
+      $('#arxiv-response').append("</dd><br><hr><br>");
+    $('#arxiv-response').append("<dt> Authors: </dt>");
+    $('#arxiv-response').append("<dd>");
+      $('#arxiv-response').append(data.getElementsByTagName("author"));
+      $('#arxiv-response').append("</dd><br>");
+    $('#arxiv-response').append("<br></dl>");
+  
+  });
+  $('#modal-arxiv-data').modal('show');
+
+  
+  });
+
+  
   })
 
 
