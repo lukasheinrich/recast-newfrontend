@@ -27,29 +27,41 @@
 </div>
 <div class="col-md-9">
   <div class="panel panel-primary">
-    <div class="panel-heading"> Analysis </div>
+    <!-- <div class="panel-heading"> Analysis </div> -->
+    <div class="panel-heading">{{ analysis.title }} </div>
     <div class="panel-body">
       <dl class="dl-horizontal">
-	<dt> Title </dt>
-	<dd> {{ analysis.title }}</dd>
-	
-	<dt> Description </dt>
-	<dd> {{ analysis.description }}</dd>
+	<br>
+
+	<!-- <dt> Description </dt>
+	<dd> {{ analysis.description }}</dd> -->
+	<dd> {{ analysis.description }} </dd>
+	<br><br>
       
 	<dt> Collaboration </dt>
 	<dd> {{ analysis.collaboration }}</dd>
+
+	<br><br>
 	
 	<dt> E Print </dt>
 	<dd> {{ analysis.e_print }}</dd>
+
+	<br><br>
 	
 	<dt> Journal </dt>
 	<dd> {{ analysis.journal }}</dd>
 
+	<br><br>
+
 	<dt> DOI </dt>
 	<dd> {{ analysis.doi }}</dd>
+	
+	<br><br>
 
 	<dt> Owner </dt>
 	<dd> {{ analysis.user.name }}</dd>
+	
+	<br>
       </dl>
     </div>
   </div>
@@ -58,10 +70,13 @@
     <div class="panel-heading">  RunCondition </div>
       <div class="panel-content">  
 	<dl class="dl-horizontal">
+	  <br><br>
 	  <dt> Title </dt>
 	  <dd> {{ analysis.run_condition.name }}</dd>
+	  <br><br>
 	  <dt> Description </dt>
 	  <dd> {{ analysis.run_condition.description }}</dd>
+	  <br>
 	</dl>
       </div>
   </div>

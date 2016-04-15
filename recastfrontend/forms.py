@@ -47,8 +47,8 @@ class RequestSubmitForm(Form):
     uuid = StringField('UUUID')
 
 class RequestParameterPointsSubmitForm(Form):
-    parameter_point = StringField('Parameter Point 1', validators=[DataRequired()])
-    zip_file = FileField('Zip file')
+    parameter_point = StringField(label='Parameter Point 1', validators=[DataRequired()], id="parameter_points_1", description="parameter point")
+    zip_file = FileField(label='Zip file 1', id="zip_file_1", description="Recast file")
     zenodo_file_id = StringField('Zenodo file id')
     uuid = StringField('UUID')
 

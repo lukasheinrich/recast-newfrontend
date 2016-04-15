@@ -8,11 +8,30 @@
   {{ form.hidden_tag() }}
   {{ run_condition_form.hidden_tag() }}
   
+  
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Import from Arxiv</div>
+    <div class="panel-content col-md-offset-1">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4">Arxiv ID</label>
+	<div class="col-md-6">
+	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="">
+	</div>
+	<br><br><br><br>
+	<div class="col-md-10">
+	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv">Import</button>
+	</div>
+      </div>
+    </div>
+  </div>
+  
+
 
   <div class="panel panel-default col-md-offset-2">
     <div class="panel-heading">Create new analysis</div>
     <div class="panel-content col-md-offset-1">
-
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
 	<div class="col-md-6">
@@ -20,7 +39,8 @@
 
 	</div>
       </div>
-
+      
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.collaboration.id }}"><i class="fa fa-users"></i>&nbsp;{{ form.collaboration.label }}</label>
 	<div class="col-md-6">
@@ -28,6 +48,7 @@
 	</div>
       </div>
 
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.e_print.id }}">{{ form.e_print.label }}</label>
 	<div class="col-md-6">
@@ -35,6 +56,7 @@
 	</div>
       </div>
   
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.journal.id }}">{{ form.journal.label }}</label>
 	<div class="col-md-6">
@@ -42,6 +64,7 @@
 	</div>
       </div>
   
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.doi.id }}">{{ form.doi.label }}</label>
 	<div class="col-md-6">
@@ -49,20 +72,22 @@
 	</div>
       </div>
 
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.inspire_URL.id }}">{{ form.inspire_URL.label }}</label>
 	<div class="col-md-6">
 	  {{ form.inspire_URL(class='form-control') }}
 	</div>
       </div>
-      
+
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
 	<div class="col-md-6">
 	  {{ form.description(class='form-control') }}
 	</div>
       </div>
-
+      <br><br>
     </div>
   </div>
   
@@ -71,7 +96,7 @@
   <div class="panel panel-default col-md-offset-2">
     <div class="panel-heading">Run Condition</div>
     <div class="panel-content col-md-offset-1">
-      
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ run_condition_form.name.id }}"><i class="fa fa-book"></i>&nbsp;{{ run_condition_form.name.label }}</label>
 	<div class="col-md-6">
@@ -79,26 +104,54 @@
 	</div>
       </div>
       
+      <br><br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ run_condition_form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ run_condition_form.description.label }}</label>
 	<div class="col-md-6">
 	  {{ run_condition_form.description(class='form-control') }}
 	</div>
       </div>
-      
+      <br><br>
     </div>
   </div>
   <!-- End of Run condition -->
 
+  <br><br>
   <div class="col-md-offset-2">
     <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
     <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
   </div>
+  <br><br>      <br><br>      <br><br>
   
 </form>
+
+<!-- Modal for arxiv import -->
+<div id="arxiv-data" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
+      </div>
+      <div class="modal-body">
+	<form
+
+
 
 
 </div>
 
+
+<script type="text/javascript">
+
+  $(document).ready(function () {
+  $('#btn-import-arxiv').click(function() {
+  alert("TEst");
+  });
+
+  })
+
+
+</script>
 {% endblock %}
 

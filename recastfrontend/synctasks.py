@@ -58,19 +58,20 @@ def createRunConditionFromForm(app, form, current_user):
 
 
 # Request tables --------------------------------------------------------------------------
-def createRequestFromForm(app, request_form, current_user, parameter_points_form):
+def createRequestFromForm(app, request_form, current_user, parameter_points):
   with app.app_context():
     user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
     assert len(user_query)==1
     
-    scan_request = dbmodels.ScanRequest(requester_id = user_query[0].id,
-                                        reason_for_request = request_form.reason_for_request.data,
-                                        additional_information = request_form.additional_information.data,
-                                        analysis_id = request_form.analysis_id.data,
-                                        zenodo_deposition_id = request_form.zenodo_deposition_id.data,
-                                        uuid = request_form.uuid.data,
-                                        post_date = datetime.date.today()
-                                        )
+    scan_request = dbmodels.ScanRequest(
+      requester_id = user_query[0].id,
+      reason_for_request = request_form.reason_for_request.data,
+      additional_information = request_form.additional_information.data,
+      analysis_id = request_form.analysis_id.data,
+      zenodo_deposition_id = request_form.zenodo_deposition_id.data,
+      uuid = request_form.uuid.data,
+      post_date = datetime.date.today()
+      )
 
     db.session.add(scan_request)
     db.session.commit()
@@ -90,20 +91,25 @@ def createRequestFromForm(app, request_form, current_user, parameter_points_form
     db.session.add(basic_request)
     db.session.commit()
 
-    parameter_point = dbmodels.ParameterPoint(value = parameter_points_form.parameter_point.data,
-                                              point_request_id = point_request.id
-                                              )
-    db.session.add(parameter_point)
-    db.session.commit()
+    for parameter in parameter_points:
 
-    zip_file = dbmodels.RequestArchive(file_name = parameter_points_form.uuid.data,
-                                path = './',
-                                zenodo_file_id = parameter_points_form.zenodo_file_id.data,
-                                original_file_name = parameter_points_form.zip_file.data.filename,
-                                basic_request_id = basic_request.id
-                                )
-    db.session.add(zip_file)
-    db.session.commit()
+      parameter_point = dbmodels.ParameterPoint(
+        value = parameter.parameter_point.data,
+        point_request_id = point_request.id
+        )
+
+      db.session.add(parameter_point)
+      db.session.commit()
+
+      zip_file = dbmodels.RequestArchive(
+        file_name = parameter.uuid.data,
+        path = './',
+        zenodo_file_id = parameter.zenodo_file_id.data,
+        original_file_name = parameter.zip_file.data.filename,
+        basic_request_id = basic_request.id
+        )
+      db.session.add(zip_file)
+      db.session.commit()
                                 
     
     
@@ -222,7 +228,9 @@ def uploadToZenodo(ZENODO_ACCESS_TOKEN, deposition_id, file_uuid, zip_file):
   return deposition_file_id
   
 def publish(ZENODO_ACCESS_TOKEN, deposition_id):
-  url = "https://zenodo.org/api/deposit/depositions/{}/actions/publish?access_token={}".format(deposition_id, ZENODO_ACCESS_TOKEN)
+  url = "https://zenodo.org/api/deposit/depositions/{}/actions/publish?access_token={}".format(
+    deposition_id,
+    ZENODO_ACCESS_TOKEN)
   response = requests.post(url)
 
 def search(ES_HOST_NAME, ES_AUTH, ES_INDEX, doc_type, query_string):

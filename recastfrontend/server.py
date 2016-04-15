@@ -257,35 +257,56 @@ def request_form(id):
 
   if request.method == 'POST':
     if request_form.validate_on_submit():
-      zip_file = request.files['zip_file']
-      if zip_file:
 
-        request_uuid = uuid.uuid1()
-        file_uuid = uuid.uuid1()
+      this_file = request.files['zip_file']
 
-        zip_file.save(zip_file.filename)
-        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                              AWS_SECRET_ACCESS_KEY,
-                              AWS_S3_BUCKET_NAME,
-                              zip_file,
-                              file_uuid)
-        deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
-                                                   request_uuid,
-                                                   login.current_user,
-                                                   request_form.reason_for_request.data)
-        deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                      deposition_id,
-                                                      file_uuid,
-                                                      zip_file)
-        synctasks.publish(ZENODO_ACCESS_TOKEN,
-                          deposition_id)
+      request_uuid = str(uuid.uuid1())
+      deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
+                                                 request_uuid,
+                                                 login.current_user,
+                                                 request_form.reason_for_request.data)
+      if this_file:
+        parameter_points = []
+        for i, z_file in enumerate(request.files):
+          '''Loop through the parameter points'''
+          zip_file = request.files[z_file]  
+
+          file_uuid = str(uuid.uuid1())
+
+          zip_file.save(zip_file.filename)
+          
+          synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                                AWS_SECRET_ACCESS_KEY,
+                                AWS_S3_BUCKET_NAME,
+                                zip_file,
+                                file_uuid)
+          deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                        deposition_id,
+                                                        file_uuid,
+                                                        zip_file)
+          #Uncomment when the website goes live
+          #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
+
+          parameter_point = "parameter_point"
+          if not i==0:
+            parameter_point = '{}_{}'.format(parameter_point, str(i+1))
+          
+          parameter_val = 0.0
+          if request.form.has_key(parameter_point):
+            parameter_val = request.form[parameter_point]
+                                 
+          parameter = forms.RequestParameterPointsSubmitForm()
+          parameter.parameter_point.data = parameter_val
+          parameter.zip_file.data = zip_file
+          parameter.zenodo_file_id.data =deposition_file_id
+          parameter.uuid.data = str(file_uuid)
+
+          parameter_points.append(parameter)
 
         request_form.zenodo_deposition_id.data = deposition_id
         request_form.uuid.data = request_uuid
-        parameter_point_form.zenodo_file_id.data = deposition_file_id
-        parameter_point_form.uuid.data = str(file_uuid)
-
-      synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
+        
+      synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_points)
       flash('success!', 'success')
       return redirect(url_for('analyses'))
   
