@@ -75,23 +75,14 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
 
     db.session.add(scan_request)
     db.session.commit()
-    
-    
-    point_request = dbmodels.PointRequest(requester_id = user_query[0].id,
+
+    for parameter in parameter_points:
+      point_request = dbmodels.PointRequest(requester_id = user_query[0].id,
                                           scan_request_id = scan_request.id
                                           )
 
-    db.session.add(point_request)
-    db.session.commit()
-
-    basic_request = dbmodels.BasicRequest(requester_id = user_query[0].id,
-                                          point_request_id = point_request.id
-                                          )
-
-    db.session.add(basic_request)
-    db.session.commit()
-
-    for parameter in parameter_points:
+      db.session.add(point_request)
+      db.session.commit()
 
       parameter_point = dbmodels.ParameterPoint(
         value = parameter.parameter_point.data,
@@ -99,6 +90,13 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
         )
 
       db.session.add(parameter_point)
+      db.session.commit()
+
+      basic_request = dbmodels.BasicRequest(requester_id = user_query[0].id,
+                                          point_request_id = point_request.id
+                                          )
+
+      db.session.add(basic_request)
       db.session.commit()
 
       zip_file = dbmodels.RequestArchive(
