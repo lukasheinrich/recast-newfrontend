@@ -163,38 +163,18 @@
 
   $('#btn-import-arxiv').click(function() {
   var arxiv_id = id_arxiv;
-  var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
-  $.get(base_url, function( data ){
-  glo = data;
-  //var my_data = "<dl class='dl-horizontal'><br>";
-    //my_data += "<dt> Title: </dt>";
-    // my_data += "<dd>" + data.getElementsByTagName("title") + "</dd> <br>";
-    //my_data += "<dt> Description: </dt>";
-    //my_data += "<dd>" + data.getElementsByTagName("summary") + "</dd> <br>";
-    //my_data += "<dt> Authors: </dt>";
-    //my_data += "<dd>" + data.getElementsByTagName("author") + "</dd>";
-    //my_data += "<br></dl>";
-
-  //console.log(my_data);
-  
-  $('#arxiv-response').html("<dl class='dl-horizontal'><br>");
-  $('#arxiv-response').append("<dt> Title: </dt>");
-    $('#arxiv-response').append("<dd>");
-      $('#arxiv-response').append(data.getElementsByTagName("title")[1])
-      $('#arxiv-response').append("</dd><br><hr>");
-    $('#arxiv-response').append("<dt> Description: </dt>");
-    $('#arxiv-response').append("<dd>");
-      $('#arxiv-response').append(data.getElementsByTagName("summary"));
-      $('#arxiv-response').append("</dd><br><hr><br>");
-    $('#arxiv-response').append("<dt> Authors: </dt>");
-    $('#arxiv-response').append("<dd>");
-      $('#arxiv-response').append(data.getElementsByTagName("author"));
-      $('#arxiv-response').append("</dd><br>");
-    $('#arxiv-response').append("<br></dl>");
-  
+  //var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
+  var base_url = "https://inspirehep.net/search?p="+arxiv_id+"&of=recjson&ot=title,collaboration,full_url,doc_url,url_code,prep_ref,jour_ref,doi,url";
+  console.log(base_url);
+  $.ajax({
+         url: base_url,
+         success: function( data ){
+            glo = data;
+            console.log('success');
+            $('#arxiv-response').html(data);  
+            $('#modal-arxiv-data').modal('show');  
+           }
   });
-  $('#modal-arxiv-data').modal('show');
-
   
   });
 
