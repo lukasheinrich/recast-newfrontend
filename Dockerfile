@@ -2,10 +2,9 @@ FROM python:2.7
 
 # Copy source code
 WORKDIR /recast-newfrontend
-COPY * /recast-newfrontend/
+COPY . /recast-newfrontend/
 
 # Install dependencies using setup file
-RUN yum install python-pip
 RUN pip install -e . --process-dependency-links
 
 # Add user
