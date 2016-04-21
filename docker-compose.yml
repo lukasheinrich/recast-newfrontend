@@ -3,9 +3,22 @@ recastfrontend:
   ports:
    - "5000:5000"
   volumes:
-   - .:/recast-newfrontend
+   - ./recastfrontend:/recast-newfrontend/recastfrontend
+   - ./config.yaml:/recast-newfrontend/recastfrontend/resources/defaultconfig.yaml
   links:
+   - db
+   - celery
+   - api
    - cache
+
+db:
+  image: postgres
+  
+celery:
+  image: celery
 
 cache:
   image: redis
+
+api:
+  image: cbora/recastrestapi
