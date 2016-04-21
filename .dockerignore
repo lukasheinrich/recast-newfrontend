@@ -1,3 +1,6 @@
-./recastfrontend/myconfig.yml
 *.pyc
 *~
+recastfrontend/*.pyc
+recastfrontend/*~
+recastfrontend/templates/*~
+config.yaml
