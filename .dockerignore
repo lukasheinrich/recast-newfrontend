@@ -4,3 +4,5 @@ recastfrontend/*.pyc
 recastfrontend/*~
 recastfrontend/templates/*~
 config.yaml
+*.yaml
+*.yml
