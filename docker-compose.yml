@@ -7,9 +7,8 @@ recastfrontend:
    - ./config.yaml:/recast-newfrontend/recastfrontend/resources/defaultconfig.yaml
   links:
    - db
-   - celery
-   - api
    - cache
+   - celery
 
 db:
   image: postgres
@@ -19,6 +18,18 @@ celery:
 
 cache:
   image: redis
+  ports:
+   - "6379:6379"
 
 api:
-  image: cbora/recastrestapi
+  image: cbora/recastrestapi:0.1
+  volumes:
+   - ./config.yaml:/recast-rest-api/recastrestapi/resources/defaultconfig.yaml
+  ports:
+   - "6000:5000"
+  
+es:
+  image: elasticsearch
+  ports:
+   - "9200:9200"
+  
