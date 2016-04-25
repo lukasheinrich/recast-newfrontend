@@ -76,7 +76,7 @@
 	  </form>
           <ul class="nav navbar-nav navbar-right">
 	    <!--- current_user -->
-	    {% if current_user and not current_user.is_anonymous %}
+	    {% if current_user and not current_user.is_anonymous() %}
 	    <!-- current_user and not current_user.is_anonymous() --> <!-- re-check this!! -->
             <li><a href="{{url_for('profile')}}"><i class="fa fa-user"></i>&nbsp; {{current_user.name()}}</a></li>
             <li><a href="/logout">(Logout)</a></li>
