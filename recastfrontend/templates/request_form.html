@@ -18,35 +18,39 @@
 	  <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
 	</div>
       </div>
-      <br><br>
-      <div class="form-group">
+      <br>
+      <div class="form-group required">
 	<label class="control-label col-md-4" for="{{ form.title.id }}"><i class="fa fa-book fa-fw"></i>&nbsp;{{ form.title.label }} </label>
 	<div class="col-md-6">
 	  {{ form.title(class='form-control') }}
+	  <p class="text-muted"><small>Required.</small></p>
 	</div>
       </div>
-      <br><br>
-      <div class="form-group">
+      <br>
+      <div class="form-group required">
 	<label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
 	<div class="col-md-6">
 	  {{ form.model_name(class='form-control') }}
+	  <p class="text-muted"><small>Required.</small></p>
 	</div>
       </div>
-      <br><br>
+      <br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
 	<div class="col-md-6">
 	  {{ form.reason_for_request(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
-      <br><br>
+      <br>
       <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
 	<div class="col-md-6">
 	  {{ form.additional_information(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
-      <br><br>
+      <br>
     </div>
   </div>
     
@@ -60,17 +64,19 @@
       <div class="panel panel-default col-md-10 col-md-offset-1">
 	<div class="panel-content">
 	  <br>
-	  <div class="form-group">
+	  <div class="form-group required">
 	    <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label.text }} </label>
 	    <div class="col-md-6">
 	      {{ parameter_points_form.parameter_point(class='form-control') }}
+	      <p class="text-muted"><small>Required value of type "float"</small></p>
 	    </div>
 	  </div>
 	  <br>
-	  <div class="form-group">
+	  <div class="form-group required">
 	    <label class="control-label col-md-4" for="{{ parameter_points_form.zip_file.id }} "><i class="fa fa-file-zip-o"></i>&nbsp;{{ parameter_points_form.zip_file.label.text }} </label>
 	    <div class="col-md-6">
 	      {{ parameter_points_form.zip_file }}
+	      <p class="text-muted"><small>.zip extension allowed</small></p>
 	  <!--	      <button type="button" class="btn btn-info">Upload file</button>	      -->
 	    </div>
 	  </div>
@@ -82,7 +88,7 @@
 	
       </div>
       <!-- onclick="arxiv(1602.07646)" -->
-      <br><br><br>
+      <br><br>
 
 
       <div class="">

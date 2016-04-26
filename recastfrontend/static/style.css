@@ -76,3 +76,7 @@ html {
   left: initial;
   font-size: 14px;
 }
+.form-group.required .control-label:after {
+    content:" *";
+    color:red;
+}

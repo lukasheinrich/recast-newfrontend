@@ -2,62 +2,72 @@
 
 {% block container %}
 
-<div class='col-md-10'>
-
-<h1>Subscribe</h1> 
+<div class="container">
 
 <form class="form-horizontal" method="POST" role="form">
   {{ form.hidden_tag() }}
 
-  <div class="form-group">
-    <label class="control-label col-md-4" for="Analysis"> Analysis: </label>
-    <div class="col-md-6">
-      <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Subscribe</div>
+    <div class="panel-content">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="Analysis"> Analysis: </label>
+	<div class="col-md-6">
+	  <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
+	</div>
       </div>
-  </div>
-
-  <div class="form-group">    
-    <label class="control-label col-md-4" for="{{ form.subscription_type.id }}"> {{ form.subscription_type.label }} </label>
-    <div class="col-md-6">
-      {{ form.subscription_type(class='radio-inline', onchange="hide()") }}
-    </div>
-  </div>
-    
-  <div class="form-group" id="authorize">
-    <label class="control-label col-md-4" for="{{ form.authoritative.id }}"> {{ form.authoritative.label }} </label>
-    <div class="col-md-6">
-      {{ form.authoritative(class='radio-inline') }}
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.description.id }}"> {{ form.description.label }}</label>
-    <div class="col-md-5">
-      {{ form.description(class='form-control') }}
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.requirements.id }}"> {{ form.requirements.label }}</label>
-    <div class="col-md-5">
-      {{ form.requirements(class='form-control') }}
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.notifications.id }}"> {{ form.notifications.label }}</label>
-    <div class="col-md-6">
-      {{ form.notifications }}
       
+      <br>
+      <div class="form-group required">    
+	<label class="control-label col-md-4" for="{{ form.subscription_type.id }}"> {{ form.subscription_type.label }} </label>
+	<div class="col-md-6">
+	  {{ form.subscription_type(class='radio-inline', onchange="hide()") }}
+	</div>
+      </div>
+      
+      <br>
+      <div class="form-group" id="authorize">
+	<label class="control-label col-md-4" for="{{ form.authoritative.id }}"> {{ form.authoritative.label }} </label>
+	<div class="col-md-6">
+	  {{ form.authoritative(class='checkbox-inline') }}
+	</div>
+      </div>
+
+      <br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
+	<div class="col-md-5">
+	  {{ form.description(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
+	</div>
+      </div>
+      
+      <br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.requirements.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.requirements.label }}</label>
+	<div class="col-md-5">
+	  {{ form.requirements(class='form-control') }}
+	  <p class="text-muted"><small>Optional. One requirement per line</small></p>
+	</div>
+      </div>
+
+      <br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.notifications.id }}"> {{ form.notifications.label }}</label>
+	<div class="col-md-6">
+	  {{ form.notifications(class='checkbox-inline') }}
+	</div>
+      </div>
+      <br>
     </div>
-  </div>
- 
-  <div class="form-group">
-    <div class="col-md-offset-6">
-      <button type="submit" class="btn btn-default">Submit</button>      
     </div>
-  </div>
-  
+          
+    <br><br>
+    <div class="col-md-offset-2">
+      <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+      <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
+    </div>
 </form>
 </div>
 
