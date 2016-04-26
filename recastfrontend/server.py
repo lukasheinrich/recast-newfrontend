@@ -473,16 +473,16 @@ def display_testing(page):
   #return render_template('testing.html', analyses = new_query, pagination = pagination)
   return render_template('testing.html', analyses = new_query)
 
-@app.route("/list_subscriptions", defaults={'analysis_id': 1})
-@app.route("/list_subscriptions/analysis/<int:analysis_id>")
+@app.route("/list-subscriptions-for-analysis", defaults={'analysis_id': 1})
+@app.route("/list-subscriptions-for-analysis/<int:analysis_id>")
 @login.login_required
 def list_subscriptions(analysis_id):
   query = db.session.query(dbmodels.Subscription).filter(dbmodels.Subscription.analysis_id == analysis_id).all()
   
   return render_template('list_subscriptions.html', subscriptions = query)
 
-@app.route("/list_requests", defaults={'analysis_id': 1})
-@app.route("/list_requests/analysis/<int:analysis_id>")
+@app.route("/list-requests-for-analysis", defaults={'analysis_id': 1})
+@app.route("/list-requests-for-analysis/<int:analysis_id>")
 @login.login_required
 def list_requests(analysis_id):
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.analysis_id == analysis_id).all()

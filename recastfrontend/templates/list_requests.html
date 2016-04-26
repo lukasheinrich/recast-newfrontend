@@ -20,7 +20,7 @@
 	{% for request in requests %}
 	
 	<tr class="active">
-	  <td> {{ request.title }} </td>
+	  <td> <a href="{{ url_for('.request_view', id=request.id) }}">{{ request.title }}</a></td>
 	  <td> {{ request.requester.name }} </td>
 	  <td> {{ request.status }}</td>
 	</tr>

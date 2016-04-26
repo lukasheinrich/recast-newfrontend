@@ -65,6 +65,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
     
     scan_request = dbmodels.ScanRequest(
       requester_id = user_query[0].id,
+      title = request_form.title.data,
       reason_for_request = request_form.reason_for_request.data,
       additional_information = request_form.additional_information.data,
       analysis_id = request_form.analysis_id.data,
