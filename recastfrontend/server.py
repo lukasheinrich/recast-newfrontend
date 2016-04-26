@@ -1,10 +1,10 @@
 import json
 import requests
 import importlib
+from boto3.session import Session
 
 import asynctasks
 import synctasks
-
 
 from flask import Flask, redirect, jsonify, session, request, url_for, render_template, flash
 from flask.ext import login as login
@@ -13,15 +13,27 @@ from recastdb.database import db
 import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
-#from flask.ext.paginate import Pagination
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
+import uuid
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 
 ORCID_APPID = frontendconf['ORCID_APPID']
 ORCID_REDIRECT_URI = frontendconf['ORCID_REDIRECT_URI']
 ORCID_SECRET = frontendconf['ORCID_SECRET']
+ORCID_TOKEN_REDIRECT_URI = frontendconf['ORCID_TOKEN_REDIRECT_URI']
+AWS_ACCESS_KEY_ID = frontendconf['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = frontendconf['AWS_SECRET_ACCESS_KEY']
+ZENODO_CLIENT_ID = frontendconf['ZENODO_CLIENT_ID']
+ZENODO_CLIENT_SECRET = frontendconf['ZENODO_CLIENT_SECRET']
+ZENODO_ACCESS_TOKEN = frontendconf['ZENODO_ACCESS_TOKEN']
+ELASTIC_SEARCH_URL = frontendconf['ELASTIC_SEARCH_URL']
+ELASTIC_SEARCH_INDEX = frontendconf['ELASTIC_SEARCH_INDEX']
+ELASTIC_SEARCH_AUTH = frontendconf['ELASTIC_SEARCH_AUTH']
+AWS_S3_BUCKET_NAME = 'recast'
 
+ALLOWED_EXTENSIONS = set(['zip', 'txt'])
 
 class User(login.UserMixin):
   def __init__(self,**kwargs):
@@ -67,16 +79,66 @@ def login_user():
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
+  print r
+  print r.content
   login_details = json.loads(r.content)
   
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
   
+  confirmUserInDB(user)
+  if not hasEmail(user):
+    return redirect(url_for('signup'))
   
   return redirect(url_for('home'))
+  
 
 # Forms --------------------------------------------------------------------------------
 
+def confirmUserInDB(user):
+  try:
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
+    confirmOrcid(user_query)
+  except MultipleResultsFound, e:
+    pass
+  except NoResultFound, e:
+    new_user = dbmodels.User(name=user.name(), email=None, orcid_id=user.get_id())
+    db.session.add(new_user)
+    db.session.commit()    
+  return
+
+def confirmOrcid(user_query):
+  if not user_query.orcid_id:
+    user_query.orcid_id = login.current_user.get_id()
+    db.session.commit()
+
+def hasEmail(user):
+  try: 
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
+    if not user_query.email:
+      return False
+  except MultipleResultsFound, e:
+    pass
+  except NoResultFound, e:
+    pass
+
+  return True
+
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
+  form = forms.SignupSubmitForm()
+  if request.method == 'POST':
+    if form.validate_on_submit():
+      synctasks.createSignupFromForm(app, form, login.current_user)
+      flash('success! form validated and was processed', 'success')
+      return redirect(url_for('home'))
+    elif form.is_submitted():
+      print form.errors
+      flash('failure! form did not validate and was not processed', 'danger')
+    
+  return render_template('signup.html', form=form)
+    
+  
 @app.route("/analysis_form", methods=['GET', 'POST'])
 @login.login_required
 def form():
@@ -99,7 +161,7 @@ def form():
   return render_template('analysis_form.html', form = myform, run_condition_form = run_condition_form)
 
 
-@app.route("/userform", methods=('GET', 'POST'))
+@app.route("/userform", methods=['GET', 'POST'])
 def user_form():
   userform = forms.UserSubmitForm()
 
@@ -166,29 +228,95 @@ def scan_request_form():
     
   return render_template('form.html', form=scan_request_form)
 
-@app.route("/request_form", methods=('GET', 'POST'), defaults={'analysis_id':1})
+@app.route("/editsubscription", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editsubscription/<int:id>", methods=['GET', 'POST'])
+def edit_subscription(id):
+  pass
+
+@app.route("/editanalysis", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editanalysis/<int:id>", methods=['GET', 'POST'])
+def edit_analysis(id):
+  pass
+
+
+@app.route("/editrequest", methods=['GET', 'POST'], defaults={'id':0})
+@app.route("/editrequest/<int:id>", methods=['GET', 'POST'])
+def edit_request(id):
+  pass
+
+@app.route("/request_form", methods=['GET','POST'], defaults={'id': 1})
+@app.route('/request_form/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def request_form(analysis_id):
+def request_form(id):
   request_form = forms.RequestSubmitForm()
   
   parameter_point_form = forms.RequestParameterPointsSubmitForm()
   
-  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
-  request_form.analysis_id.data = analysis_id
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  request_form.analysis_id.data = analysis[0].id
+
+  if request.method == 'POST':
+    if request_form.validate_on_submit():
+
+      this_file = request.files['zip_file']
+
+      request_uuid = str(uuid.uuid1())
+      deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
+                                                 request_uuid,
+                                                 login.current_user,
+                                                 request_form.reason_for_request.data)
+      if this_file:
+        parameter_points = []
+        for i, z_file in enumerate(request.files):
+          '''Loop through the parameter points'''
+          zip_file = request.files[z_file]  
+
+          file_uuid = str(uuid.uuid1())
+
+          zip_file.save(zip_file.filename)
+          
+          synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                                AWS_SECRET_ACCESS_KEY,
+                                AWS_S3_BUCKET_NAME,
+                                zip_file,
+                                file_uuid)
+          deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                        deposition_id,
+                                                        file_uuid,
+                                                        zip_file)
+          #Uncomment when the website goes live
+          #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
+
+          parameter_point = "parameter_point"
+          if not i==0:
+            parameter_point = '{}_{}'.format(parameter_point, str(i+1))
+          
+          parameter_val = 0.0
+          if request.form.has_key(parameter_point):
+            parameter_val = request.form[parameter_point]
+                                 
+          parameter = forms.RequestParameterPointsSubmitForm()
+          parameter.parameter_point.data = parameter_val
+          parameter.zip_file.data = zip_file
+          parameter.zenodo_file_id.data =deposition_file_id
+          parameter.uuid.data = str(file_uuid)
+
+          parameter_points.append(parameter)
+
+        request_form.zenodo_deposition_id.data = deposition_id
+        request_form.uuid.data = request_uuid
+        
+      synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_points)
+      flash('success!', 'success')
+      return redirect(url_for('analyses'))
   
-  if request_form.validate_on_submit():
-    flash('success!', 'success')
-    synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_point_form)
-    #filename = secure_filename(parameter_point_form.lhe_file.data.filename)
-    #parameter_point_form.lhe_file.data.save('./' + filename)
-    return redirect(url_for('analyses'))
-  
-  elif request_form.is_submitted():
-    print request_form.errors
-    flash('failure!', 'failure')
-    filename = None
+    elif request_form.is_submitted():
+      print request_form.errors
+      flash(request_form.errors, 'failure')
+      filename = None
     
-  return render_template('request_form.html', form=request_form, parameter_points_form=parameter_point_form, analysis = analysis[0])
+  return render_template('request_form.html', form=request_form,
+                         parameter_points_form=parameter_point_form, analysis = analysis[0])
   
 @app.route("/pointrequestform", methods=('GET', 'POST'))
 @login.login_required
@@ -224,12 +352,13 @@ def basic_request_form():
 
   return render_template('form.html', form = basic_request_form)
 
-@app.route("/subscribe", methods=['GET', 'POST'], defaults={'analysis_id': 1})
+@app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route('/subscribe/<int:id>')
 @login.login_required
-def subscribe(analysis_id):
+def subscribe(id):
   subscribe_form = forms.SubscribeSubmitForm()
-  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == analysis_id).all()
-  subscribe_form.analysis_id.data = analysis_id
+  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+  subscribe_form.analysis_id.data = analysis[0].id
 
   if subscribe_form.validate_on_submit():
     synctasks.createSubscriptionFromForm(app, subscribe_form, login.current_user)
@@ -240,6 +369,16 @@ def subscribe(analysis_id):
 
   return render_template('subscribe.html', form=subscribe_form, analysis = analysis[0])
   
+@app.route("/contact", methods=('GET', 'POST'), defaults={'id': 1})
+@app.route('/contact/<int:id>')
+@login.login_required
+def contact(id):
+  contact_form = forms.ContactSubmitForm()
+  user = db.session.query(dbmodels.User).filter(dbmodels.User.name == login.current_user.name()).all()
+  contact_form.responder.data = user[0].name
+  contact_form.responder_email.data = user[0].email
+
+  return render_template('contact.html', form = contact_form)
 
 # Views -------------------------------------------------------------------------------------
 @app.route("/analysis/<int:id>", methods=['GET', 'POST'])
@@ -247,7 +386,7 @@ def analysis(id):
   query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   return render_template('analysis.html', analysis=query[0])
 
-@app.route("/analyses")
+@app.route("/analyses", methods=['GET', 'POST'])
 @login.login_required
 def analyses():
   query = db.session.query(dbmodels.Analysis).all()
@@ -264,7 +403,7 @@ def requests_views():
 @login.login_required
 def request_view(id):
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
-  return render_template('request.html', request = query[0])
+  return render_template('request.html', request = query[0], bucket_name=AWS_S3_BUCKET_NAME)
 
 @app.route('/subscriptions')
 @login.login_required
@@ -327,11 +466,28 @@ def display_testing(page):
   new_query = get_elements_for_page(page, 5, count, query)
   
   if not new_query and page != 1:
-    abort(404)
+    #abort(404)
+    pass
   
-  pagination = Pagination(page=page, total=count)
-  return render_template('testing.html', analyses = new_query, pagination = pagination)
+  #pagination = Pagination(page=page, total=count)
+  #return render_template('testing.html', analyses = new_query, pagination = pagination)
+  return render_template('testing.html', analyses = new_query)
 
+@app.route("/list_subscriptions", defaults={'analysis_id': 1})
+@app.route("/list_subscriptions/analysis/<int:analysis_id>")
+@login.login_required
+def list_subscriptions(analysis_id):
+  query = db.session.query(dbmodels.Subscription).filter(dbmodels.Subscription.analysis_id == analysis_id).all()
+  
+  return render_template('list_subscriptions.html', subscriptions = query)
+
+@app.route("/list_requests", defaults={'analysis_id': 1})
+@app.route("/list_requests/analysis/<int:analysis_id>")
+@login.login_required
+def list_requests(analysis_id):
+  query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.analysis_id == analysis_id).all()
+
+  return render_template('list_requests.html', requests = query)
 
 def get_elements_for_page(page, PER_PAGE, count, obj):
   first_index = (page - 1) * PER_PAGE
@@ -364,13 +520,79 @@ def load_user(userid):
 def unauthorized():
   return redirect(url_for('login_user'))
 
-@app.route("/profile")
+@app.route("/profile", methods=['GET', 'POST'])
 @login.login_required
 def profile():
   user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
   assert len(user_query)
-  return render_template('profile.html', db_user = user_query[0])
 
+  if request.method == 'POST':
+    token = dbmodels.AccessToken.query.filter(dbmodels.AccessToken.id == request.form['delete']).one()
+    db.session.delete(token)
+    db.session.commit()
+
+  return render_template('profile.html', db_user = user_query[0], tokens=user_query[0].access_tokens)
+
+@app.route("/token", methods=['GET', 'POST'])
+@login.login_required
+def show_token():  
+  user_query = dbmodels.User.query.filter(dbmodels.User.name == login.current_user.name()).all()
+  assert len(user_query)
+  
+  if request.method == 'POST':
+    new_token = dbmodels.AccessToken(token_name=request.form['tokenname'], user_id=user_query[0].id)
+    db.session.add(new_token)
+    db.session.commit()
+  elif request.method == 'GET':
+    tokens = db.session.query(dbmodels.AccessToken).all()
+    new_token = tokens[len(tokens)-1]
+                                     
+  if not request.args.has_key('code'):
+    return  redirect('https://orcid.org/oauth/authorize?client_id={}&response_type=code&scope=/authenticate&redirect_uri={}&show_login=true'.format(
+    ORCID_APPID,
+    ORCID_TOKEN_REDIRECT_URI
+  ))
+  
+  auth_code = request.args.get('code')
+  data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code, 'redirect_uri':ORCID_TOKEN_REDIRECT_URI}
+
+  r = requests.post('https://pub.orcid.org/oauth/token', data = data)
+  login_details = json.loads(r.content)
+
+
+  if not user_query[0].orcid_id:
+    user_query[0].orcid_id = login_details['orcid']
+    db.session.add(user_query[0])
+    db.session.commit()
+  
+  new_token.token = login_details['access_token']
+  db.session.add(new_token)
+  db.session.commit()
+  return render_template('new_token.html', token=new_token, user=user_query[0])
+
+@app.route("/search", methods=['GET', 'POST', 'PUT'])
+def search():
+  q = request.args.get('q')
+
+  if request.method == 'POST':
+    q = request.form['q']
+    doc_type = None
+    if request.form['filter'] == 'Analysis':
+      doc_type = 'analysis'
+    elif request.form['filter'] == 'Requests':
+      doc_type = 'requests'
+    elif request.form['filter'] == 'User':
+      doc_type = 'users'
+    
+    search_data = synctasks.search(ELASTIC_SEARCH_URL,
+                                   ELASTIC_SEARCH_AUTH,
+                                   ELASTIC_SEARCH_INDEX,
+                                   doc_type,
+                                   q)
+  else:
+    search_data = ""
+
+  return render_template('search.html', search_data=json.dumps(search_data['hits']['hits']))
 
 def rows_to_dict(rows):
   d = []

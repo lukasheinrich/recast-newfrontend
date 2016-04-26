@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container">
+  <h3> Requests </h3>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead>
+	<tr>
+	  <th>Request Name</th>
+	  <th>Requester</th>
+	  <th>Status</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for request in requests %}
+	
+	<tr class="active">
+	  <td> (placeholder) </td>
+	  <td> {{ request.requester.name }} </td>
+	  <td> (placeholder) </td>
+	</tr>
+	
+	{% endfor %}
+      </tbody>
+  </div>
+</div>
+
+{% endblock %}
+    
+    
+      

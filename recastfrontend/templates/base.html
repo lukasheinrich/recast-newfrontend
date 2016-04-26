@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RECAST - An Analysis Reinterpretation Framework</title>
+  
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="../static/style.css">
+<link rel="stylesheet" href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
+
+<!-- font awesome for icons -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
 
@@ -44,29 +51,40 @@
 	    {% if current_user and not current_user.is_anonymous %}
 	    <li><a href="/subscriptions">My Subscriptions</a></li>
 	    {% endif %}
-	    <!--
-	    <li><a href="/links">Links</a></li>
-	    <li><a href="/userstories">User Stories</a></li>
-	    <li><a href="/testing">Testing</a></li> 
-	    -->
           </ul>
-	  <form class="navbar-form navbar-left" role="search">
-	    <div class="form-group">
-	      <input type="text" class="form-control" placeholder="Search for...">
+	  <form class="navbar-form navbar-left" role="search" action="/search" method="post">
+	    <div class="input-group">
+	      <div class="input-group-btn search-panel">
+		<button name="filter" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> 
+		  <span id="search_concept">Filter by</span> <span class="caret"></span>
+		</button> 
+		<ul class="dropdown-menu" role="menu">
+		  <li><a href="#Analysis">Analysis</a></li>
+		  <li><a href="#Requests">Request</a></li>
+		  <li><a href="#Users">User</a></li>
+		</ul>
 	      </div>
-	    <button type="submit" class="btn btn-primary">Submit</button>
+	    
+	      <input type="hidden" name="search_param" value="all" id="search_param">
+	      <input type="text" class="form-control" name="q" placeholder="Search term...">
+	      <span class="input-group-btn">
+		<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+	      </span>
+	    
+	    </div>
+	    <input hidden type="text" name="filter" value="" id="filter">
 	  </form>
           <ul class="nav navbar-nav navbar-right">
 	    <!--- current_user -->
 	    {% if current_user and not current_user.is_anonymous() %}
 	    <!-- current_user and not current_user.is_anonymous() --> <!-- re-check this!! -->
-            <li><a href="{{url_for('profile')}}">{{current_user.name()}}</a></li>
+            <li><a href="{{url_for('profile')}}"><i class="fa fa-user"></i>&nbsp; {{current_user.name()}}</a></li>
             <li><a href="/logout">(Logout)</a></li>
             {% else %}
             <li><a href="/login">Login</a></li>
             {% endif %}
           </ul>
-	    <img class="center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">
+	  <img class="center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">
 	    
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
@@ -90,5 +108,48 @@
     {% block container %}
     {% endblock %}
 </div>
-</body>
+
+<!--
+<footer class="footer">
+  <div class="container">
+    <p class="text-muted">Footer place</p>
+  </div>
+</footer>
+ -->
+<script type="text/javascript">
+  
+  
+  $(document).ready(function(e){
+  $('.search-panel .dropdown-menu').find('a').click(function(e) {
+  e.preventDefault();
+  var param = $(this).attr("href").replace("#","");
+  var concept = $(this).text();
+  $('.search-panel span#search_concept').text(concept);
+  $('.input-group #search_param').val(param);
+  document.getElementById("filter").value = concept;
+  });
+});
+
+  <!--For older browsers -->
+  function getElementByClassName(node, classname) {
+     if (node.getElementByClassName) {
+         //Use the existing method
+        return node.getElementByClassName(classname);
+     }
+     else {
+        var results = new Array();
+        var elems = node.getElementsByTagName("*");
+        for ( var i=0; i < elems.length; i++ ) {
+   	    if (elems[i].classname.indexOf(classname) != -1) {
+	        results[results.length] = elems[i]
+            }
+        }
+     }
+
+  }
+			  
+</script>
+<script type="text/javascript" src="../static/recast.js"></script>
+	
+<br><br><br><br><br><br>			
 </html>

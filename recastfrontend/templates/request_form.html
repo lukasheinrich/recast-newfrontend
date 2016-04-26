@@ -4,86 +4,163 @@
 
 <div class="container">
 
-<h1>Submit new request</h1> 
-
-<form method="POST" class="form-horizontal" role="form">
+<form method="post" class="form-horizontal" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   {{ parameter_points_form.hidden_tag() }}
 
-  <div class="form-group">
-    <label class="control-label col-md-4" for="Analysis"> Analysis: </label>
-    <div class="col-md-6">
-      <input class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
-    <div class="col-md-6">
-      {{ form.model_name(class='form-control') }}
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.reason_for_request.id }}"> {{ form.reason_for_request.label }} </label>
-    <div class="col-md-6">
-      {{ form.reason_for_request(class='form-control') }}
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="control-label col-md-4" for="{{ form.additional_information.id }}"> {{ form.additional_information.label }} </label>
-    <div class="col-md-6">
-      {{ form.additional_information(class='form-control') }}
-    </div>
-  </div>
-
-    <div class="panel panel-info col-md-offset-2">
-    <div class="panel-heading">  Request Parameter Points </div>
-      <div class="panel-content col-md-offset-1">
-	<!-- Request Parameter Point form --> 
-
-	<div class="form-group">
-	  <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label }} </label>
-	  <div class="col-md-6">
-	    {{ parameter_points_form.parameter_point(class='form-control') }}
-	  </div>
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Request </div>
+    <div class="panel-body">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="Analysis"> Analysis: </label>
+	<div class="col-md-6">
+	  <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
 	</div>
-
-	<div class="form-group">
-	  <label class="control-label col-md-4" for="{{ parameter_points_form.lhe_file.id }} "> {{ parameter_points_form.lhe_file.label }} </label>
-	  <div class="col-md-6">
-	    {{ parameter_points_form.lhe_file }} <button type="button" class="btn btn-info">Upload file</button>
-	  </div>
-	</div>
-     
-	<div class="form-group">
-	  <label class="control-label col-md-4" for="{{ parameter_points_form.number_events.id }}"> {{ parameter_points_form.number_events.label }} </label>
-	  <div class="col-md-6">
-	    {{ parameter_points_form.number_events(class='form-control')}}
-	  </div>
-	</div>
-
-	<div class="form-group">
-	  <label class="control-label col-md-4" for="{{ parameter_points_form.reference_cross_section.id }}"> {{ parameter_points_form.reference_cross_section.label }} </label>
-	  <div class="col-md-6">
-	    {{ parameter_points_form.reference_cross_section(class='form-control') }}
-	  </div>
-	</div>
-
       </div>
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
+	<div class="col-md-6">
+	  {{ form.model_name(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
+	<div class="col-md-6">
+	  {{ form.reason_for_request(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
+	<div class="col-md-6">
+	  {{ form.additional_information(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
     </div>
+  </div>
     
-    <div>
-      <div class="col-md-offset-6">
-	<button type="submit" class="btn btn-default">Submit</button>
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">  Request Parameter Points </div>
+    <div class="panel-content">
+      <!-- Request Parameter Point form --> 
+
+      <br><br>
+      <div id="copy-parameter-point">
+      <div class="panel panel-default col-md-10 col-md-offset-1">
+	<div class="panel-content">
+	  <br>
+	  <div class="form-group">
+	    <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label.text }} </label>
+	    <div class="col-md-6">
+	      {{ parameter_points_form.parameter_point(class='form-control') }}
+	    </div>
+	  </div>
+	  <br>
+	  <div class="form-group">
+	    <label class="control-label col-md-4" for="{{ parameter_points_form.zip_file.id }} "><i class="fa fa-file-zip-o"></i>&nbsp;{{ parameter_points_form.zip_file.label.text }} </label>
+	    <div class="col-md-6">
+	      {{ parameter_points_form.zip_file }}
+	  <!--	      <button type="button" class="btn btn-info">Upload file</button>	      -->
+	    </div>
+	  </div>
+	</div>
+      </div> <!--- End of each parameter point  -->
+      </div> <!-- Example of parameter point to copy -->
+
+      <div id="placeholder">
+	
       </div>
+      <!-- onclick="arxiv(1602.07646)" -->
+      <br><br><br>
+
+
+      <div class="">
+	<button id="btn-add-parameter-point" type="button" class="btn btn-success col-md-offset-10"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add parameter</button>
+      </div>
+
+      <br><br>
+
+    </div> <!-- End of parameter point panel -->
+  </div>
+    
+  <br><br>
+  <div>
+    <div class="col-md-offset-2">
+      <button type="button" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
+      <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
     </div>
+  </div>
+  
+  <br><br>  <br><br>  <br><br>
 
 </form>
   
 
 </div>
+
+<script type="text/javascript">
+  
+  $(document).ready(function() {
+  $('#btn-add-parameter-point').click(function() {
+  var $div = $('input[id^="parameter_point"]:last');
+  console.log($div);
+  var num = parseInt($div.prop("id").match(/\d+/g),10)+1;
+  console.log(num);
+
+  $('#copy-parameter-point').clone()
+  .find("input:text").val("").end()
+  .find("input:file").val("").end()
+  .prop('id', 'added_'+num).appendTo('#placeholder');
+
+  $('#added_'+num+' input[id^="parameter"]')
+  .prop('id', 'parameter_point_'+num)
+  .attr('name', 'parameter_point_'+num);
+
+  $('#added_'+num+' input[id^="zip_file"]')
+  .prop('id', 'zip_file_'+num)
+  .attr('name', 'zip_file_'+num);
+
+  $('#added_'+num+' label[for^="parameter"]')
+  .text('Parameter Point '+num);
+
+  $('#added_'+num+' label[for^="zip"]')
+  .text('Zip file '+num);
+  });
+
+
+  })
+
+ 
+  function validateExtension(e){
+        file = e.target.files;
+
+        var fileExtension = theFile.split('.')[theFile.split('.').length - 1].toLowerCase();
+        var fileSize = file.size;
+
+        var txt ="";
+  
+        if (!(fileExtension === validFileExtension)){
+            txt += "File type extension not allowed \n";
+            txt += "Only zip files are allowed"
+        }
+
+        if (fileSize > validFileSize){
+            txt += "File size must be less than"
+            txt += (validFileSize/1000)
+            txt += "MB"
+        }
+        alert(txt)
+  }
+
+
+
+</script>
+            
+  
 
 {% endblock %}
 

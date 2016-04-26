@@ -4,37 +4,184 @@
 
 <div class="container">
 
-<h1>Create new analysis</h1> 
-
-<form method="POST">
+<form id="myForm" method="POST" class="form-horizontal">
   {{ form.hidden_tag() }}
   {{ run_condition_form.hidden_tag() }}
-  {% for field in form if not field.id == 'csrf_token' %}
-  <div class="form-group">
-        <label for="{{field.id}}">{{ field.label }}</label>
-        {{ field(class='form-control') }}
-  </div>
-      
-  {% endfor %}
-
-  <div class="panel panel-info">
-    <div class="panel-heading">  Run Condition </div>
-      <div class="panel-content">
-
-	{% for field in run_condition_form if not field.id == 'csrf_token' %}
   
-	<div class="form-group">
-	  <label for="{{field.id}}"> {{ field.label }} </label>
-	  {{ field(class='form-control') }}
+  
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Import from Arxiv</div>
+    <div class="panel-content col-md-offset-1">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4">Arxiv ID</label>
+	<div class="col-md-6">
+	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="">
+	  <p class="text-muted"><small>e.g. 12901.00001</small></p>
 	</div>
-
-	{% endfor %}
+	<br><br><br><br>
+	<div class="col-md-10">
+	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv">Import</button>
+	</div>
       </div>
+    </div>
   </div>
-      <button type="submit" class="btn btn-default">Submit</button>
+  
+
+
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Create new analysis</div>
+    <div class="panel-content col-md-offset-1">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
+	<div class="col-md-6">
+	  {{ form.title(class='form-control') }}
+
+	</div>
+      </div>
+      
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.collaboration.id }}"><i class="fa fa-users"></i>&nbsp;{{ form.collaboration.label }}</label>
+	<div class="col-md-6">
+	  {{ form.collaboration(class='form-control') }}
+	</div>
+      </div>
+
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.e_print.id }}">{{ form.e_print.label }}</label>
+	<div class="col-md-6">
+	  {{ form.e_print(class='form-control') }}
+	</div>
+      </div>
+  
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.journal.id }}">{{ form.journal.label }}</label>
+	<div class="col-md-6">
+	  {{ form.journal(class='form-control') }}
+	</div>
+      </div>
+  
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.doi.id }}">{{ form.doi.label }}</label>
+	<div class="col-md-6">
+	  {{ form.doi(class='form-control') }}
+	</div>
+      </div>
+
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.inspire_URL.id }}">{{ form.inspire_URL.label }}</label>
+	<div class="col-md-6">
+	  {{ form.inspire_URL(class='form-control') }}
+	</div>
+      </div>
+
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
+	<div class="col-md-6">
+	  {{ form.description(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
+    </div>
+  </div>
+  
+  
+  <!-- Run condition stuff -->
+  <div class="panel panel-default col-md-offset-2">
+    <div class="panel-heading">Run Condition</div>
+    <div class="panel-content col-md-offset-1">
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ run_condition_form.name.id }}"><i class="fa fa-book"></i>&nbsp;{{ run_condition_form.name.label }}</label>
+	<div class="col-md-6">
+	  {{ run_condition_form.name(class='form-control') }}
+	</div>
+      </div>
+      
+      <br><br>
+      <div class="form-group">
+	<label class="control-label col-md-4" for="{{ run_condition_form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ run_condition_form.description.label }}</label>
+	<div class="col-md-6">
+	  {{ run_condition_form.description(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
+    </div>
+  </div>
+  <!-- End of Run condition -->
+
+  <br><br>
+  <div class="col-md-offset-2">
+    <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
+    <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+  </div>
+  <br><br>      <br><br>      <br><br>
+  
 </form>
+
+<!-- Modal for arxiv import -->
+<div id="modal-arxiv-data" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
+      </div>
+      <div class="modal-body">
+	<p id="arxiv-response"> </p>
+      </div>
+      <div class="modal-footer">
+	<button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	<button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 </div>
 
+
+<script type="text/javascript">
+  
+  glo = "";
+  $(document).ready(function () {
+
+  $('#arxiv-id').on('change', function() {
+  id_arxiv = this.value;
+  console.log(id_arxiv);
+  });
+
+
+  $('#btn-import-arxiv').click(function() {
+  var arxiv_id = id_arxiv;
+  //var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
+  var base_url = "https://inspirehep.net/search?p="+arxiv_id+"&of=recjson&ot=title,collaboration,full_url,doc_url,url_code,prep_ref,jour_ref,doi,url";
+  console.log(base_url);
+  $.ajax({
+         url: base_url,
+         success: function( data ){
+            glo = data;
+            console.log('success');
+            $('#arxiv-response').html(data);  
+            $('#modal-arxiv-data').modal('show');  
+           }
+  });
+  
+  });
+
+  
+  })
+
+
+</script>
 {% endblock %}
 

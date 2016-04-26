@@ -1,9 +1,60 @@
 {% extends "base.html" %}
 
 {% block container %}
-profile page for user: <strong>{{current_user.name()}}</strong>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <div class="panel panel-default profile-panel">
+	<div class="panel-body">
+	  <div class="col-sm-9 col-xs-12 user-info-box">
+	    <h3 class="user-name">{{ db_user.name }}</h3>
+	    <p><strong><i class="fa fa-envelope"></i>&nbsp;E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
+	    <p><strong><i class="fa fa-bars"></i>&nbsp;ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
+	  </div>
+	</div>
+      </div>
 
-<ul>
-    <li>from the database we got this email: {{db_user.email}}</li>
-</ul>
+      <div class="panel panel-default">
+	<div class="panel-body">
+	  <h3><i></i>Tokens<a href="#newToken"><button id="upperNewToken" onclick="hideshow('upperNewToken')" type="text" class="btn btn-success pull-right">Generate new token</button></a></h3>    
+	  <hr class="colorgraph">
+	  <table class="table table-hover table-responsive">
+	    <thead>
+	      <tr>
+		<th>#</th>
+		<th>Token Name</th>
+		<th>Action</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      {% for token in tokens %}
+	      <tr>
+		<td>{{ loop.index0 }}</td>
+		<td>{{ token.token_name }}</td>
+		<td><form action="/profile" method="post"><button type="text" name="delete" value="{{ token.id }}" class="btn btn-danger"><i class="glyphicon glyphicon-trash">&nbsp;Delete</button></form></td>
+	      </tr>
+	      {% endfor %}
+	    </tbody>  
+	  </table>	  
+	</div>
+      </div>
+      
+      <div class="panel panel-default">
+	<div class="panel-body">
+	  <h3> Generate New Token </h3>
+	  <hr class="colograph">
+	  <a name="newToken"></a>
+	  <form action="/token" method="post" class="form-inline">
+	    <label for="name"><strong>Name: </strong></label>	    
+	    <input type="text" name="tokenname" class="form-control" onfocus="hideshow()" placeholder="Name your token"/>
+	    <button type="submit" name="delete" value="delete" class="btn btn-success pull-right">Generate new token</button>
+	  </form>
+	</div>
+      </div>
+
+
+    </div>
+  </div>
+</div>  
+	  
 {% endblock %}

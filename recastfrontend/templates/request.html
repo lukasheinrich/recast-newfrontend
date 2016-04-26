@@ -11,27 +11,32 @@
     <div class="panel-content">
       <ul class="nav nav-pills nav-stacked">
 	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
-	<li class="disabled"><a href="">Contact Requester</a></li>
+	<li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
     </div>
   </div>
 
 </div>
 
 <div class="col-md-9">
-<h1> Request #  {{ request.id }} </h1>
-  <dl class="dl-horizontal">
-    <dt> Analysis Title </dt>
-    <dd> {{ request.analysis.title }}</dd>
-
-    <dt> Requester </dt>
-    <dd> {{ request.requester.name }}</dd>
-    
-    <dt> Model Name </dt>
-    <dd> {{ request.description_of_model }}</dd>
-    
-  </dl>
-
-    <div class="panel panel-info">
+  <div class="panel panel-primary">
+    <div class="panel-heading"><strong>Request</strong></div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+	<dt> Analysis Title </dt>
+	<dd><a href="{{ url_for('.analysis', id=request.analysis.id) }}">{{ request.analysis.title }}</a></dd>
+	
+	<dt> Status </dt>
+	<dd> {{ request.status }}</dd>
+	
+	<dt> Requester </dt>
+	<dd> {{ request.requester.name }}</dd>
+	
+	<dt> Model Name </dt>
+	<dd> {{ request.description_of_model }}</dd>
+      </dl>
+    </div>
+  </div>
+    <div class="panel panel-primary">
       <div class="panel-heading">Request Description and Potential</div>
       <div class="panel-content">
 	<dl class="dl-horizontal">
@@ -46,7 +51,7 @@
 
   <hr>
   
-  <div class="panel panel-info">
+  <div class="panel panel-primary">
     <div class="panel-heading">  Run Condition </div>
       <div class="panel-content">
 
@@ -61,28 +66,57 @@
   </div>
   
   {% if request.scan_points[0].parameter_points[0] is defined  and request.scan_points[0] is defined and request.scan_points[0].requests[0] is defined and request.scan_points[0].requests[0].file_name[0] is defined %}
-  <div class="panel panel-info">
+  <div class="panel panel-primary">
     <div class="panel-heading">  Request Parameter Points </div>
     <div class="panel-content">
-      <dl class="dl-vertical">
+      <dl class="dl-horizontal">
 	<dt> Parameter Point1: </dt>
 	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
-	<dt> LHE File: </dt>
+	<dt> Zip File: </dt>
 	
-	<dd> {{ request.scan_points[0].requests[0].file_name[0].file_name }}</dd>
-	<dt> # of events </dt> 
-	<dd> {{ request.scan_points[0].requests[0].number_of_events }}</dd>
-	
-	<dt> Reference cross section </dt>
-	<dd> {{ request.scan_points[0].requests[0].reference_cross_section }}</dd>
+	<dd><a class="btn btn-default" href="{{"https://s3.amazonaws.com/" + bucket_name +"/"+ request.scan_points[0].requests[0].file_name[0].file_name }}"><i class="glyphicon glyphicon-download"></i>&nbsp;Download</a></dd>
 	</dl>
       </div>
     </div>  
   {% endif %}
   <hr>
 </div>
-  
-			      
+
+<div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="myModalLabel">Contact Requester</h3>
+      </div>
+
+      <div class="modal-body">
+	<form class="form-horizontal col-md-12" role="form">
+	  <div class="form-group">
+	    <label>Subject</label>
+	    <input class="form-control" type="text">
+	  </div>
+	  <div class="form-group">
+	    <label>Message</label>
+	    <textarea class="form-control" placeholder="Your message here.."></textarea>
+	  </div>
+	  <div class="form-group">
+	    <label>E-mail</label>
+	    <input class="form-control" placeholder="email@you.com" data-placement="top" type="text">
+	  </div>
+	  <div class="form-group">
+	    <button type="submit" class="btn btn-success pull-right">Send</button>
+	  </div>
+	</form>
+      </div>
+      <div class="modal-footer">
+	<button class="btn" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </div>
 
 {% endblock %}

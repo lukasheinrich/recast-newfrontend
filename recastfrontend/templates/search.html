@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+
+<div class="container">
+  <div class="panel panel-default">
+
+    <div class="panel-heading">Search</div>
+
+    <div class="panel-body">
+      <table id="child">
+
+      </table>
+
+    </div>
+  </div> <!-- end of panel -->
+       
+
+  <input hidden name="editor" value="{{ search_data }}" id="editor" mode="application/json" json="true">
+  <script src="https://rawgit.com/marianoguerra/json.human.js/master/src/json.human.js"></script>
+  <script src="https://rawgit.com/padolsey-archive/prettyprint.js/master/prettyprint.js"></script>
+<script type="text/javascript">
+  
+  var json = JSON.parse(document.getElementById("editor").value); 
+  output = document.getElementById("child");
+  
+  node = JsonHuman.format(json);
+  
+  output.innerHTML = "";
+  output.appendChild(node);
+</script>
+  
+</div>
+
+{% endblock %}

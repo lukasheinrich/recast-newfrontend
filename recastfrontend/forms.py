@@ -40,15 +40,17 @@ class BasicRequestSubmitForm(Form):
 
 class RequestSubmitForm(Form):
     analysis_id = IntegerField('Analysis')
-    model_name = StringField('Model Name', validators=[DataRequired()])
+    model_name = StringField('Model Name', validators=[DataRequired(message="Model Name required")])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
+    zenodo_deposition_id = StringField('Zenodo id')
+    uuid = StringField('UUUID')
 
 class RequestParameterPointsSubmitForm(Form):
-    parameter_point = StringField('Parameter Point 1', validators=[DataRequired()])
-    lhe_file = FileField('LHE file')
-    number_events = IntegerField('# of events')
-    reference_cross_section = StringField('Reference cross section')
+    parameter_point = StringField(label='Parameter Point 1', validators=[DataRequired()], id="parameter_points_1", description="parameter point")
+    zip_file = FileField(label='Zip file 1', id="zip_file_1", description="Recast file")
+    zenodo_file_id = StringField('Zenodo file id')
+    uuid = StringField('UUID')
 
 class MultipleCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
@@ -61,3 +63,14 @@ class SubscribeSubmitForm(Form):
     notifications = MultipleCheckboxField('Notifications', choices=[('Recast Requests', 'Recast Requests'), ('Recast Responses', 'Recast Responses'), ('New Subscribers to Analysis', 'New Subscribers to Analysis')])
     authoritative = BooleanField('Authoritative')
     analysis_id = IntegerField('Analysis')
+
+class ContactSubmitForm(Form):
+    name = StringField('Your name', validators=[DataRequired()])
+    email = StringField('Your e-mail address', validators=[DataRequired()])
+    responder = StringField('To')
+    responder_email = StringField('To (email)')
+    subject = StringField('Subject')
+    message = TextAreaField('Message', validators=[DataRequired()])
+
+class SignupSubmitForm(Form):
+    email = StringField('Email address', validators=[DataRequired()])

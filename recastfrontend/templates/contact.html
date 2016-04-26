@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container col-md-10">
+
+<h1>Contact Form</h1>
+
+<form class="form-horizontal" method="POST" role="form">
+  {{ form.hidden_tag() }}
+  
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.name.id }}"> {{ form.name.label }} </label>
+    <div class="col-md-6">
+      {{ form.name(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.email.id }}"> {{ form.email.label }} </label>
+    <div class="col-md-6">
+      {{ form.email(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.responder.id }}">{{ form.responder.label }}</label>
+    <div class="col-md-6">
+      <input class="form-control" id="name" type="text" placeholder="{{ form.responder.data }}" disabled >
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.subject.id }}"> {{ form.subject.label }} </label>
+    <div class="col-md-6">
+      {{ form.subject(class='form-control') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-md-4" for="{{ form.message.id }}">{{ form.message.label }} </label>
+    <div class="class-md-8">
+      {{ form.message }}
+    </div>
+  </div>
+
+
+</form>
+</div>
+    
+{% endblock %}

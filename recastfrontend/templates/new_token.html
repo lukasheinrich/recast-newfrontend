@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-sm-12">
+      <div class="panel panel-default profile-panel">
+	<div class="panel-body">
+	  <h3>Your access token</h3>
+	  <p>To access the API use the ORCID ID as the username and the access token as the password. Please save the access token safely as it will not be shown again.</p>
+	  <table class="table table-responsive">
+	      <tbody>
+		<tr>
+		  <td><strong>ORCID ID: </strong></td>
+		  <td>{{user.orcid_id}}</td>
+		</tr>
+		<tr>
+		  <td><strong>Access Token: </strong></td>
+		  <td>{{token.token}}</td>
+		</tr>
+		<tr>
+		  <td><strong>Name: </strong></td>
+		  <td>{{token.token_name}}</td>
+	      </tbody>
+	  </table>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+	
+
+	    
+       
