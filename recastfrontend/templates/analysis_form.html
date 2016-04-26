@@ -152,6 +152,7 @@
 
 <script type="text/javascript">
   
+
   glo = "";
   $(document).ready(function () {
 
@@ -160,24 +161,48 @@
   console.log(id_arxiv);
   });
 
-
   $('#btn-import-arxiv').click(function() {
   var arxiv_id = id_arxiv;
   //var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
-  var base_url = "https://inspirehep.net/search?p="+arxiv_id+"&of=recjson&ot=title,collaboration,full_url,doc_url,url_code,prep_ref,jour_ref,doi,url";
+  var base_url = "https://inspirehep.net/search?p="+arxiv_id+"&of=recjson&ot=title";
+  //  var base_url = "./proxy.php";
+  //var base_url = "http://twitter.com/status/user_timeline/padraicb.json?count=10";
+  //"&ot=title,collaboration,full_url,doc_url,url_code,prep_ref,jour_ref,doi,url";
   console.log(base_url);
-  $.ajax({
-         url: base_url,
-         success: function( data ){
-            glo = data;
-            console.log('success');
-            $('#arxiv-response').html(data);  
-            $('#modal-arxiv-data').modal('show');  
-           }
-  });
-  
-  });
+  console.log("HERE:");
 
+  $.ajax({
+         cache: false,
+         contentType: 'application/json; charset=utf-8',
+         dataType: 'jsonp', 
+         crossDomain: true,
+         type: 'GET',
+         url: base_url,
+         timeout: 5000,
+         success: function( data ){
+            //glo = data;
+            console.log('success');
+            //$('#arxiv-response').html(data);  
+          //  $('#modal-arxiv-data').modal('show');  
+           },
+        error: function(a, b, c) {
+         console.log('failure');
+         console.log(typeof(a));
+         console.log(a.statusText);
+         console.log(a.status);
+         console.log(a.responseXML);
+         console.log(a.readyState);
+         console.log(b);
+         console.log(c);
+  
+         },  
+        complete: function(a,b){
+            console.log('complete');
+            console.log(a);
+            console.log(b);
+        }
+  });  
+  });
   
   })
 

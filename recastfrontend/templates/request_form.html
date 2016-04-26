@@ -20,6 +20,13 @@
       </div>
       <br><br>
       <div class="form-group">
+	<label class="control-label col-md-4" for="{{ form.title.id }}"><i class="fa fa-book fa-fw"></i>&nbsp;{{ form.title.label }} </label>
+	<div class="col-md-6">
+	  {{ form.title(class='form-control') }}
+	</div>
+      </div>
+      <br><br>
+      <div class="form-group">
 	<label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
 	<div class="col-md-6">
 	  {{ form.model_name(class='form-control') }}
