@@ -2,72 +2,73 @@
 
 {% block container %}
 
-<div class='container'>
- 
+<div class="container">
+<div class="row">
 
-<div class="col-md-3">
-  <h1>&nbsp;</h1> <!-- to have the panel go a bit down -->
-  
-
-  <div class="panel panel-info">
+  <div class="col-md-3">
+    <br><br><br>
+    
+    
+    <div class="panel panel-info">
     <div class="pannel-content">
       
       <ul class="nav nav-pills nav-stacked">
-	
-	<li class="active"><a href="{{ url_for('.analysis', id=analysis.id) }}">View</a></li>
+	<li><a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">Subscriptions&nbsp;<span class="badge pull-right">{{ analysis.subscriptions[:]|length }}</span></a></li>
+	<li><a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">Requests&nbsp;<span class="badge pull-right">{{ analysis.scan_requests[:]|length }}</span></a></li>
 	<li><a href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a></li>
 	<li><a href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a></li>
 	<li class="disabled"><a href="#">Edit</a></li>
-	<li><a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">List Subscriptions</a></li>
-	<li><a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">List Requests</a></li>
       </ul>
     </div>
-  </div>
-
-</div>
-<div class="col-md-9">
-  <div class="panel panel-primary">
-    <!-- <div class="panel-heading"> Analysis </div> -->
-    <div class="panel-heading">{{ analysis.title }} </div>
-    <div class="panel-body">
-      <dl class="dl-horizontal">
-	<br>
-
-	<!-- <dt> Description </dt>
-	<dd> {{ analysis.description }}</dd> -->
-	<dd> {{ analysis.description }} </dd>
-	<br><br>
-      
-	<dt> Collaboration </dt>
-	<dd> {{ analysis.collaboration }}</dd>
-
-	<br><br>
-	
-	<dt> E Print </dt>
-	<dd> {{ analysis.e_print }}</dd>
-
-	<br><br>
-	
-	<dt> Journal </dt>
-	<dd> {{ analysis.journal }}</dd>
-
-	<br><br>
-
-	<dt> DOI </dt>
-	<dd> {{ analysis.doi }}</dd>
-	
-	<br><br>
-
-	<dt> Owner </dt>
-	<dd> {{ analysis.user.name }}</dd>
-	
-	<br>
-      </dl>
     </div>
+    
   </div>
-  <hr>
-  <div class="panel panel-primary">
-    <div class="panel-heading">  RunCondition </div>
+  
+  <div class="col-md-9">
+    <br><br><br>
+    <div class="panel panel-primary">
+      <!-- <div class="panel-heading"> Analysis </div> -->
+      <div class="panel-heading">{{ analysis.title }} </div>
+      <div class="panel-body">
+	<dl class="dl-horizontal">
+	  <br>
+	
+	  <!-- <dt> Description </dt>
+	       <dd> {{ analysis.description }}</dd> -->
+	  <dd> {{ analysis.description }} </dd>
+	  <dd>  </dd>
+	  <br><br>
+	  
+	  <dt> Collaboration </dt>
+	  <dd> {{ analysis.collaboration }}</dd>
+	  
+	  <br><br>
+	  
+	  <dt> E Print </dt>
+	  <dd> {{ analysis.e_print }}</dd>
+	  
+	  <br><br>
+	  
+	  <dt> Journal </dt>
+	  <dd> {{ analysis.journal }}</dd>
+	  
+	  <br><br>
+	  
+	  <dt> DOI </dt>
+	  <dd> {{ analysis.doi }}</dd>
+	  
+	  <br><br>
+	  
+	  <dt> Owner </dt>
+	  <dd> {{ analysis.user.name }}</dd>
+	  
+	  <br>
+	</dl>
+      </div>
+    </div>
+    <hr>
+    <div class="panel panel-primary">
+      <div class="panel-heading">  RunCondition </div>
       <div class="panel-content">  
 	<dl class="dl-horizontal">
 	  <br><br>
@@ -79,10 +80,10 @@
 	  <br>
 	</dl>
       </div>
+    </div>
   </div>
-</div>
      
-			      
+</div>
 </div>
 
 {% endblock %}

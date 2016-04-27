@@ -2,22 +2,23 @@
 
 {% block container %}
 
-<div class='container'>
+<div class="container">
+  <div class="row">
 
-<div class="col-md-3">
-  <h1>&nbsp;</h1>
-  
-  <div class="panel panel-info">
-    <div class="panel-content">
-      <ul class="nav nav-pills nav-stacked">
-	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
-	<li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
+  <div class="col-md-3">
+    <br><br><br>
+    <div class="panel panel-info">
+      <div class="panel-content">
+	<ul class="nav nav-pills nav-stacked">
+	  <li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
+	  <li class="disabled"><a href="#">Edit</a></li>
+      </div>
     </div>
+    
   </div>
-
-</div>
-
-<div class="col-md-9">
+  
+  <div class="col-md-9">
+    <br><br><br>
   <div class="panel panel-primary">
     <div class="panel-heading"><strong>{{ request.title }}</strong></div>
     <div class="panel-body">
@@ -115,7 +116,7 @@
     </div>
   </div>
 </div>
-
+  </div>
 
 </div>
 
