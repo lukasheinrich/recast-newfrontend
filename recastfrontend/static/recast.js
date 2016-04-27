@@ -16,6 +16,15 @@ function RecastAddParameterPoint(e){
     return;
 }
 
+function shortStr(str, max_chars){
+    /* returns shortened string  */
+    if (str.length > max_chars){
+	return (str.substring(0, max_chars)+"...");
+    }else{
+	return str;
+    }
+}
+
 function validateFloatValues(val) {
     
     //return false if the value is not float
@@ -108,15 +117,18 @@ function arxiv(arxiv_id){
          Results still need to be serialized */
 
     base_url = 'http://export.arxiv.org/api/query?search_query=' + arxiv_id;
+    base_url = 'https://inspirehep.net/search?p='+arxiv_id+'&of=recjson';
+    console.log('javascript');
     var request = new XMLHttpRequest();
     if (request) {
 	request.open("GET", base_url, true);
 	request.onreadystatechange = function() {
 	    if (request.readyState == 4) {
-		var para = document.createElement("p");
-		var txt = document.createTextNode(request.responseText);
-		para.appendChild(txt);
-		document.getElementById('new').appendChild(para);
+		//var para = document.createElement("p");
+		//var txt = document.createTextNode(request.responseText);
+		//para.appendChild(txt);
+		//document.getElementById('new').appendChild(para);
+		console.log(request.responseText);
 	    }
 	};
 	request.send(null);
