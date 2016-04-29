@@ -5,83 +5,180 @@
 <div class="container">
   <div class="row">
 
-  <div class="col-md-3">
+  <div class="col-md-2">
     <br><br><br>
     <div class="panel panel-info">
       <div class="panel-content">
 	<ul class="nav nav-pills nav-stacked">
 	  <li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
 	  <li class="disabled"><a href="#">Edit</a></li>
+	</ul>
       </div>
+    </div>    
+  </div>
+  
+  <div class="col-md-8">
+    <br><br><br>
+    <div class="table-responsive">
+      <table class="table">
+	<tbody>
+	  <tr class="" style="border:none;">
+	    <td style="border:none;padding-top:0em;">
+	      <h3 style="margin-top:5px">{{ request.title }}</h3>
+	      <br>
+	      <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
+	      {% if request.post_date %}
+	      <span>{{ request.post_date }}</span>
+	      {% endif %}
+	      <br><br>
+	      {% if request.description_of_model %}
+	      <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span>
+	      {% endif %}
+	      
+	      
+
+	      {% if request.status %}
+	      <span class="label label-warning"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}</span>
+	      {% endif %}
+
+	      {% if request.uuid %}	     
+	      <span class="label label-primary"><i class="glyphicon glyphicon-tags"></i>&nbsp;<strong>uuid:</strong>&nbsp;{{ request.uuid }}</span>
+	      {% endif %}
+	      
+
+	      <br><br>
+	      <span>
+		<strong>
+		  <span>
+		    <i class="glyphicon glyphicon-pencil"></i>
+		    &nbsp;analysis&nbsp;
+		  </span>
+		</strong>
+		<a href="{{ url_for('.analysis', id=request.analysis.id) }}">
+		  <span id="analysis-title">{{ request.analysis.title }}
+		  </span>
+		</a>
+		<span class="label label-primary">{{ request.analysis.collaboration }}
+		</span>
+	      </span>
+	      
+	      <br><br>
+	      <strong>Reason for request</strong>
+	      <br>
+	      {{ request.reason_for_request }}
+	      <br>
+	      <br>
+	      <strong>Additional information</strong>
+	      <br>
+	      {{request.additional_information }}
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
     </div>
     
-  </div>
-  
-  <div class="col-md-9">
-    <br><br><br>
-  <div class="panel panel-primary">
-    <div class="panel-heading"><strong>{{ request.title }}</strong></div>
-    <div class="panel-body">
-      <dl class="dl-horizontal">
-	<dt> Analysis Title </dt>
-	<dd><a href="{{ url_for('.analysis', id=request.analysis.id) }}">{{ request.analysis.title }}</a></dd>
-	
-	<dt> Status </dt>
-	<dd> {{ request.status }}</dd>
-	
-	<dt> Requester </dt>
-	<dd> {{ request.requester.name }}</dd>
-	
-	<dt> Model Name </dt>
-	<dd> {{ request.description_of_model }}</dd>
-      </dl>
+    
+    <br><br>
+    <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
+    <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Upload</button>
+    <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Mint&nbsp;DOI</button>
+    	       
+    
+    <br>
+    <br>
+    <br>
+    <div class="table-responsive">
+      <table class="table">
+	<thead>
+	  <tr>
+	    <th>
+	      <span class="col-md-2" style="display:inline-block;">Parameter</span>
+	      <span class="col-md-2" style="display:inline-block;">Value</span>
+	      <span class="col-md-4" style="display:inline-block;">File</span>	      
+	      <span class="col-md-4" style="display:inline-block;">Actions</span>
+	      <th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for point_request in request.scan_points %}
+	  
+	  {% if point_request.parameter_points[0] and point_request.requests[0].file_name[0] %}
+	  <tr>
+	  <th>
+	    <span class="col-md-2" style="display:inline-block;">
+	      {% if point_request.parameter_points[0].title %}	      
+	      {{ point_request.parameter_points[0].title }}
+	      {% else %}
+	      Parameter_{{ loop.index0 }}
+	     {% endif %}
+	    </span>
+	    <span class="col-md-2" style="display:inline-block;">{{ point_request.parameter_points[0].value }}</span>
+	    <span class="col-md-3" style="display:inline-block;">
+	      <a class="btn btn-success" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
+		<i class="glyphicon glyphicon-download"></i>&nbsp;Download</a>	      
+	    </span>
+	    <span class="col-md-2" style="display:inline-block;">
+	    <div class="dropdown">
+	      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" id="btn-process">Process
+		<span class="caret"></span>
+	      </button>
+	      <ul class="dropdown-menu" role="menu" aria-labelledby="btn-process">
+		<li role="presentation"><a role="menuitem" href="#">example1</a></li>
+		<li role="presentation"><a role="menuitem" href="#">example2</a></li>
+	      </ul>
+	    </div>
+	    </span>
+	    <span class="col-md-2" style="display:inline-block;">	    
+	    <div class="dropdown">
+	      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" id="btn-process">Results
+		<span class="caret"></span>
+	      </button>
+	      <ul class="dropdown-menu" role="menu" aria-labelledby="btn-process">
+		<li role="presentation"><a role="menuitem" href="#">example1</a></li>
+		<li role="presentation"><a role="menuitem" href="#">example2</a></li>
+	      </ul>
+	    </div>
+	    </span>
+	    <span class="col-md-1" style="display:inline-block;" data-toggle="tooltip" data-placement="right" title="Press to check job processing status">
+	      <i id="drop-jobs-{{ loop.index0 }}" onClick="changeGlyphicon('#drop-jobs-{{loop.index0}}')" class="glyphicon glyphicon-chevron-down" style="color:blue;cursor:pointer;" data-toggle="collapse" data-target="#jobs-{{loop.index0}}"></i>
+	    </span>
+	    <div id="jobs-{{ loop.index0 }}" class="collapse">
+	      <div class="col-md-10">
+		<br><br>
+		<p>Processing status of this parameter point on the backend</p>
+		<table class="table table-bordered table-condensed col-md-10">
+		  <thead>
+		    <tr>
+		      <th class="col-md-6">Job ID</th>
+		      <th class="col-md-2">Backend</th>
+		      <th class="col-md-2">State</th>
+		    </tr>
+		  </thead>
+		  <tr>
+		    <td class="col-md-6"><a href="#">1a09f51c-5872-11e5-a86c-02163e008f91</a></td>
+		    <td class="col-md-2">(Placeholder)</td>
+		    <td class="col-md-2">(Placeholder)</td>
+		  </tr>
+		</table>
+	      </div>
+	    </div>
+	  </th>
+	  <tr>
+	    {% endif %}
+	  {% endfor %}
+	</tbody>
+      </table>
     </div>
-  </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">Request Description and Potential</div>
-      <div class="panel-content">
-	<dl class="dl-horizontal">
-	<dt> Reason for request </dt>
-	<dd> {{ request.reason_for_request }}</dd>
-
-	<dt> Additional information </dt>
-	<dd> {{ request.additional_information }}</dd>
-	</dl>
-      </div>
-    </div>
-
-  <hr>
-  
-  <div class="panel panel-primary">
-    <div class="panel-heading">  Run Condition </div>
-      <div class="panel-content">
-
-  
-	<dl class="dl-horizontal">
-	  <dt> Title </dt>
-	  <dd> {{ request.analysis.run_condition.name }}</dd>
-	  <dt> Description </dt>
-	  <dd> {{ request.analysis.run_condition.description }}</dd>
-	</dl>
-      </div>
+      
+    
+    
+  </div> <!-- End middle column -->
   </div>
   
-  {% if request.scan_points[0].parameter_points[0] is defined  and request.scan_points[0] is defined and request.scan_points[0].requests[0] is defined and request.scan_points[0].requests[0].file_name[0] is defined %}
-  <div class="panel panel-primary">
-    <div class="panel-heading">  Request Parameter Points </div>
-    <div class="panel-content">
-      <dl class="dl-horizontal">
-	<dt> Parameter Point1: </dt>
-	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
-	<dt> Zip File: </dt>
-	
-	<dd><a class="btn btn-default" href="{{"https://s3.amazonaws.com/" + bucket_name +"/"+ request.scan_points[0].requests[0].file_name[0].file_name }}"><i class="glyphicon glyphicon-download"></i>&nbsp;Download</a></dd>
-	</dl>
-      </div>
-    </div>  
-  {% endif %}
-  <hr>
-</div>
+  
+
+
+
 
 <div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -116,8 +213,28 @@
     </div>
   </div>
 </div>
-  </div>
-
 </div>
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+  var analysis_content = $('#analysis-title').html();
+  $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
+  
+
+  })
+
+    function changeGlyphicon(id){
+      if ( $(id).attr('class') == 'glyphicon glyphicon-chevron-down'){
+             $(id).removeClass();
+             $(id).addClass('glyphicon glyphicon-chevron-up');
+       }
+       else {
+             $(id).removeClass();
+             $(id).addClass('glyphicon glyphicon-chevron-down');
+       }
+  }
+  
+</script>  
 
 {% endblock %}

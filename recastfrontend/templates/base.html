@@ -7,8 +7,10 @@
   <title>RECAST - An Analysis Reinterpretation Framework</title>
   
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="../static/style.css">
+<!--- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css">
+
+<link rel="stylesheet" href="../static/card.css">
 <link rel="stylesheet" href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
 
 <!-- font awesome for icons -->
@@ -18,7 +20,20 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <!-- Latest compiled and minified JavaScript -->
+
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<style>
+@import url('http://fonts.googleapis.com/css?family=Lato');
+body,h6,h5,h4,h3,h2,h1,html {
+  font-family: "Lato";
+}
+
+.badge {
+  background-color:#777;
+}
+
+</style>
+
 
 </head>
 
@@ -47,7 +62,7 @@
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/analyses">Analysis Catalogue</a></li>
-            <li><a href="/requests">Recast Requests</a></li>
+            <li><a href="/requests">Requests</a></li>
 	    {% if current_user and not current_user.is_anonymous %}
 	    <li><a href="/subscriptions">My Subscriptions</a></li>
 	    {% endif %}
@@ -78,13 +93,13 @@
 	    <!--- current_user -->
 	    {% if current_user and not current_user.is_anonymous %}
 	    <!-- current_user and not current_user.is_anonymous() --> <!-- re-check this!! -->
-            <li><a href="{{url_for('profile')}}"><i class="fa fa-user"></i>&nbsp; {{current_user.name()}}</a></li>
-            <li><a href="/logout">(Logout)</a></li>
+            <li><a href="{{url_for('profile')}}"><i class="glyphicon glyphicon-user"></i>&nbsp; {{current_user.name()}}</a></li>
+            <li><a href="/logout"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Logout</a></li>
             {% else %}
-            <li><a href="/login">Login</a></li>
+            <li><a href="/login"><i class="glyphicon glyphicon-log-in"></i>&nbsp;Login</a></li>
             {% endif %}
           </ul>
-	  <img class="img-responsive center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">
+	  <!--<img class="img-responsive center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">-->
 	    
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->

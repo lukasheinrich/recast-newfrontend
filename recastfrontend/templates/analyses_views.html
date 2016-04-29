@@ -7,8 +7,25 @@
 <div class="row">
 <div class="col-md-11">
 
-<h3>&nbsp;&nbsp;Analyses <span class="pull-right">
-<a id="sort" href="#" type="button" class="btn btn-default"><i class="glyphicon glyphicon-sort-by-attributes"></i>&nbsp;Sort</a>&nbsp;&nbsp;<a id="max-results" href="#" type="button" class="btn btn-default"><i class="glyphicon glyphicon-resize-vertical"></i>&nbsp;Max results</a>&nbsp;&nbsp;<a href="analysis_form" class="btn btn-info" role="button"><i class="glyphicon glyphicon-plus"></i>&nbsp;New Analysis</a></span> </h3>
+<!-- top -->
+<h3>&nbsp;&nbsp;Analyses 
+  <span class="pull-right">
+    <a id="sort" href="#" type="button" class="btn btn-default">
+      <i class="glyphicon glyphicon-sort-by-attributes"></i>
+      &nbsp;Sort</a>&nbsp;&nbsp;
+    <a id="max-results" href="#" type="button" class="btn btn-default">
+      <i class="glyphicon glyphicon-resize-vertical"></i>
+      &nbsp;Max results</a>
+    &nbsp;&nbsp;
+    <a href="analysis_form" class="btn btn-primary" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      &nbsp;
+      <strong>New Analysis</strong>
+    </a>
+  </span> 
+</h3>
+
+
 <br>
 <div class="table-responsive">
   <table class="table table-hover">
@@ -17,7 +34,14 @@
       <tr class="responsive" style="border:none;">
 	<td style="border:none;">
 	  <br>
-	  <a href ="{{ url_for('.analysis', id=analysis.id) }}"> <strong>{{ analysis.title }}</strong></a>&nbsp;&nbsp;<span class="label label-primary">{{ analysis.collaboration }}</span>
+	  <a href ="{{ url_for('.analysis', id=analysis.id) }}">
+	    <strong>{{ analysis.title }}</strong>
+	  </a>
+	  &nbsp;&nbsp;
+	  <span class="label label-primary" data-toggle="tooltip" data-placement="right" title="Collaboration">
+	    {{ analysis.collaboration }}
+	  </span>
+	  
 	  <br><br>
 	  <div class="more">{{ analysis.description }}</div>
 	  <br><br>
@@ -42,7 +66,7 @@
   $(document).ready(function() {
   $('.more').each(function () {
         var content = $(this).html();
-        $(this).html(shortStr(content, 300));
+        $(this).html(shortStr(content, content.length/2, 300));
   });
   })
 
