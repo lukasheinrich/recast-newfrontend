@@ -604,3 +604,25 @@ def rows_to_dict(rows):
     d.append(new_dict)
   
   return d
+
+@app.route("/arxiv", methods=['GET', 'POST'])
+def arxiv():
+  if request.args.has_key('id'):
+    arxiv_id = request.args.get('id')
+  print arxiv_id
+  fields = "title,author,doi,abstract,corporate_name"
+  url = "https://inspirehep.net/search?p={}&of=recjson&ot={}".format(arxiv_id,fields)
+  print url
+  response = requests.get(url)
+
+  if not response.content or len(response.json()) > 1 or len(response.json()) == 0:
+    """No record found"""
+    return "{}"
+  if len(response.json()) > 1:
+    """More than one record found"""
+    return "{N}"
+  
+  ret = response.json()[0]
+  ret = json.dumps(ret)
+  return ret
+  
