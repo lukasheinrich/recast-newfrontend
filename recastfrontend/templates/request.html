@@ -79,7 +79,7 @@
     
     
     <br><br>
-    <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
+    <button type="button" class="btn btn-default" id="btn-add-parameter-point"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
     <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Upload</button>
     <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Mint&nbsp;DOI</button>
     	       
@@ -175,11 +175,48 @@
   </div> <!-- End middle column -->
   </div>
   
-  
+
+<!-- Modal for adding parameter point -->
+<div id="modal-add-parameter-point" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="modalLabel">Add Parameter Point</h3>
+      </div>
+      <div class="modal-body">
+	<form method="post" class="form-horizontal" enctype="multipart/form-data">
+	  <div id="form-data">
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="parameter-point">Parameter Point:</label>
+	      <div class="col-md-6">
+		<input class="form-control" id="parameter-point" name="parameter-point" type="textt" value="">
+		<p class="text-muted"><small>Required valued of type "float"</small></p>
+	      </div>	   
+	    </div>
+	  
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
+	      <div class="col-md-6">
+		<input id="zip-file" name="zip-file" type="file">
+		<p class="text-muted"><small>.zip extension allowed</small></p>
+	      </div>
+	    </div>
+	    
+	  </div>
+	</form>
+      </div><!-- end of modal data -->
+      <div class="modal-footer">
+	<button class="btn btn-warning pull-left" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	<button class="btn btn-primary pull-right" id="parameter-accept-data" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
-
+<!-- Modal to contact requester -->
 <div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -222,6 +259,29 @@
   $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
   
 
+  $('#btn-add-parameter-point').click( function() {
+      $('#modal-add-parameter-point').modal('show');
+  });
+  
+  $('#parameter-accept-data').click( function() {
+      $('#modal-add-parameter-point').modal('hide');      
+      url = "/add-parameter-point";      
+      var request = $.ajax({
+                      type: "POST",
+                      url: url,
+                      success: function (msg) {         
+                      }
+                    });
+       request.done( function(){
+          window.location.replace(location.origin+"/request/"+"{{request.id}}");
+        });
+   });
+   
+  $('#parameter-reject-data').click( function() {
+      $('#modal-add-parameter-point').modal('hide');
+  });
+ 
+          
   })
 
     function changeGlyphicon(id){

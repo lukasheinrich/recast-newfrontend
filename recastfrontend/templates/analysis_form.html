@@ -178,7 +178,7 @@
   
   NProgress.start();
   NProgress.inc(0.6);
-  url = "./arxiv?id="+$('#arxiv-id').val()
+  url = "/arxiv?id="+$('#arxiv-id').val();
   $.ajax({
       type: "POST",
       url: url,

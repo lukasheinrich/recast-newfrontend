@@ -3,10 +3,10 @@
 {% block container %}
 <div class="container">
   <div class="row">
-    <div class="col-md-8 col-sm-12">
+    <div class="col-md-offset-2 col-md-8 col-sm-12">
       <div class="panel panel-default profile-panel">
 	<div class="panel-body">
-	  <div class="col-sm-9 col-xs-12 user-info-box">
+	  <div class="col-sm-12 col-xs-12 user-info-box">
 	    <h3 class="user-name">{{ db_user.name }}</h3>
 	    <p><strong><i class="fa fa-envelope"></i>&nbsp;E-mail: </strong><span class="user-email">{{db_user.email }}</span></p>
 	    <p><strong><i class="fa fa-bars"></i>&nbsp;ORCID ID: </strong><span class="user-orcid">{{db_user.orcid_id}}</span></p>	 
@@ -16,7 +16,7 @@
 
       <div class="panel panel-default">
 	<div class="panel-body">
-	  <h3><i></i>Tokens<a href="#newToken"><button id="upperNewToken" onclick="hideshow('upperNewToken')" type="text" class="btn btn-success pull-right">Generate new token</button></a></h3>    
+	  <h3><i></i>Tokens<!--<a href="#newToken"><button id="upperNewToken" onclick="hideshow('upperNewToken')" type="text" class="btn btn-success pull-right">Generate new token</button></a>--></h3>    
 	  <hr class="colorgraph">
 	  <table class="table table-hover table-responsive">
 	    <thead>

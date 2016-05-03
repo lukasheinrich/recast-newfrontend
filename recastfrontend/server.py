@@ -47,6 +47,7 @@ class User(login.UserMixin):
 def create_app():
   app = Flask(__name__)
   app.config.from_object(frontendconf['FLASKCONFIG'])
+  app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
   db.init_app(app)
   return app
   
@@ -626,3 +627,6 @@ def arxiv():
   ret = json.dumps(ret)
   return ret
   
+@app.route("/add-parameter-point", methods=['GET', 'POST'])
+def add_parameter_point():
+  return
