@@ -110,7 +110,37 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
       db.session.add(zip_file)
       db.session.commit()
                                 
+
+def createParameterPoint(app, request_id, parameter_point, zip_file, deposition_file_id, current_user, file_uuid):
+  with app.app_context():
+    #user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) == 1
+    point_request = dbmodels.PointRequest(requester_id = user_query[0].id,
+                                          scan_request_id = request_id)
+    db.session.add(point_request)
+    db.session.commit()
+
+    parameter_point = dbmodels.ParameterPoint(value = parameter_point,
+                                              point_request_id = point_request.id)
+    db.session.add(parameter_point)
+    db.session.commit()
     
+    basic_request = dbmodels.BasicRequest(requester_id = user_query[0].id,
+                                          point_request_id = point_request.id)
+    db.session.add(basic_request)
+    db.session.commit()
+    
+    request_file = dbmodels.RequestArchive(file_name = file_uuid,
+                                           path = './',
+                                           zenodo_file_id = deposition_file_id,
+                                           original_file_name = zip_file.filename,
+                                           basic_request_id = basic_request.id)
+    db.session.add(request_file)
+    db.session.commit()
+                   
+                                          
+                                          
     
 def createScanRequestFromForm(app, form, current_user):
   with app.app_context():

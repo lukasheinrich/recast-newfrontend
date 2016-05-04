@@ -184,8 +184,8 @@
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h3 class="modal-title" id="modalLabel">Add Parameter Point</h3>
       </div>
+      <form id="form-add-parameter-point" method="post" class="form-horizontal" enctype="multipart/form-data">
       <div class="modal-body">
-	<form method="post" class="form-horizontal" enctype="multipart/form-data">
 	  <div id="form-data">
 	    <div class="form-group required">
 	      <label class="control-label col-md-4" for="parameter-point">Parameter Point:</label>
@@ -204,12 +204,12 @@
 	    </div>
 	    
 	  </div>
-	</form>
       </div><!-- end of modal data -->
       <div class="modal-footer">
 	<button class="btn btn-warning pull-left" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-	<button class="btn btn-primary pull-right" id="parameter-accept-data" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	<button class="btn btn-primary pull-right" id="parameter-accept-data" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
@@ -263,13 +263,26 @@
       $('#modal-add-parameter-point').modal('show');
   });
   
-  $('#parameter-accept-data').click( function() {
-      $('#modal-add-parameter-point').modal('hide');      
-      url = "/add-parameter-point";      
+  $('#form-add-parameter-point').on('submit', function(e) {
+      $('#modal-add-parameter-point').modal('hide');     
+      e.preventDefault();
+      NProgress.start();
+      NProgress.inc(0.3);
+      var form_data = new FormData($('#form-add-parameter-point')[0]);
+      url = "/add-parameter-point?id="+"{{request.id}}";      
       var request = $.ajax({
                       type: "POST",
                       url: url,
+                      data: form_data,
+                      processData: false,
+                      contentType: false,
+                      dataFilter: function (msg){
+                          NProgress.inc(0.4);
+                          NProgress.inc(0.3);
+                          NProgress.done();
+                         },
                       success: function (msg) {         
+                        NProgress.done();
                       }
                     });
        request.done( function(){

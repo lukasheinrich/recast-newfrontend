@@ -8,44 +8,44 @@
   {{ form.hidden_tag() }}
   {{ parameter_points_form.hidden_tag() }}
 
-  <div class="panel panel-default col-md-offset-2">
+  <div class="panel panel-default">
     <div class="panel-heading">Request </div>
     <div class="panel-body">
       <br><br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="Analysis"> Analysis: </label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="Analysis"> Analysis </label>
+	<div class="col-md-offset-1 col-md-6">
 	  <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
 	</div>
       </div>
       <br>
       <div class="form-group required">
-	<label class="control-label col-md-4" for="{{ form.title.id }}"><i class="fa fa-book fa-fw"></i>&nbsp;{{ form.title.label }} </label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.title.id }}"><i class="fa fa-book fa-fw"></i>&nbsp;{{ form.title.label }} </label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.title(class='form-control') }}
 	  <p class="text-muted"><small>Required.</small></p>
 	</div>
       </div>
       <br>
       <div class="form-group required">
-	<label class="control-label col-md-4" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.model_name(class='form-control') }}
 	  <p class="text-muted"><small>Required.</small></p>
 	</div>
       </div>
       <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.reason_for_request(class='form-control') }}
 	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
       <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.additional_information(class='form-control') }}
 	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
@@ -54,57 +54,60 @@
     </div>
   </div>
     
-  <div class="panel panel-default col-md-offset-2">
+  <div class="panel panel-default">
     <div class="panel-heading">  Request Parameter Points </div>
     <div class="panel-content">
       <!-- Request Parameter Point form --> 
 
       <br><br>
-      <div id="copy-parameter-point">
-      <div class="panel panel-default col-md-10 col-md-offset-1">
-	<div class="panel-content">
-	  <button type="button" class="close">&times;</button>
-	  <br><br>
-	  <div class="form-group required">
-	    <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label.text }} </label>
-	    <div class="col-md-6">
-	      {{ parameter_points_form.parameter_point(class='form-control') }}
-	      <p class="text-muted"><small>Required value of type "float"</small></p>
-	    </div>
-	  </div>
-	  <br>
-	  <div class="form-group required">
-	    <label class="control-label col-md-4" for="{{ parameter_points_form.zip_file.id }} "><i class="fa fa-file-zip-o"></i>&nbsp;{{ parameter_points_form.zip_file.label.text }} </label>
-	    <div class="col-md-6">
-	      {{ parameter_points_form.zip_file }}
-	      <p class="text-muted"><small>.zip extension allowed</small></p>
-	  <!--	      <button type="button" class="btn btn-info">Upload file</button>	      -->
-	    </div>
-	  </div>
-	</div>
-      </div> <!--- End of each parameter point  -->
-      </div> <!-- Example of parameter point to copy -->
+      <div id="copy-parameter-point" class="container-fluid">
+	<div class="panel panel-default col-md-10 col-md-offset-1">
+	  <div class="panel-content">
+	    <button type="button" class="close">&times;</button>
+	    <br><br>
 
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="{{ parameter_points_form.parameter_point.id }}"> {{ parameter_points_form.parameter_point.label.text }} </label>
+	      <div class="col-md-6">
+		{{ parameter_points_form.parameter_point(class='form-control') }}
+		<p class="text-muted"><small>Required value of type "float"</small></p>
+	      </div>
+	    </div>
+	    <br>
+
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="{{ parameter_points_form.zip_file.id }} "><i class="fa fa-file-zip-o"></i>&nbsp;{{ parameter_points_form.zip_file.label.text }} </label>
+	      <div class="col-md-6">
+		{{ parameter_points_form.zip_file }}
+		<p class="text-muted"><small>.zip extension allowed</small></p>
+		<!--	      <button type="button" class="btn btn-info">Upload file</button>	      -->
+	      </div>
+	    </div>
+	    
+	  </div>
+	</div> <!--- End of each parameter point  -->
+      </div> <!-- Example of parameter point to copy -->
+      
       <div id="placeholder">
 	
       </div>
       <!-- onclick="arxiv(1602.07646)" -->
-      <br><br>
+      
 
 
-      <div class="">
-	<button id="btn-add-parameter-point" type="button" class="btn btn-success col-md-offset-10"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add parameter</button>
+      <div class="col-md-11">
+	<button id="btn-add-parameter-point" type="button" class="btn btn-success pull-right"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add parameter</button>
       </div>
-
-      <br><br>
+      <br><br><br>
+			       
 
     </div> <!-- End of parameter point panel -->
   </div>
     
   <br><br>
   <div>
-    <div class="col-md-offset-2">
-      <button type="button" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
+    <div class="col-md-12">
+      <button type="button" class="btn btn-warning pull-left"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
       <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
     </div>
   </div>

@@ -487,8 +487,7 @@ def list_subscriptions(analysis_id):
 @login.login_required
 def list_requests(analysis_id):
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.analysis_id == analysis_id).all()
-
-  return render_template('list_requests.html', requests = query)
+  return render_template('request_views.html', requests = query)
 
 def get_elements_for_page(page, PER_PAGE, count, obj):
   first_index = (page - 1) * PER_PAGE
@@ -629,4 +628,48 @@ def arxiv():
   
 @app.route("/add-parameter-point", methods=['GET', 'POST'])
 def add_parameter_point():
-  return
+  print "Parameter point function"
+  if request.args.has_key('id'):    
+    print "Id"
+    request_id = request.args.get('id')
+  else:
+    print "No request id found in the args"
+    return ""
+  
+  print "request id found"
+  print request.form
+  
+  parameter_point = request.form['parameter-point']
+  print "parameter found"
+  print parameter_point
+
+  print request.files
+  zip_file = request.files['zip-file']
+  print "file found"
+
+  print "Data found"
+  request_query = db.session.query(dbmodels.ScanRequest).filter(
+    dbmodels.ScanRequest.id == request_id).one()
+
+  file_uuid = str(uuid.uuid1())
+  zip_file.save(zip_file.filename)
+
+  synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                        AWS_SECRET_ACCESS_KEY,
+                        AWS_S3_BUCKET_NAME,
+                        zip_file,
+                        file_uuid)
+    
+  deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                request_query.zenodo_deposition_id,
+                                                file_uuid,
+                                                zip_file)
+    
+  synctasks.createParameterPoint(app,
+                                 request_id,
+                                 parameter_point,
+                                 zip_file,
+                                 deposition_file_id,
+                                 login.current_user,
+                                 file_uuid)
+  return ""

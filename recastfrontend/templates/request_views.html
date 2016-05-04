@@ -56,7 +56,7 @@
 	<br>
 	<span class="label label-info">{{request.analysis.collaboration}}</span>
 	&nbsp;&nbsp;<a href="{{ url_for('.analysis', id=request.analysis.id) }}">
-	  <span class="analysis-title">{{ request.analysis.title }}</span>
+	  <span class="analysis-title">{{ request.analysis.title }}</span></a>
 	<br><br><br>
 	
 	<span>
@@ -92,10 +92,10 @@
            $(this).html(new_content);
        });
       
-      $('.analysis-title').each(function() {
+       /**$('.analysis-title').each(function() {
            var content = $(this).html();
            $(this).html(shortStr(content, 40));
-       });
+       });**/
   })
 
   
