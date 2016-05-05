@@ -390,6 +390,13 @@ def analysis(id):
 @app.route("/analyses", methods=['GET', 'POST'])
 @login.login_required
 def analyses():
+  if request.args.has_key('sort'):
+    query  = db.session.query(dbmodels.Analysis).order_by(dbmodels.Analysis.title).all()
+    return render_template('analyses_views.html', analyses = query)
+
+  if request.args.has_key('max_results'):
+    pass
+
   query = db.session.query(dbmodels.Analysis).all()
   return render_template('analyses_views.html', analyses = query)
 
@@ -397,12 +404,16 @@ def analyses():
 @app.route('/requests', methods=['GET', 'POST'])
 @login.login_required
 def requests_views():
+  if request.args.has_key('sort'):
+    query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
+    return render_template('request_views.html', requests = query)
+
   query = db.session.query(dbmodels.ScanRequest).all()
   return render_template('request_views.html', requests = query)
 
 @app.route('/request/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def request_view(id):
+def request_view(id):  
   query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
   return render_template('request.html', request = query[0], bucket_name=AWS_S3_BUCKET_NAME)
 
@@ -577,20 +588,38 @@ def search():
   if request.method == 'POST':
     q = request.form['q']
     doc_type = None
+    print request.form['filter']
     if request.form['filter'] == 'Analysis':
       doc_type = 'analysis'
-    elif request.form['filter'] == 'Requests':
+      search_data = synctasks.search(ELASTIC_SEARCH_URL,
+                                     ELASTIC_SEARCH_AUTH,
+                                     ELASTIC_SEARCH_INDEX,
+                                     doc_type,
+                                     q)
+      ids = []
+      for entry in search_data['hits']['hits']:
+        ids.append(entry['_source']['id'])
+
+      ids.sort()
+      query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id.in_(ids)).all()
+      return render_template('analyses_views.html', analyses = query)
+                   
+    elif request.form['filter'] == 'Request':
       doc_type = 'requests'
-    elif request.form['filter'] == 'User':
-      doc_type = 'users'
-    
-    search_data = synctasks.search(ELASTIC_SEARCH_URL,
-                                   ELASTIC_SEARCH_AUTH,
-                                   ELASTIC_SEARCH_INDEX,
-                                   doc_type,
-                                   q)
-  else:
-    search_data = ""
+      search_data = synctasks.search(ELASTIC_SEARCH_URL,
+                                     ELASTIC_SEARCH_AUTH,
+                                     ELASTIC_SEARCH_INDEX,
+                                     doc_type,
+                                     q)
+      
+      ids = [1,2,3,4]
+      for entry in search_data['hits']['hits']:
+        ids.append(entry['_source']['id'])            
+
+      ids.sort()
+      query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id.in_(ids)).all()
+      print len(query)
+      return render_template('request_views.html', requests = query)
 
   return render_template('search.html', search_data=json.dumps(search_data['hits']['hits']))
 
@@ -634,7 +663,7 @@ def add_parameter_point():
     request_id = request.args.get('id')
   else:
     print "No request id found in the args"
-    return ""
+    return 
   
   print "request id found"
   print request.form
