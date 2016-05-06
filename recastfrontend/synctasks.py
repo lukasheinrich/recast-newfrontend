@@ -85,7 +85,7 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
       db.session.add(point_request)
       db.session.commit()
 
-      parameter_point = dbmodels.ParameterPoint(
+      parameter_point = dbmodels.PointCoordinate(
         value = parameter.parameter_point.data,
         point_request_id = point_request.id
         )
@@ -121,7 +121,7 @@ def createParameterPoint(app, request_id, parameter_point, zip_file, deposition_
     db.session.add(point_request)
     db.session.commit()
 
-    parameter_point = dbmodels.ParameterPoint(value = parameter_point,
+    parameter_point = dbmodels.PointCoordinate(value = parameter_point,
                                               point_request_id = point_request.id)
     db.session.add(parameter_point)
     db.session.commit()

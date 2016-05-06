@@ -103,17 +103,17 @@
 	<tbody>
 	  {% for point_request in request.scan_points %}
 	  
-	  {% if point_request.parameter_points[0] and point_request.requests[0].file_name[0] %}
+	  {% if point_request.point_coordinates[0] and point_request.requests[0].file_name[0] %}
 	  <tr>
 	  <th style="background-color:white;">
 	    <span class="col-md-2" style="display:inline-block;">
-	      {% if point_request.parameter_points[0].title %}	      
-	      {{ point_request.parameter_points[0].title }}
+	      {% if point_request.point_coordinates[0].title %}	      
+	      {{ point_request.point_coordinates[0].title }}
 	      {% else %}
 	      Parameter {{ loop.index0 }}
 	     {% endif %}
 	    </span>
-	    <span class="col-md-2" style="display:inline-block;">{{ point_request.parameter_points[0].value }}</span>
+	    <span class="col-md-2" style="display:inline-block;">{{ point_request.point_coordinates[0].value }}</span>
 	    <span class="col-md-3" style="display:inline-block;">
 	      <a class="btn btn-success" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
 		<i class="glyphicon glyphicon-download"></i>&nbsp;Download</a>	      
@@ -146,7 +146,7 @@
 	    <div id="jobs-{{ loop.index0 }}" class="collapse">
 	      <div class="col-md-10">
 		<br><br>
-		<p>Processing status of this parameter point on the backend</p>
+		<p>Processing status of this point coordinate on the backend</p>
 		<table class="table table-bordered table-condensed col-md-10">
 		  <thead>
 		    <tr>
@@ -183,7 +183,7 @@
     <div class="modal-content">
       <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="modalLabel">Add Parameter Point</h3>
+	<h3 class="modal-title" id="modalLabel">Add Point Coordinate</h3>
       </div>
       <form id="form-add-parameter-point" method="post" class="form-horizontal" enctype="multipart/form-data">
       <div class="modal-body">
