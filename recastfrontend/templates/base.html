@@ -10,7 +10,7 @@
 <!--- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
 
 
-<link rel="stylesheet" href="http://bootswatch.com/cerulean/bootstrap.min.css">
+<link rel="stylesheet" href="../static/bootstrap.min.css">
 
 <link rel="stylesheet" href="../static/card.css">
 <link rel="stylesheet" href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
@@ -18,10 +18,10 @@
 <!-- font awesome for icons -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-<script src="../static/sweetalert.min.js"></script>
+<script type="text/javascript" src="../static/sweetalert.min.js"></script>
 <link rel="stylesheet" href="../static/sweetalert.css">
 
-<script src="http://ricostacruz.com/nprogress/nprogress.js"></script>
+<script type="text/javascript" src="../static/nprogress.js"></script>
 <link rel="stylesheet" href="../static/nprogress.css">
 
 
@@ -31,6 +31,23 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script type="text/javascript">
+        MathJax.Hub.Config({
+          TeX: {
+            Macros: {
+              TeV: "\\mathrm{TeV}",
+              pT: "p_\\mathrm{T}",
+            }
+          }
+        });
+</script>
+
 
 <style>
 @import url('http://fonts.googleapis.com/css?family=Lato');
