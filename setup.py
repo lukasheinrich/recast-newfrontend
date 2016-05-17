@@ -22,7 +22,6 @@ setup(
     'requests',
     'boto3',
     'elasticsearch',
-    're',
     'psycopg2'
   ],
   entry_points = {
