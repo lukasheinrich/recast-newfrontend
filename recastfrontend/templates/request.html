@@ -76,102 +76,79 @@
       
 
     </div>
-    
-    <br><br><br>
-    
-    <br><br>
-    <button type="button" class="btn btn-default" id="btn-add-parameter-point"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
-    <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Upload</button>
-    <button class="btn btn-default"><i class="glyphicon glyphicon-upload"></i>&nbsp;Mint&nbsp;DOI</button>
+    <span>
+      <br><br><br><br>
+    </span>
+    <button type="button" class="btn btn-info pull-right" id="btn-add-parameter-point"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
     	       
-    
+    <span>
     <br>
     <br>
     <br>
-    <div class="table-responsive">
-      <table class="table">
-	<thead>
-	  <tr>
-	    <th>
-	      <span class="col-md-2" style="display:inline-block;">Parameter</span>
-	      <span class="col-md-2" style="display:inline-block;">Value</span>
-	      <span class="col-md-4" style="display:inline-block;">File</span>	      
-	      <span class="col-md-4" style="display:inline-block;">Actions</span>
-	      <th>
-	  </tr>
-	</thead>
-	<tbody>
-	  {% for point_request in request.scan_points %}
-	  
-	  {% if point_request.point_coordinates[0] and point_request.requests[0].file_name[0] %}
-	  <tr>
-	  <th style="background-color:white;">
-	    <span class="col-md-2" style="display:inline-block;">
-	      {% if point_request.point_coordinates[0].title %}	      
-	      {{ point_request.point_coordinates[0].title }}
-	      {% else %}
-	      Parameter {{ loop.index0 }}
-	     {% endif %}
-	    </span>
-	    <span class="col-md-2" style="display:inline-block;">{{ point_request.point_coordinates[0].value }}</span>
-	    <span class="col-md-3" style="display:inline-block;">
-	      <a class="btn btn-success" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
-		<i class="glyphicon glyphicon-download"></i>&nbsp;Download</a>	      
-	    </span>
-	    <span class="col-md-2" style="display:inline-block;">
-	    <div class="dropdown">
-	      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" id="btn-process">Process
-		<span class="caret"></span>
-	      </button>
-	      <ul class="dropdown-menu" role="menu" aria-labelledby="btn-process">
-		<li role="presentation"><a role="menuitem" href="#">example1</a></li>
-		<li role="presentation"><a role="menuitem" href="#">example2</a></li>
-	      </ul>
-	    </div>
-	    </span>
-	    <span class="col-md-2" style="display:inline-block;">	    
-	    <div class="dropdown">
-	      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" id="btn-process">Results
-		<span class="caret"></span>
-	      </button>
-	      <ul class="dropdown-menu" role="menu" aria-labelledby="btn-process">
-		<li role="presentation"><a role="menuitem" href="#">example1</a></li>
-		<li role="presentation"><a role="menuitem" href="#">example2</a></li>
-	      </ul>
-	    </div>
-	    </span>
-	    <span class="col-md-1" style="display:inline-block;" data-toggle="tooltip" data-placement="right" title="Press to check job processing status">
-	      <i id="drop-jobs-{{ loop.index0 }}" onClick="changeGlyphicon('#drop-jobs-{{loop.index0}}')" class="glyphicon glyphicon-chevron-down" style="color:blue;cursor:pointer;" data-toggle="collapse" data-target="#jobs-{{loop.index0}}"></i>
-	    </span>
-	    <div id="jobs-{{ loop.index0 }}" class="collapse">
-	      <div class="col-md-10">
-		<br><br>
-		<p>Processing status of this point coordinate on the backend</p>
-		<table class="table table-bordered table-condensed col-md-10">
-		  <thead>
-		    <tr>
-		      <th class="col-md-6">Job ID</th>
-		      <th class="col-md-2">Backend</th>
-		      <th class="col-md-2">State</th>
-		    </tr>
-		  </thead>
-		  <tr>
-		    <td class="col-md-6"><a href="#">1a09f51c-5872-11e5-a86c-02163e008f91</a></td>
-		    <td class="col-md-2">(Placeholder)</td>
-		    <td class="col-md-2">(Placeholder)</td>
-		  </tr>
-		</table>
-	      </div>
-	    </div>
-	  </th>
-	  <tr>
-	    {% endif %}
-	  {% endfor %}
-	</tbody>
-      </table>
-    </div>
+    </span>
+    <div ng-controller="parameterCtrl as ctrl">
+    {% for point_request in request.scan_points %}
+    {% if loop.index0 > 0 %}
+    <span>
+      <br><br>
+    </span>
+    {% endif %}
+    <div class="card col-md-12">
+      <br>
+      <span class="col-md-3"><strong>&nbsp;&nbsp;&nbsp;&nbsp;Parameter {{loop.index0+1}} </strong></span>
+      <span class="col-md-2">
+	<!--<a class="btn btn-success btn-sm" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
+	  <i class="glyphicon glyphicon-download"></i>&nbsp;Download</a>	      -->
+      </span>
+      <span class="col-md-6"></span>
+      <!--{#{% if point_request.point_coordinates[0] and point_request.requests[0].file_name[0] %}#}-->	 
+      <div class="col-md-12">
+	<div class="col-md-4">	  
+	  <br><br>
+	  <a class="btn btn-success btn-sm" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
+	  <i class="glyphicon glyphicon-download"></i>&nbsp;Download File</a>
+	  <br><br>
+	  <a class="btn btn-info btn-sm disabled" href="#"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;View Response</a>
+	  <br><br>
+	</div>
+	<div class="table-responsive col-md-8">
+	  <table class="table">
+	    <thead>
+	      <tr>
+		<th>
+		  <span class="col-md-6" style="display:inline-block;">Coordinate</span>
+		  <span class="col-md-6" style="display:inline-block;">Value</span>
+		<th>
+	      </tr>
+	    </thead>
+	    <tbody>	  
+	      {% for coordinate in point_request.point_coordinates %}
+	      
+	      <tr>
+		<th style="background-color:white;">
+		  <span class="col-md-6" style="display:inline-block;">	     
+		    {%  if coordinate.title %}
+		    {{ coordinate.title }}
+		    {% else %}
+		    Coordinate {{ loop.index0 }}
+		    {% endif %}
+		    
+		  </span>
+		  <span class="col-md-6" style="display:inline-block;">{{ coordinate.value }}</span>
+		</th>
+	      <tr>
+		{% endfor %}	    
+	    </tbody>
+	  </table>
+	  <span><button type="button" id="btn-add-coordinate-{{loop.index0}}" class="btn btn-primary btn-sm pull-right" ng-click="ctrl.addCoordinate({{point_request.id}})"><i class="glyphicon glyphicon-plus"></i>&nbsp;New Coordinate</button>
+	    <br><br>
+	  </span>
+	</div><!-- end of div table responsive -->
+      </div>
       
-    
+    </div>
+    {% endfor %}  
+    </div><!-- ng-controller -->
     
   </div> <!-- End middle column -->
   </div>
@@ -183,38 +160,79 @@
     <div class="modal-content">
       <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="modalLabel">Add Point Coordinate</h3>
+	<h3 class="modal-title" id="modalLabel">Add Parameter</h3>
       </div>
       <form id="form-add-parameter-point" method="post" class="form-horizontal" enctype="multipart/form-data">
-      <div class="modal-body">
+	<div class="modal-body">
 	  <div id="form-data">
 	    <div class="form-group required">
-	      <label class="control-label col-md-4" for="parameter-point">Parameter Point:</label>
-	      <div class="col-md-6">
-		<input class="form-control" id="parameter-point" name="parameter-point" type="textt" value="">
-		<p class="text-muted"><small>Required valued of type "float"</small></p>
+	      <label class="control-label col-md-4" for="parameter-point">Parameter:</label>
+	      <div class="col-md-4">
+		<input class="form-control" id="coordinate-name" name="coordinate-name" type="textt" value="" placeholder="Name">		
+		<p class="text-muted"><small>Optional name</small></p>
 	      </div>	   
-	    </div>
-	  
-	    <div class="form-group required">
-	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
-	      <div class="col-md-6">
-		<input id="zip-file" name="zip-file" type="file">
-		<p class="text-muted"><small>.zip extension allowed</small></p>
+	      <div class="col-md-4">
+		<input class="form-control" id="coordinate-value" name="coordinate-value" type="text" value="" placeholder="Value">
+		<p class="text-muted"><small>Required value of type "float"</small></p>
 	      </div>
+	      
+	      <div class="form-group required">
+		<label class="control-label col-md-4" for="zip-file">Zip File:</label>
+		<div class="col-md-6">
+		  <input id="zip-file" name="zip-file" type="file">
+		  <p class="text-muted"><small>.zip extension allowed</small></p>
+		</div>
+	      </div>
+	      
 	    </div>
-	    
 	  </div>
-      </div><!-- end of modal data -->
-      <div class="modal-footer">
-	<button class="btn btn-warning pull-left" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-	<button class="btn btn-primary pull-right" id="parameter-accept-data" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-      </div>
+	</div><!-- end of modal data -->
+	  
+	<div class="modal-footer">
+	  <button class="btn btn-warning pull-left" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	  <button class="btn btn-primary pull-right" id="parameter-accept-data" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	</div>
       </form>
     </div>
   </div>
 </div>
 
+
+<div id="modal-add-coordinate" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="parameterCtrl as ctrl">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
+      </div>
+      <form id="form-add-coordinate" method="post" class="form-horizontal">
+	<div class="modal-body">
+	  <div id="form-data-coordinate">
+	    
+	    <div class="form-group required">
+	      <label class="control-label col-md-3" for="coordinate">Coordinate:</label>
+	      <div class="col-md-4">
+		<input class="form-control" ng-model="ctrl.coordinate.name" id="coordinate-name-2" name="coordinate-name" type="text" value="" placeholder="Name">
+		<p class="text-muted"><small>Optional name</small></p>
+	      </div>
+
+	      <div class="col-md-4">
+		<input class="form-control" id="coordinate-value-2" ng-model="ctrl.coordinate.value" name="coordinate-value" type="text" value="" placeholder="Value">
+		<p class="text-muted"><small>Required value of type "float" </small></p>
+	      </div>	      
+	    </div>
+	  </div>
+	</div><!-- end modal body -->
+	
+	<div class="modal-footer">
+	  <button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	  <button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	  </div>
+	</div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
 <!-- Modal to contact requester -->
@@ -236,6 +254,7 @@
 	    <label>Message</label>
 	    <textarea class="form-control" placeholder="Your message here.."></textarea>
 	  </div>
+
 	  <div class="form-group">
 	    <label>E-mail</label>
 	    <input class="form-control" placeholder="email@you.com" data-placement="top" type="text">
@@ -255,59 +274,89 @@
 
 <script type="text/javascript">
 
-  $(document).ready(function() {
-  var analysis_content = $('#analysis-title').html();
-  $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
+angular.module('recastApp', [])
+    .controller('parameterCtrl', ['$http', 'PointRequestService', function($http, prs) {
+	var self = this;
+	self.addCoordinate = function(pid) {
+	    prs.setID(pid);
+	    $('#modal-add-coordinate').modal('show');	    
+	};
+	self.submit = function() {
+	    self.hideModal();
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    $http.post('/add-coordinate/'+prs.getID(), self.coordinate)
+		.then(function(reponse) {
+		    NProgress.inc(0.5);
+		    self.coordinate = {};
+		    NProgress.done();		    
+		    location.reload();
+		});
+	};
+	self.hideModal = function() {
+	    console.log('hide modal');
+	    $('#modal-add-coordinate').modal('hide');
+	};
+    }])
+
+    .factory('PointRequestService', [function() {
+	/* Service to store point request ID */
+	point_request_id = 0;
+	return {
+	    setID: function(ID) {
+		point_request_id = ID;
+	    },
+	    getID: function() {
+		return point_request_id;
+	    }
+	};	     
+    }]);
+
+$(document).ready(function() {
+    var analysis_content = $('#analysis-title').html();
+    $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
   
 
-  $('#btn-add-parameter-point').click( function() {
-      $('#modal-add-parameter-point').modal('show');
-  });
-  
-  $('#form-add-parameter-point').on('submit', function(e) {
-      $('#modal-add-parameter-point').modal('hide');     
-      e.preventDefault();
-      NProgress.start();
-      NProgress.inc(0.3);
-      var form_data = new FormData($('#form-add-parameter-point')[0]);
-      url = "/add-parameter-point?id="+"{{request.id}}";      
-      var request = $.ajax({
-                      type: "POST",
-                      url: url,
-                      data: form_data,
-                      processData: false,
-                      contentType: false,
-                      dataFilter: function (msg){
-                          NProgress.inc(0.4);
-                          NProgress.inc(0.3);
-                          NProgress.done();
-                         },
-                      success: function (msg) {         
-                        NProgress.done();
-                      }
-                    });
-       request.done( function(){
-          window.location.replace(location.origin+"/request/"+"{{request.id}}");
+    $('#btn-add-parameter-point').click( function() {
+	$('#modal-add-parameter-point').modal('show');
+    });
+    
+    $('#parameter-reject-data').click( function() {
+	$('#modal-add-parameter-point').modal('hide');
+    });
+			     
+    
+    $('#form-add-parameter-point').on('submit', function(e) {
+	$('#modal-add-parameter-point').modal('hide');     
+	e.preventDefault();
+	NProgress.start();
+	var form_data = new FormData($('#form-add-parameter-point')[0]);
+	url = "/add-parameter-point?id="+"{{request.id}}";      
+	NProgress.inc(0.3);
+	var request = $.ajax({
+            type: "POST",
+            url: url,
+            data: form_data,
+            processData: false,
+            contentType: false,
+            dataFilter: function (msg){
+                NProgress.inc(0.4);
+                NProgress.inc(0.3);
+                NProgress.done();
+            },
+            success: function (msg) {         
+                NProgress.done();
+            }
         });
-   });
-   
-  $('#parameter-reject-data').click( function() {
-      $('#modal-add-parameter-point').modal('hide');
-  });
- 
+	request.done( function(){
+            window.location.replace(location.origin+"/request/"+"{{request.id}}");
+        });
+   });   
+    
           
-  })
+})
 
-    function changeGlyphicon(id){
-      if ( $(id).attr('class') == 'glyphicon glyphicon-chevron-down'){
-             $(id).removeClass();
-             $(id).addClass('glyphicon glyphicon-chevron-up');
-       }
-       else {
-             $(id).removeClass();
-             $(id).addClass('glyphicon glyphicon-chevron-down');
-       }
-  }
+
   
 </script>  
 

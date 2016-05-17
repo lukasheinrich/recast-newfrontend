@@ -14,6 +14,8 @@ import recastdb.models as dbmodels
 import forms
 from werkzeug import secure_filename
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+import re
+
 
 import uuid
 
@@ -259,55 +261,105 @@ def request_form(id):
   if request.method == 'POST':
     if request_form.validate_on_submit():
 
-      this_file = request.files['zip_file']
-
+      ''' Simple algorithm to gather the fields added dynamically 
+           what we eventually want is to group all point_coordinate_X-y in the corresp. X's list
+                where X is the parameter number and Y is the point coordinate(Axis)
+      '''
+      dict_value = {'1': 1} # for the initial parameter point, already present in WTForm
+      for k in request.form.keys():
+        if 'value_point_coordinate_' in k:
+          #Get the Parameter number 
+          #substring between last '_' and '-'
+          parameter_number = int((re.search('coordinate_(.*)-', k)).group(1))
+          if dict_value.has_key(str(parameter_number)):
+            dict_value[str(parameter_number)] += 1
+          else:
+            dict_value[str(parameter_number)] = 1
+            
+        
+      parameter_list = []
+      for k, v in dict_value.iteritems():
+        parameter = []
+        i = 1
+        if k == '1':
+          parameter.append('value_point_coordinate')
+          v -= 1
+        while v > 0:
+          value_id_name = 'value_point_coordinate_'+str(k)+'-'+str(i)
+          if  request.form.has_key(value_id_name):
+            parameter.append(value_id_name)
+            v -= 1
+          i += 1
+        parameter_list.append(parameter)
+      
       request_uuid = str(uuid.uuid1())
       deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
                                                  request_uuid,
                                                  login.current_user,
-                                                 request_form.reason_for_request.data)
-      if this_file:
-        parameter_points = []
-        for i, z_file in enumerate(request.files):
-          '''Loop through the parameter points'''
-          zip_file = request.files[z_file]  
+                                                 request_form.reason_for_request.data,
+                                                 request_form.title.data)
+      
+      request_form.uuid.data = request_uuid
+      request_form.zenodo_deposition_id.data = deposition_id
 
-          file_uuid = str(uuid.uuid1())
+      request_id = synctasks.createRequest(app, 
+                                           request_form, 
+                                           login.current_user)
 
-          zip_file.save(zip_file.filename)
-          
-          synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                                AWS_SECRET_ACCESS_KEY,
-                                AWS_S3_BUCKET_NAME,
-                                zip_file,
-                                file_uuid)
-          deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                        deposition_id,
-                                                        file_uuid,
-                                                        zip_file)
-          #Uncomment when the website goes live
-          #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
+      for parameter in parameter_list:
+        print parameter
+        #this is where I create a new Point request and retrieve its ID
+        point_request_id = synctasks.createPointRequest(app,
+                                                        request_id,
+                                                        login.current_user)
+        #Upload file on AWS and save into DB
+        if parameter[0] == "value_point_coordinate":
+          parameter_number = 1
+          zip_file_form_name = 'zip_file'
+        else:
+          parameter_number = int((re.search('coordinate_(.*)-', parameter[0])).group(1))
+          zip_file_form_name = 'zip_file_'+str(parameter_number)
 
-          parameter_point = "parameter_point"
-          if not i==0:
-            parameter_point = '{}_{}'.format(parameter_point, str(i+1))
-          
-          parameter_val = 0.0
-          if request.form.has_key(parameter_point):
-            parameter_val = request.form[parameter_point]
-                                 
-          parameter = forms.RequestParameterPointsSubmitForm()
-          parameter.parameter_point.data = parameter_val
-          parameter.zip_file.data = zip_file
-          parameter.zenodo_file_id.data =deposition_file_id
-          parameter.uuid.data = str(file_uuid)
 
-          parameter_points.append(parameter)
-
-        request_form.zenodo_deposition_id.data = deposition_id
-        request_form.uuid.data = request_uuid
+        print zip_file_form_name
+        zip_file = request.files[zip_file_form_name]
         
-      synctasks.createRequestFromForm(app, request_form, login.current_user, parameter_points)
+        file_uuid = str(uuid.uuid1())
+        
+        zip_file.save(zip_file.filename)
+        
+        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                              AWS_SECRET_ACCESS_KEY,
+                              AWS_S3_BUCKET_NAME,
+                              zip_file,
+                              file_uuid)
+        
+        deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                      deposition_id,
+                                                      file_uuid,
+                                                      zip_file)
+        
+        '''Uncomment when the website goes live'''
+        #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
+                  
+        synctasks.createRequestArchive(app,
+                                       login.current_user,
+                                       point_request_id,
+                                       file_uuid,
+                                       deposition_file_id,
+                                       zip_file.filename)
+        for coordinate in parameter:
+          #Add each Point coordinate
+          name_id_name = coordinate.replace("value", "name")
+          coordinate_value = request.form[coordinate]
+          coordinate_name = request.form[name_id_name]
+          
+          synctasks.createPointCoordinate(app,
+                                          login.current_user,
+                                          coordinate_name,
+                                          coordinate_value,
+                                          point_request_id)
+
       flash('success!', 'success')
       return redirect(url_for('analyses'))
   
@@ -657,26 +709,17 @@ def arxiv():
   
 @app.route("/add-parameter-point", methods=['GET', 'POST'])
 def add_parameter_point():
-  print "Parameter point function"
-  if request.args.has_key('id'):    
+  if request.args.has_key('id'):
     print "Id"
     request_id = request.args.get('id')
   else:
     print "No request id found in the args"
     return 
   
-  print "request id found"
-  print request.form
-  
-  parameter_point = request.form['parameter-point']
-  print "parameter found"
-  print parameter_point
-
-  print request.files
+  coordinate = request.form['coordinate-value']
+  coordinate_name = request.form['coordinate-name']
   zip_file = request.files['zip-file']
-  print "file found"
 
-  print "Data found"
   request_query = db.session.query(dbmodels.ScanRequest).filter(
     dbmodels.ScanRequest.id == request_id).one()
 
@@ -693,12 +736,60 @@ def add_parameter_point():
                                                 request_query.zenodo_deposition_id,
                                                 file_uuid,
                                                 zip_file)
-    
-  synctasks.createParameterPoint(app,
-                                 request_id,
-                                 parameter_point,
-                                 zip_file,
-                                 deposition_file_id,
+  
+  point_request_id = synctasks.createPointRequest(app,
+                                                  request_id,
+                                                  login.current_user
+                                                  )
+
+  synctasks.createPointCoordinate(app,
+                                  login.current_user,
+                                  coordinate_name,
+                                  coordinate,
+                                  point_request_id
+                                  )
+
+  synctasks.createRequestArchive(app,
                                  login.current_user,
-                                 file_uuid)
+                                 point_request_id,
+                                 file_uuid,
+                                 deposition_file_id,
+                                 zip_file.filename
+                                 )
   return ""
+
+
+
+@app.route("/add-coordinate", methods=['GET', 'POST'])
+@app.route("/add-coordinate/<int:point_request_id>", methods=['GET', 'POST'])
+def add_coordinate(point_request_id):
+  if request.method == 'POST':
+    
+    point_request_query = db.session.query(dbmodels.PointRequest).filter(
+      dbmodels.PointRequest.id == point_request_id).one()
+
+
+    data = json.loads(request.data.decode())
+    coordinate = data['value']
+    coordinate_name = data['name']
+    point_coordinate_id = synctasks.createPointCoordinate(app,
+                                                          login.current_user,
+                                                          coordinate_name,
+                                                          coordinate,
+                                                          point_request_query.id)
+    #return point_coordinate_id
+    return ""
+
+  return ""
+           
+@app.route("/analysis-number")
+def analysis_number():
+  analyses = db.session.query(dbmodels.Analysis).all()
+  requests = db.session.query(dbmodels.ScanRequest).all()
+  
+  
+
+  data = {}
+  data['analyses'] = len(analyses)
+  data['requests'] = len(requests)
+  return jsonify(data)

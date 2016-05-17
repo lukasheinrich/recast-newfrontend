@@ -1,4 +1,5 @@
 // Javascript file for Recast
+angular.module('recastApp', []);
 
 window.onload = prepareLinks;
 
