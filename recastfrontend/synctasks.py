@@ -58,6 +58,77 @@ def createRunConditionFromForm(app, form, current_user):
 
 
 # Request tables --------------------------------------------------------------------------
+def createRequest(app, request_form, current_user):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query)==1
+
+    scan_request = dbmodels.ScanRequest(
+      requester_id = user_query[0].id,
+      title = request_form.title.data,
+      reason_for_request = request_form.reason_for_request.data,
+      additional_information = request_form.additional_information.data,
+      analysis_id = request_form.analysis_id.data,
+      zenodo_deposition_id = request_form.zenodo_deposition_id.data,
+      uuid = request_form.uuid.data,
+      post_date = datetime.date.today()
+    )
+    db.session.add(scan_request)
+    db.session.commit()
+    
+    return scan_request.id
+
+def createPointRequest(app, request_id, current_user):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) == 1
+    
+    point_request = dbmodels.PointRequest(
+      requester_id = user_query[0].id,
+      scan_request_id = request_id
+      )
+    db.session.add(point_request)
+    db.session.commit()
+    
+    return point_request.id
+
+def createRequestArchive(app, current_user, PR_id, file_name, zenodo_file_id, original_name):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) == 1
+
+    basic_request = dbmodels.BasicRequest(
+      requester_id = user_query[0].id,
+      point_request_id = PR_id
+    )
+    db.session.add(basic_request)
+    db.session.commit()
+
+    zip_file = dbmodels.RequestArchive(
+      file_name = file_name,
+      path = './',
+      zenodo_file_id = zenodo_file_id,
+      original_file_name = original_name,
+      basic_request_id = basic_request.id
+    )
+    db.session.add(zip_file)
+    db.session.commit()
+    return zip_file.id
+
+def createPointCoordinate(app, current_user, name, value, PR_id):
+  with app.app_context():
+    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
+    assert len(user_query) ==1
+    
+    point_coordinate = dbmodels.PointCoordinate(value = value,
+                                                point_request_id = PR_id,
+                                                title = name)
+    db.session.add(point_coordinate)
+    db.session.commit()
+
+    return point_coordinate.id
+
+
 def createRequestFromForm(app, request_form, current_user, parameter_points):
   with app.app_context():
     user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
@@ -109,38 +180,6 @@ def createRequestFromForm(app, request_form, current_user, parameter_points):
         )
       db.session.add(zip_file)
       db.session.commit()
-                                
-
-def createParameterPoint(app, request_id, parameter_point, zip_file, deposition_file_id, current_user, file_uuid):
-  with app.app_context():
-    #user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
-    user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
-    assert len(user_query) == 1
-    point_request = dbmodels.PointRequest(requester_id = user_query[0].id,
-                                          scan_request_id = request_id)
-    db.session.add(point_request)
-    db.session.commit()
-
-    parameter_point = dbmodels.PointCoordinate(value = parameter_point,
-                                              point_request_id = point_request.id)
-    db.session.add(parameter_point)
-    db.session.commit()
-    
-    basic_request = dbmodels.BasicRequest(requester_id = user_query[0].id,
-                                          point_request_id = point_request.id)
-    db.session.add(basic_request)
-    db.session.commit()
-    
-    request_file = dbmodels.RequestArchive(file_name = file_uuid,
-                                           path = './',
-                                           zenodo_file_id = deposition_file_id,
-                                           original_file_name = zip_file.filename,
-                                           basic_request_id = basic_request.id)
-    db.session.add(request_file)
-    db.session.commit()
-                   
-                                          
-                                          
     
 def createScanRequestFromForm(app, form, current_user):
   with app.app_context():
@@ -223,15 +262,17 @@ def downloadFromAWS(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME
   s3 = session.resource('s3')
   s3.Bucket(AWS_S3_BUCKET_NAME).download(Key=str(file_uuid), Filename=original_file_name)
 
-def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, description):
+def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, description, request_title):
 
   url = "https://zenodo.org/api/deposit/depositions/?access_token={}".\
       format(ZENODO_ACCESS_TOKEN)
   headers = {"Content-Type": "application/json"}
-  description = "RECAST_request: {} Requester: {} ORCID: {} Request_description: {}".format(request_uuid, 
-             current_user.name(), 
-             current_user.get_id(),
-             description)
+  description = "RECAST_request: {} Requester: {} ORCID: {} Request_title: {} Request_description: {}".format(
+    request_uuid, 
+    current_user.name(), 
+    current_user.get_id(),
+    request_title,
+    description)
       
   deposition_data = {"metadata":
                         {
@@ -239,7 +280,7 @@ def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, descriptio
       "upload_type": "dataset",
       "creators": [{"name": "Bora, Christian"}],
       "description": description,
-      "title": "Sample title"
+      "title": request_title
       }
                       }
   response = requests.post(url, data=json.dumps(deposition_data), headers=headers)
