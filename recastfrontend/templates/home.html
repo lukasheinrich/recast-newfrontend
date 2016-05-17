@@ -69,27 +69,5 @@
       </div>
     </div>
   </div>
-</div>
-	
-<script type="text/javascript">
-  
-  angular.module('recastApp', [])
-    .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
-	var self = this;
-	self.analyses = "-";
-	self.requests = "-";
-	
-	$interval( function() {
-	    $http.get('/analysis-number')
-		.then(function(response) {
-		    self.analyses = response.data.analyses;
-		    self.requests = response.data.requests;
-		});
-	}, 3000);
-	
-
-    }]);
-	
-</script>
-
+</div>	
 {% endblock %}

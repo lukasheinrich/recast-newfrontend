@@ -1,8 +1,60 @@
 // Javascript file for Recast
-try{
-    angular.module('recastApp');
-}
-catch(err){}
+
+//angular App
+angular.module('recastApp', [])
+    .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
+	var self = this;
+	self.analyses = 0;
+	self.requests = 0;
+	
+	$interval( function() {
+	    $http.get('/analysis-number')
+		.then(function(response) {
+		    self.analyses = response.data.analyses;
+		    self.requests = response.data.requests;
+		});
+	},3000);
+    }])
+    
+    
+    .controller('parameterCtrl', ['$http', 'PointRequestService', function($http, prs) {
+	var self = this;
+	self.addCoordinate = function(pid) {
+	    prs.setID(pid);
+	    $('#modal-add-coordinate').modal('show');	    
+	};
+	self.submit = function() {
+	    self.hideModal();
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    $http.post('/add-coordinate/'+prs.getID(), self.coordinate)
+		.then(function(reponse) {
+		    NProgress.inc(0.5);
+		    self.coordinate = {};
+		    NProgress.done();		    
+		    location.reload();
+		});
+	};
+	self.hideModal = function() {
+	    console.log('hide modal');
+	    $('#modal-add-coordinate').modal('hide');
+	};
+    }])
+
+    .factory('PointRequestService', [function() {
+	/* Service to store point request ID */
+	point_request_id = 0;
+	return {
+	    setID: function(ID) {
+		point_request_id = ID;
+	    },
+	    getID: function() {
+		return point_request_id;
+	    }
+	};	     
+    }]);
+
+
     
 
 
