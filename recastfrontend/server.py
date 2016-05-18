@@ -707,18 +707,11 @@ def arxiv():
   ret = json.dumps(ret)
   return ret
   
-@app.route("/add-parameter-point", methods=['GET', 'POST'])
-def add_parameter_point():
-  if request.args.has_key('id'):
-    print "Id"
-    request_id = request.args.get('id')
-  else:
-    print "No request id found in the args"
-    return 
-  
-  coordinate = request.form['coordinate-value']
-  coordinate_name = request.form['coordinate-name']
-  zip_file = request.files['zip-file']
+@app.route("/add-parameter/<int:request_id>", methods=['GET', 'POST'])
+def add_parameter_point(request_id):
+  coordinate = request.form['value']
+  coordinate_name = request.form['name']
+  zip_file = request.files['file']
 
   request_query = db.session.query(dbmodels.ScanRequest).filter(
     dbmodels.ScanRequest.id == request_id).one()
@@ -754,8 +747,7 @@ def add_parameter_point():
                                  point_request_id,
                                  file_uuid,
                                  deposition_file_id,
-                                 zip_file.filename
-                                 )
+                                 zip_file.filename)
   return ""
 
 
