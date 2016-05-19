@@ -6,7 +6,7 @@
 <form method="post" class="form-horizontal" enctype="multipart/form-data">
   {{ form.hidden_tag() }}
   {{ parameter_points_form.hidden_tag() }}
-
+  <br><br>
   <div class="panel panel-default">
     <div class="panel-heading">Request </div>
     <div class="panel-body">
@@ -14,7 +14,7 @@
       <div class="form-group">
 	<label class="control-label col-md-3" for="Analysis"> Analysis </label>
 	<div class="col-md-offset-1 col-md-6">
-	  <textarea class="form-control" id="analysis" type="text" placeholder="{{ analysis.title }}" disabled></textarea>
+	  <h4> {{analysis.title}}</h4>
 	</div>
       </div>
       <br>
@@ -37,7 +37,7 @@
       <div class="form-group">
 	<label class="control-label col-md-3" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
 	<div class="col-md-offset-1 col-md-6">
-	  {{ form.reason_for_request(class='form-control') }}
+	  {{ form.reason_for_request(class='form-control', rows="10") }}
 	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
@@ -45,7 +45,7 @@
       <div class="form-group">
 	<label class="control-label col-md-3" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
 	<div class="col-md-offset-1 col-md-6">
-	  {{ form.additional_information(class='form-control') }}
+	  {{ form.additional_information(class='form-control', rows="6") }}
 	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>

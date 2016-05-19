@@ -20,16 +20,19 @@
   <div class="col-md-8">
     <br><br><br>
 
-    <div class="card col-md-12">
-      <h3 style="margin-top:5px">{{ request.title }}</h3>
+    <div class="card col-md-12" style="box-shadow: 1px 1px 1px 5px #f2efef;">
+      <h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
       <br>
+      <div class="text-center">
       <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
+
       {% if request.post_date %}
-      <span>{{ request.post_date }}</span>
+
+      <span class="label label-default">{{ request.post_date }}</span>
       {% endif %}
-      <br><br>
+
       {% if request.description_of_model %}
-      <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span>
+      <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span> 
       {% endif %}
       
 	      
@@ -37,14 +40,19 @@
       {% if request.status %}
       <span class="label label-warning"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}</span>
       {% endif %}
+
       
       {% if request.uuid %}	     
+      <span><p> </p> </span>
+
       <span class="label label-primary">
+
 	<i class="glyphicon glyphicon-tags"></i>
-	&nbsp;<strong>uuid:</strong>&nbsp;{{ request.uuid }}
+	<strong>uuid:</strong>{{ request.uuid }}
       </span>
-      {% endif %}
       
+      {% endif %}
+      </div>
       
       <br><br>
       <span>

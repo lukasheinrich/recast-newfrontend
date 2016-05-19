@@ -785,3 +785,7 @@ def analysis_number():
   data['analyses'] = len(analyses)
   data['requests'] = len(requests)
   return jsonify(data)
+
+@app.route("/response/<int:response_id>")
+def response(response_id):
+  return render_template('response.html')
