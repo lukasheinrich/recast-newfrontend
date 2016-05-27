@@ -7,92 +7,193 @@
   <title>RECAST - An Analysis Reinterpretation Framework</title>
   
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="../static/style.css">
-<link rel="stylesheet" href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
+<!--- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
+<link rel="stylesheet" 
+      href="https://bootswatch.com/cerulean/bootstrap.min.css">
+<!--<link rel="stylesheet" href="../static/bootstrap.min.css"> -->
+
+<link rel="stylesheet" 
+      href="../static/card.css">
+
+<link rel="stylesheet"
+      href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
 
 <!-- font awesome for icons -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<script type="text/javascript" src="../static/sweetalert.min.js"></script>
+<link rel="stylesheet" href="../static/sweetalert.css">
+
+<script type="text/javascript" src="../static/nprogress.js"></script>
+<link rel="stylesheet" href="../static/nprogress.css">
+
+
 
 <!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script 
+   src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
+</script>
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script 
+   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+</script>
+
+<!-- Angular 1 -->
+<script
+   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js">
+</script>
+
+<!--
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+<script type="text/javascript">
+        MathJax.Hub.Config({
+          TeX: {
+            Macros: {
+              TeV: "\\mathrm{TeV}",
+              pT: "p_\\mathrm{T}",
+            }
+          }
+        });
+</script>
+-->
+
+<style>
+@import url('http://fonts.googleapis.com/css?family=Lato');
+body,h6,h5,h4,h3,h2,h1,html {
+    font-family: "Lato";
+}
+body {
+    background-color:#F6F5EE;	
+}
+
+.badge {
+    background-color:#777;
+}
+
+.form-group.required .control-label:after {
+    content:" *";
+    color:red;
+}
+
+.navbar-form input, .form-inline input {
+    width: auto;
+}
+
+#nav.affix {
+    position:fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+
+
+</style>
+
 
 </head>
 
-<body>
+<body ng-app="recastApp">
 
-
-<header>
+<div style="background-color:white;">
+<header style="background-color:white;">
   <!-- <nav class="navbar navbar-default" role="navigation"> -->
-  <div>
-  <nav class="navbar navbar-inverse navbar-custom">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#recast-navigation" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">RECAST</a>
-        </div>
+  
+  <div class="card container-fluid hidden-sm hidden-xs">
+    <span class="col-md-1">
+    </span>
+    <span class="col-md-1">
+      <!--<img class="card-mg im-responsive" src="https://pbs.twimg.com/profile_images/1344530309/RLangTip_400x400.png" style="height:80px;">-->
+      <h4>(some nice logo)</h4>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="recast-navigation">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/analyses">Analysis Catalogue</a></li>
-            <li><a href="/requests">Recast Requests</a></li>
-	    {% if current_user and not current_user.is_anonymous %}
-	    <li><a href="/subscriptions">My Subscriptions</a></li>
-	    {% endif %}
-          </ul>
-	  <form class="navbar-form navbar-left" role="search" action="/search" method="post">
-	    <div class="input-group">
-	      <div class="input-group-btn search-panel">
-		<button name="filter" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> 
-		  <span id="search_concept">Filter by</span> <span class="caret"></span>
-		</button> 
-		<ul class="dropdown-menu" role="menu">
-		  <li><a href="#Analysis">Analysis</a></li>
-		  <li><a href="#Requests">Request</a></li>
-		  <li><a href="#Users">User</a></li>
-		</ul>
-	      </div>
-	    
-	      <input type="hidden" name="search_param" value="all" id="search_param">
-	      <input type="text" class="form-control" name="q" placeholder="Search term...">
-	      <span class="input-group-btn">
-		<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-	      </span>
-	    
-	    </div>
-	    <input hidden type="text" name="filter" value="" id="filter">
-	  </form>
-          <ul class="nav navbar-nav navbar-right">
-	    <!--- current_user -->
-	    {% if current_user and not current_user.is_anonymous() %}
-	    <!-- current_user and not current_user.is_anonymous() --> <!-- re-check this!! -->
-            <li><a href="{{url_for('profile')}}"><i class="fa fa-user"></i>&nbsp; {{current_user.name()}}</a></li>
-            <li><a href="/logout">(Logout)</a></li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            {% endif %}
-          </ul>
-	  <img class="center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">
-	    
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
+    </span>
+    <span class="col-md-1">
+      <span class="col-md-12">
+	<h2><strong>recast</strong> </h2>
+	</span>
+    </span>
+    <span class="col-md-3"></span>
+    <span class="col-md-6">
+      <!--<img style="height:120px;" class="col-md-12 img-responsive pull-right" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">-->
+      <h4 class="text-right">A framework for extending the impact of existing analyses performed by high-energy physics experiments.</h4>
+    </span>
   </div>
 </header>
+    
+<div id="nav">
+  <nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#recast-navigation" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">RECAST</a>
+      </div>
+      
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="recast-navigation">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+	  <!-- <li><a href="/about">About</a></li>-->
+          <li><a href="/analyses">Analysis Catalogue</a></li>
+          <li><a href="/requests">Requests</a></li>
+	  {% if current_user and not current_user.is_anonymous %}
+	  <li><a href="/subscriptions">My Subscriptions</a></li>
+	  {% endif %}
+        </ul>
+	<form class="navbar-form navbar-left hidden-md" role="search" action="/search" method="post">
+	  <div class="input-group">
+	    <div class="input-group-btn search-panel">
+	      <button name="filter" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> 
+		<span id="search_concept">Filter by</span> <span class="caret"></span>
+	      </button> 
+	      <ul class="dropdown-menu" role="menu">
+		<li><a href="#Analysis">Analysis</a></li>
+		<li><a href="#Requests">Request</a></li>
+		<li><a href="#Users">User</a></li>
+	      </ul>
+	    </div>
+	    
+	    <input type="hidden" name="search_param" value="all" id="search_param">
+	    <input type="text" class="form-control" name="q" placeholder="Search term...">
+	    <span class="input-group-btn">
+	      <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+	    </span>
+	    
+	  </div>
+	  <input hidden type="text" name="filter" value="" id="filter">
+	</form>
+        <ul class="nav navbar-nav navbar-right">
+	    <!--- current_user -->
+	    {% if current_user and not current_user.is_anonymous %}
+	    <!-- current_user and not current_user.is_anonymous() --> <!-- re-check this!! -->
+            <li><a href="{{url_for('profile')}}"><i class="glyphicon glyphicon-user"></i>&nbsp; {{current_user.name()}}</a></li>
+            <li><a href="/logout"><i class="glyphicon glyphicon-log-out"></i>&nbsp;Logout</a></li>
+            {% else %}
+            <li><a href="/login"><i class="glyphicon glyphicon-log-in"></i>&nbsp;Login</a></li>
+            {% endif %}
+        </ul>
+	  <!--<img class="img-responsive center-block" src="http://recast.perimeterinstitute.ca/sites/all/themes/perimeter/images/lhc_tunnel.jpg" alt="LHC">-->
+	  
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+</div>
+</div>
 
 <div class="container-fluid">
+
     <div class="row col-md-12">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -106,50 +207,91 @@
 
 <div class="container-fluid">
     {% block container %}
+    
     {% endblock %}
 </div>
 
-<!--
+
+<br><br><br><br>
+
+
+<!-- footer -->
 <footer class="footer">
-  <div class="container">
-    <p class="text-muted">Footer place</p>
-  </div>
-</footer>
- -->
+  <div class="container-fluid col-md-12" style="background-color:#033c73;color:white;">
+  
+  <br><br>
+
+  <span class="col-md-offset-2 col-md-4">
+
+    <ul class="list-unstyled" style="color:white;">
+
+      <li>
+	<a href="{{url_for('about')}}" style="color:white;">
+	  <strong>
+	  About
+	  </strong>
+	</a>
+      </li>
+      
+      <li>
+	<a href="#" style="color:white;">
+	  <strong>
+	    API
+	  </strong>
+	</a>
+      </li>
+      
+      <li>
+	<a href="#" style="color:white;">
+	  <strong>
+	    Contact
+	  </strong>
+	</a>
+      </li>
+
+      </ul>
+
+  </span>
+  
+  <span class="col-md-4">
+    
+  </span>
+    
+  <span class="col-md-2">
+    
+  </span>
+
+  <span class="col-md-12 text-center">
+    Copyright (c) 2016
+    <br><br><br><br><br>
+  </span>
+</div>
+
+<footer>
+
 <script type="text/javascript">
-  
-  
-  $(document).ready(function(e){
-  $('.search-panel .dropdown-menu').find('a').click(function(e) {
-  e.preventDefault();
-  var param = $(this).attr("href").replace("#","");
-  var concept = $(this).text();
-  $('.search-panel span#search_concept').text(concept);
-  $('.input-group #search_param').val(param);
-  document.getElementById("filter").value = concept;
-  });
-});
-
-  <!--For older browsers -->
-  function getElementByClassName(node, classname) {
-     if (node.getElementByClassName) {
-         //Use the existing method
-        return node.getElementByClassName(classname);
-     }
-     else {
-        var results = new Array();
-        var elems = node.getElementsByTagName("*");
-        for ( var i=0; i < elems.length; i++ ) {
-   	    if (elems[i].classname.indexOf(classname) != -1) {
-	        results[results.length] = elems[i]
-            }
-        }
-     }
-
-  }
-			  
+    
+ $(document).ready(function(e){
+     $('.search-panel .dropdown-menu').find('a').click(function(e) {
+	 e.preventDefault();
+	 var param = $(this).attr("href").replace("#","");
+	 var concept = $(this).text();
+	 $('.search-panel span#search_concept').text(concept);
+	 $('.input-group #search_param').val(param);
+	 document.getElementById("filter").value = concept;
+     });
+     
+     $('#nav').affix({
+	 offset: {
+	     top: $('header').height()
+	 }
+     });
+      
+ });
+ 
 </script>
 <script type="text/javascript" src="../static/recast.js"></script>
 	
-<br><br><br><br><br><br>			
+
+</body>
 </html>

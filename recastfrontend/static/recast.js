@@ -1,5 +1,196 @@
 // Javascript file for Recast
 
+//angular App
+angular.module('recastApp', [])
+    .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
+	/* home page controller */
+	var self = this;
+	self.analyses = 0;
+	self.requests = 0;
+	
+	$interval( function() {
+	    $http.get('/analysis-number')
+		.then(function(response) {
+		    self.analyses = response.data.analyses;
+		    self.requests = response.data.requests;
+		});
+	},3000);
+    }])
+
+    .directive('fileModel', ['$parse', function($parse) {
+	/* Directive to allow to easily upload a  file
+	   using AngularJS $http service, and provides 
+	   binding to angular file directive 
+	     source: 
+	     https://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
+	     */  
+	return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+		var model = $parse(attrs.fileModel);
+		var modelSetter = model.assign;
+
+		element.bind('change', function(){
+		    console.log('change');
+                    scope.$apply(function(){
+			modelSetter(scope, element[0].files[0]);
+                    });
+		});
+            }
+	};
+    }])
+
+    
+    .controller('parameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
+	/* Controller to add parameter */
+	var self = this;
+
+	self.items = function() {
+	    return coordinates.items();
+	};
+
+	self.addCoordinate = function() {
+	    coordinates.push();
+	};
+
+	self.addParameter = function(rid) {
+	    console.log("add parameter");
+	    ris.setID(rid);
+	    coordinates.clear();
+	    coordinates.push();
+	    $('#zip-file-request-page').val('');
+	    $('#modal-add-parameter').modal('show');	    
+	};
+
+	self.submit = function() {
+	    self.hideModal();
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    var form_data = new FormData();
+	    form_data.append('file', self.zipFile);
+
+	    for (var k in self.items()){
+		parameter = {};
+		parameter.name = self.items()[k].name;
+		parameter.value = self.items()[k].value;
+		par = angular.toJson(parameter);
+		form_data.append(k, par);
+	    }
+
+	    $http({
+		method: 'POST',
+		url:'/add-parameter/'+ris.getID(),
+		data: form_data,		
+		headers: {'Content-Type': undefined},
+		transformRequest: angular.identity
+	    })
+		.success(function(response){
+		    NProgress.inc(0.5);
+		    self.parameter = {};
+		    NProgress.done();
+		    location.reload();
+		})
+		.error(function(err){
+		    NProgress.done();
+		});
+	};
+	self.hideModal = function() {
+	    $('#modal-add-parameter').modal('hide');
+	};
+    }])
+
+    .controller('coordinateCtrl', ['$http', 'IDService', function($http, prs) {
+	/* Controller to add coordinate on request page */
+	var self = this;
+	self.addCoordinate = function(pid) {
+	    prs.setID(pid);
+	    $('#modal-add-coordinate').modal('show');	    
+	};
+	self.submit = function() {
+	    self.hideModal();
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    $http.post('/add-coordinate/'+prs.getID(), self.coordinate)
+		.then(function(reponse) {
+		    NProgress.inc(0.5);
+		    self.coordinate = {};
+		    NProgress.done();		    
+		    location.reload();
+		});
+	};
+	self.hideModal = function() {
+	    $('#modal-add-coordinate').modal('hide');
+	};
+    }])
+
+    .controller('arxivImportCtrl', ['$http', 'IDService', function($http, id_service) {
+	
+	var self = this;
+	self.arxiv_id;
+	self.example = "this";
+	self.here = "hello";
+	self.title = "";
+	self.collaboration = "";
+	self.doi = "";
+	self.abstract = "";
+	
+	self.import = function() {
+	    console.log("clicked");
+	    console.log(self.arxiv_id);
+	    $('#modal-arxiv-data').modal('show');
+	    $http.post('/arxiv?id='+self.arxiv_id)
+		.then(function(response) {
+		    console.log(response);
+		    self.title = response.data['title'];
+		    self.collaboration = response.data['collaboration'];
+		    self.doi = response.data['doi'];
+		    self.abstract = response.data['description'];	
+		    console.log(self.title);
+		    console.log(self.collaboration);
+		    console.log(self.doi);
+		    console.log(self.abstract);
+		});
+	};
+    }])
+
+    .factory('ItemService', [function() {
+	items = [];
+
+	return {
+	    push: function() {
+		items.push({
+		    name: "",
+		    value: "",
+		    namePlaceholder: "Name",
+		    valuePlaceholder: "Value",
+		});
+	    },
+	    clear: function() {
+		items = [];
+	    },
+	    items: function() {
+		return items;
+	    }
+	}
+    }])
+
+    .factory('IDService', [function() {
+	/* Service to store ID's */
+	variable_id = 0;
+	return {
+	    setID: function(ID) {
+		variable_id = ID;
+	    },
+	    getID: function() {
+		return variable_id;
+	    }
+	};	     
+    }]);
+
+
+    
+
+
 window.onload = prepareLinks;
 
 function prepareLinks(){
@@ -14,6 +205,15 @@ function RecastAddParameterPoint(e){
 
     alert("Add parameter point funcction");
     return;
+}
+
+function shortStr(str, max_chars, min_thresh=10){
+    /* returns shortened string  */
+    if (str.length > min_thresh){
+	return (str.substring(0, max_chars)+"...");
+    }else{
+	return str;
+    }
 }
 
 function validateFloatValues(val) {
@@ -108,15 +308,18 @@ function arxiv(arxiv_id){
          Results still need to be serialized */
 
     base_url = 'http://export.arxiv.org/api/query?search_query=' + arxiv_id;
+    base_url = 'https://inspirehep.net/search?p='+arxiv_id+'&of=recjson';
+    console.log('javascript');
     var request = new XMLHttpRequest();
     if (request) {
 	request.open("GET", base_url, true);
 	request.onreadystatechange = function() {
 	    if (request.readyState == 4) {
-		var para = document.createElement("p");
-		var txt = document.createTextNode(request.responseText);
-		para.appendChild(txt);
-		document.getElementById('new').appendChild(para);
+		//var para = document.createElement("p");
+		//var txt = document.createTextNode(request.responseText);
+		//para.appendChild(txt);
+		//document.getElementById('new').appendChild(para);
+		console.log(request.responseText);
 	    }
 	};
 	request.send(null);

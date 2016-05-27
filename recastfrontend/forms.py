@@ -40,15 +40,18 @@ class BasicRequestSubmitForm(Form):
 
 class RequestSubmitForm(Form):
     analysis_id = IntegerField('Analysis')
+    title = StringField('Request Title', validators=[DataRequired(message="Request title required")])
     model_name = StringField('Model Name', validators=[DataRequired(message="Model Name required")])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
     zenodo_deposition_id = StringField('Zenodo id')
     uuid = StringField('UUUID')
 
+
 class RequestParameterPointsSubmitForm(Form):
-    parameter_point = StringField(label='Parameter Point 1', validators=[DataRequired()], id="parameter_points_1", description="parameter point")
-    zip_file = FileField(label='Zip file 1', id="zip_file_1", description="Recast file")
+    value_point_coordinate = StringField(label='Parameter 1', validators=[DataRequired()], id="value_point_coordinate_1-1", description="Point coordinate value")
+    name_point_coordinate = StringField(label='Name', validators=[DataRequired()], description="parameter point name", id='name_point_coordinate')
+    zip_file = FileField(label='Zip File 1', id="zip_file_1", description="Recast file")
     zenodo_file_id = StringField('Zenodo file id')
     uuid = StringField('UUID')
 

@@ -46,3 +46,18 @@ deploying on Heroku
     git commit -m 'bla'
     git push heroku master
 
+
+##Docker instructions
+
+	 docker-compose build
+	 docker-compose up -d
+
+create database
+
+	docker-compose run recastfrontend recast-frontend-admin create_db
+
+fill database with dummy data		  
+     
+     docker-compose run recastfrontend recast-frontend fill_db
+     
+     

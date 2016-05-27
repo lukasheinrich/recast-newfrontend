@@ -5,6 +5,7 @@
 <div class="container">
   <h3> Requests </h3>
 
+  {% if requests %}
   <div class="table-responsive">
     <table class="table table-bordered table-hover">
       <thead>
@@ -15,17 +16,22 @@
 	</tr>
       </thead>
       <tbody>
+	
 	{% for request in requests %}
 	
 	<tr class="active">
-	  <td> (placeholder) </td>
+	  <td> <a href="{{ url_for('.request_view', id=request.id) }}">{{ request.title }}</a></td>
 	  <td> {{ request.requester.name }} </td>
-	  <td> (placeholder) </td>
+	  <td> {{ request.status }}</td>
 	</tr>
 	
 	{% endfor %}
       </tbody>
   </div>
+  {% else %}
+   <p> This analysis has no requests </p>
+  {% endif %}
+  
 </div>
 
 {% endblock %}

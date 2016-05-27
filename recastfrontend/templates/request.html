@@ -2,86 +2,264 @@
 
 {% block container %}
 
-<div class='container'>
+<div class="container">
+  <div class="row">
 
-<div class="col-md-3">
-  <h1>&nbsp;</h1>
-  
-  <div class="panel panel-info">
-    <div class="panel-content">
-      <ul class="nav nav-pills nav-stacked">
-	<li class="active"><a href="{{ url_for('.request_view', id=request.id) }}">View</a></li>
-	<li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
-    </div>
+  <div class="col-md-2">
+    <br><br><br>
+    <div class="panel panel-info">
+      <div class="panel-content">
+	<ul class="nav nav-pills nav-stacked">
+	  <li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
+	  <li class="disabled"><a href="#">Edit</a></li>
+	</ul>
+      </div>
+    </div>    
   </div>
+  
+  <div class="col-md-8">
+    <br><br><br>
 
+    <div class="card col-md-12" style="box-shadow: 1px 1px 1px 5px #f2efef;">
+      <h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
+      <br>
+      <div class="text-center">
+	<span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
+
+	{% if request.post_date %}
+	
+	<span class="label label-default">{{ request.post_date }}</span>
+	{% endif %}
+	
+	{% if request.description_of_model %}
+	<span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span> 
+	{% endif %}
+	
+	
+      
+	{% if request.status %}
+	<span class="label label-warning"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}</span>
+	{% endif %}
+	
+	
+	{% if request.uuid %}	     
+	<span><p> </p> </span>
+	
+	<span class="label label-primary">
+
+	  <i class="glyphicon glyphicon-tags"></i>
+	  <strong>uuid:</strong>{{ request.uuid }}
+	</span>
+	
+	{% endif %}
+      </div>
+      
+      <br><br>
+      <span>
+	<strong>
+	  <span>
+	    <i class="glyphicon glyphicon-pencil"></i>
+	    &nbsp;analysis&nbsp;
+	  </span>
+	</strong>
+	<a href="{{ url_for('.analysis', id=request.analysis.id) }}">
+	  <span id="analysis-title">{{ request.analysis.title }}
+	  </span>
+	</a>
+	<span class="label label-primary">
+	  {{ request.analysis.collaboration }}
+	</span>
+      </span>
+      
+      <br><br>
+      <strong>Reason for request</strong>
+      <br>
+      {{ request.reason_for_request }}
+      <br>
+      <br>
+      <strong>Additional information</strong>
+      <br>
+      {{request.additional_information }}
+      <br><br>
+      
+
+    </div>
+    <br><br>
+    <div class="container-fluid">
+      <br><br>
+    </div>
+    <div ng-controller="parameterCtrl as ctrl">
+      
+      <button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-info pull-right" id="btn-add-parameter-point"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
+	<br><br>
+    </div>
+
+    <div>
+    </div>
+    <div ng-controller="coordinateCtrl as ctrl">
+      {% for point_request in request.scan_points %}
+      {% if loop.index0 > 0 %}
+      <span>
+	<br><br>
+      </span>
+      {% endif %}
+      <div class="card col-md-12">
+	<br>
+	<span class="col-md-3"><strong>&nbsp;&nbsp;&nbsp;&nbsp;Parameter {{loop.index0+1}} </strong></span>
+	<span class="col-md-2">
+
+	</span>
+	<span class="col-md-6"></span>
+
+	<div class="col-md-12">
+	  <div class="col-md-4">	  
+	    <br><br>
+	    <a class="btn btn-success btn-sm" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
+	      <i class="glyphicon glyphicon-download"></i>&nbsp;Download File</a>
+	    <br><br>
+	    <a class="btn btn-info btn-sm disabled" href="#"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;View Response</a>
+	    <br><br>
+	  </div>
+	  <div class="table-responsive col-md-8">
+	    <table class="table">
+	      <thead>
+		<tr>
+		  <th>
+		    <span class="col-md-6" style="display:inline-block;">Coordinate</span>
+		    <span class="col-md-6" style="display:inline-block;">Value</span>
+		  <th>
+		</tr>
+	      </thead>
+	      <tbody>	  
+		{% for coordinate in point_request.point_coordinates %}
+		
+		<tr>
+		  <th style="background-color:white;">
+		    <span class="col-md-6" style="display:inline-block;">	     
+		      {%  if coordinate.title %}
+		      {{ coordinate.title }}
+		      {% else %}
+		      Coordinate {{ loop.index0 }}
+		      {% endif %}
+		      
+		    </span>
+		    <span class="col-md-6" style="display:inline-block;">{{ coordinate.value }}</span>
+		  </th>
+		<tr>
+		  {% endfor %}	    
+	      </tbody>
+	    </table>
+	    <span><button type="button" id="btn-add-coordinate-{{loop.index0}}" class="btn btn-primary btn-sm pull-right" ng-click="ctrl.addCoordinate({{point_request.id}})"><i class="glyphicon glyphicon-plus"></i>&nbsp;New Coordinate</button>
+	      <br><br>
+	    </span>
+	  </div><!-- end of div table responsive -->
+	</div>
+	
+      </div>
+      {% endfor %}  
+    </div><!-- ng-controller -->
+    
+  </div> <!-- End middle column -->
+  </div>
 </div>
 
-<div class="col-md-9">
-  <div class="panel panel-primary">
-    <div class="panel-heading"><strong>Request</strong></div>
-    <div class="panel-body">
-      <dl class="dl-horizontal">
-	<dt> Analysis Title </dt>
-	<dd><a href="{{ url_for('.analysis', id=request.analysis.id) }}">{{ request.analysis.title }}</a></dd>
-	
-	<dt> Status </dt>
-	<dd> {{ request.status }}</dd>
-	
-	<dt> Requester </dt>
-	<dd> {{ request.requester.name }}</dd>
-	
-	<dt> Model Name </dt>
-	<dd> {{ request.description_of_model }}</dd>
-      </dl>
-    </div>
+<!-- Modal for adding parameter point -->
+<div id="modal-add-parameter" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="parameterCtrl as ctrl">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="modalLabel">Add Parameter</h3>
+      </div>
+      
+      <div class="modal-body">
+	<form id="form-add-parameter-point" method="post" class="form-horizontal" enctype="multipart/form-data">
+	  <div id="form-data">
+	    
+	    <div ng-repeat="item in ctrl.items()">
+	      
+	      <div class="form-group required">
+		<label class="control-label col-md-4" for="parameter-point">Coordinate:</label>
+		<div class="col-md-4">
+		  <input class="form-control" ng-model="item.name" id="coordinate-name" name="coordinate-name" type="textt" value="" placeholder="Name">		
+		  <p class="text-muted"><small>Optional name</small></p>
+		</div>	   
+		
+		<div class="col-md-4">
+		  <input class="form-control" ng-model="item.value" id="coordinate-value" name="coordinate-value" type="text" value="" placeholder="Value">
+		  <p class="text-muted"><small>Required value of type "float"</small></p>
+		</div>		    		      
+	      </div>
+			    
+	    </div>
+	    
+	    <div class="col-md-12">
+	      <button class="btn btn-success btn-xs pull-right" type="button" ng-click="ctrl.addCoordinate()"><i class="glyphicon glyphicon-remove"></i>&nbsp;Add&nbsp;Coordinate</button>
+	    </div>
+	    
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
+	      <div class="col-md-6">
+		<input id="zip-file-request-page" file-model="ctrl.zipFile" name="zip-file" type="file">
+		<p class="text-muted"><small>.zip extension allowed</small></p>
+	      </div>
+	    </div>
+			
+	  </div>
+	</form>    
+      </div><!-- end of modal body -->
+
+
+      <div class="modal-footer">
+	<button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	<button class="btn btn-primary pull-right" ng-click="ctrl.submit()" id="parameter-accept-data" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+      </div>
+      
+    </div><!-- end of modal data -->
   </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">Request Description and Potential</div>
-      <div class="panel-content">
-	<dl class="dl-horizontal">
-	<dt> Reason for request </dt>
-	<dd> {{ request.reason_for_request }}</dd>
-
-	<dt> Additional information </dt>
-	<dd> {{ request.additional_information }}</dd>
-	</dl>
-      </div>
-    </div>
-
-  <hr>
-  
-  <div class="panel panel-primary">
-    <div class="panel-heading">  Run Condition </div>
-      <div class="panel-content">
-
-  
-	<dl class="dl-horizontal">
-	  <dt> Title </dt>
-	  <dd> {{ request.analysis.run_condition.name }}</dd>
-	  <dt> Description </dt>
-	  <dd> {{ request.analysis.run_condition.description }}</dd>
-	</dl>
-      </div>
-  </div>
-  
-  {% if request.scan_points[0].parameter_points[0] is defined  and request.scan_points[0] is defined and request.scan_points[0].requests[0] is defined and request.scan_points[0].requests[0].file_name[0] is defined %}
-  <div class="panel panel-primary">
-    <div class="panel-heading">  Request Parameter Points </div>
-    <div class="panel-content">
-      <dl class="dl-horizontal">
-	<dt> Parameter Point1: </dt>
-	<dd> {{ request.scan_points[0].parameter_points[0].value }}</dd>
-	<dt> Zip File: </dt>
-	
-	<dd><a class="btn btn-default" href="{{"https://s3.amazonaws.com/" + bucket_name +"/"+ request.scan_points[0].requests[0].file_name[0].file_name }}"><i class="glyphicon glyphicon-download"></i>&nbsp;Download</a></dd>
-	</dl>
-      </div>
-    </div>  
-  {% endif %}
-  <hr>
 </div>
 
+
+
+<div id="modal-add-coordinate" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="coordinateCtrl as ctrl">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
+      </div>
+      <form id="form-add-coordinate" method="post" class="form-horizontal">
+	<div class="modal-body">
+	  <div id="form-data-coordinate">
+	    
+	    <div class="form-group required">
+	      <label class="control-label col-md-3" for="coordinate">Coordinate:</label>
+	      <div class="col-md-4">
+		<input class="form-control" ng-model="ctrl.coordinate.name" id="coordinate-name-2" name="coordinate-name" type="text" value="" placeholder="Name">
+		<p class="text-muted"><small>Optional name</small></p>
+	      </div>
+
+	      <div class="col-md-4">
+		<input class="form-control" id="coordinate-value-2" ng-model="ctrl.coordinate.value" name="coordinate-value" type="text" value="" placeholder="Value">
+		<p class="text-muted"><small>Required value of type "float" </small></p>
+	      </div>	      
+	    </div>
+	  </div>
+	</div><!-- end modal body -->
+	
+	<div class="modal-footer">
+	  <button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	  <button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	  </div>
+	</div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal to contact requester -->
 <div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -100,6 +278,7 @@
 	    <label>Message</label>
 	    <textarea class="form-control" placeholder="Your message here.."></textarea>
 	  </div>
+
 	  <div class="form-group">
 	    <label>E-mail</label>
 	    <input class="form-control" placeholder="email@you.com" data-placement="top" type="text">
@@ -115,8 +294,18 @@
     </div>
   </div>
 </div>
-
-
 </div>
+
+<script type="text/javascript">
+    
+$(document).ready(function() {
+    var analysis_content = $('#analysis-title').html();
+    $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
+    
+});
+    
+
+  
+</script>  
 
 {% endblock %}

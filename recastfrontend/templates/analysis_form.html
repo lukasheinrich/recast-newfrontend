@@ -7,21 +7,24 @@
 <form id="myForm" method="POST" class="form-horizontal">
   {{ form.hidden_tag() }}
   {{ run_condition_form.hidden_tag() }}
+  <br><br>
   
-  
-  <div class="panel panel-default col-md-offset-2">
+  <div class="panel panel-default" id="import-data-panel" ng-controller="arxivImportCtrl as ctrl">
     <div class="panel-heading">Import from Arxiv</div>
-    <div class="panel-content col-md-offset-1">
-      <br><br>
+    <div class="panel-content">
+      <br>
+      <span class="col-md-12"> <div class="alert alert-info col-md-offset-3 col-md-8" role="alert"><p class="text-center"><strong>Tip: Use this field to automatically import data from Inspire</strong></p></div>
+      <div class="col-md-1">&nbsp;</div> </span>
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4">Arxiv ID</label>
-	<div class="col-md-6">
-	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="">
-	  <p class="text-muted"><small>e.g. 12901.00001</small></p>
+	<label class="control-label col-md-3">Arxiv ID</label>
+	<div class="col-md-offset-1 col-md-6">
+	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="" ng-model="ctrl.arxiv_id">
+	  <p class="text-muted"><small>e.g. 1503.03290</small></p>
 	</div>
 	<br><br><br><br>
 	<div class="col-md-10">
-	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv">Import</button>
+	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv" ng-click="ctrl.import()">Import</button>
 	</div>
       </div>
     </div>
@@ -29,97 +32,106 @@
   
 
 
-  <div class="panel panel-default col-md-offset-2">
-    <div class="panel-heading">Create new analysis</div>
-    <div class="panel-content col-md-offset-1">
+  <div class="panel panel-default">
+    <div class="panel-heading">Analysis</div>
+    <div class="panel-content" ng-controller="arxivImportCtrl as ctrl">
       <br><br>
-      <div class="form-group">
-	<label class="control-label col-md-4" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
-	<div class="col-md-6">
+      <div class="form-group required" id="title-group">
+	<label class="control-label col-md-3" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.title(class='form-control') }}
+	  <p class="text-muted"><small>Required.</small></p>
 
 	</div>
       </div>
       
-      <br><br>
-      <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.collaboration.id }}"><i class="fa fa-users"></i>&nbsp;{{ form.collaboration.label }}</label>
-	<div class="col-md-6">
+      <br>
+      <div class="form-group required">
+	<label class="control-label col-md-3" for="{{ form.collaboration.id }}"><i class="fa fa-users"></i>&nbsp;{{ form.collaboration.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.collaboration(class='form-control') }}
+	  <p class="text-muted"><small>Select collaboration.</small></p>
 	</div>
       </div>
 
-      <br><br>
+      <br>
+
+      <div class="form-group required">
+	<label class="control-label col-md-3" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
+	  {{ form.description(class='form-control', rows="16") }}
+	  <p class="text-muted"><small>Required.</small></p>
+	</div>
+      </div>
+
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.e_print.id }}">{{ form.e_print.label }}</label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.e_print.id }}"><i class="fa fa-bookmark"></i>&nbsp;{{ form.e_print.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.e_print(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
-      </div>
-  
-      <br><br>
+      </div>  
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.journal.id }}">{{ form.journal.label }}</label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.journal.id }}"><i class="fa fa-tag"></i>&nbsp;{{ form.journal.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.journal(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
   
-      <br><br>
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.doi.id }}">{{ form.doi.label }}</label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.doi.id }}"><i class="fa fa-link"></i>&nbsp;{{ form.doi.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.doi(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
 
-      <br><br>
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.inspire_URL.id }}">{{ form.inspire_URL.label }}</label>
-	<div class="col-md-6">
+	<label class="control-label col-md-3" for="{{ form.inspire_URL.id }}"><i class="fa fa-link"></i>&nbsp;{{ form.inspire_URL.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ form.inspire_URL(class='form-control') }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
-
-      <br><br>
-      <div class="form-group">
-	<label class="control-label col-md-4" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
-	<div class="col-md-6">
-	  {{ form.description(class='form-control') }}
-	</div>
-      </div>
-      <br><br>
+      <br>
     </div>
   </div>
   
   
   <!-- Run condition stuff -->
-  <div class="panel panel-default col-md-offset-2">
+  <div class="panel panel-default">
     <div class="panel-heading">Run Condition</div>
-    <div class="panel-content col-md-offset-1">
+    <div class="panel-content">
       <br><br>
-      <div class="form-group">
-	<label class="control-label col-md-4" for="{{ run_condition_form.name.id }}"><i class="fa fa-book"></i>&nbsp;{{ run_condition_form.name.label }}</label>
-	<div class="col-md-6">
+      <div class="form-group required">
+	<label class="control-label col-md-3" for="{{ run_condition_form.name.id }}"><i class="fa fa-book"></i>&nbsp;{{ run_condition_form.name.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
 	  {{ run_condition_form.name(class='form-control') }}
+	  <p class="text-muted"><small>Required.</small></p>
 	</div>
       </div>
       
-      <br><br>
+      <br>
       <div class="form-group">
-	<label class="control-label col-md-4" for="{{ run_condition_form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ run_condition_form.description.label }}</label>
-	<div class="col-md-6">
-	  {{ run_condition_form.description(class='form-control') }}
+	<label class="control-label col-md-3" for="{{ run_condition_form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ run_condition_form.description.label }}</label>
+	<div class="col-md-offset-1 col-md-6">
+	  {{ run_condition_form.description(class='form-control', rows="3") }}
+	  <p class="text-muted"><small>Optional.</small></p>
 	</div>
       </div>
-      <br><br>
+      <br>
     </div>
   </div>
   <!-- End of Run condition -->
 
   <br><br>
-  <div class="col-md-offset-2">
-    <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-trash"></i>&nbsp;Delete</button>
+  <div>
+    <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
     <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
   </div>
   <br><br>      <br><br>      <br><br>
@@ -127,19 +139,38 @@
 </form>
 
 <!-- Modal for arxiv import -->
-<div id="modal-arxiv-data" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div id="modal-arxiv-data" class="modal fade slide left" tabindex="0" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="arxivImportCtrl as ctrl">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
       </div>
-      <div class="modal-body">
-	<p id="arxiv-response"> </p>
+      <div class="modal-body" class="col-md-12">
+	<div id="arxiv-response" class="col-md-12 container-fluid">
+	  
+	  <div class="row">
+	    <input ng-model="ctrl.here">
+	    <div class="col-md-4">Title: </div>
+	    <div class="col-md-8" ng-bind="ctrl.here"></div>
+	    
+
+	    <div class="col-md-4">Collaboration: </div>
+	    <div class="col-md-8" ng-bind="ctrl.collaboration"></div>
+	    
+	    <div class="col-md-4">DOI: </div>
+	    <div class="col-md-8" ng-bind="ctrl.doi"></div>
+	    
+	    <div class="col-md-4">Abstract: </div>
+	    <div class="col-md-8" ng-bind="ctrl.abstract"></div>
+
+	  </div>
+      
+	</div>
       </div>
       <div class="modal-footer">
-	<button class="btn btn-danger" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-	<button class="btn btn-success" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Continue</button>
+	<button class="btn btn-danger" id="reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+	<button class="btn btn-success" id="accept-data" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Continue</button>
       </div>
     </div>
   </div>
@@ -151,36 +182,95 @@
 
 
 <script type="text/javascript">
+ 
+/**
+glo = "";
+response_data = "";
+$(document).ready(function () {
+     
+    $('#arxiv-id').on('change', function() {
+	id_arxiv = this.value;
+    });
+     
+    $('#btn-import-arxiv').click(function() {
+	
   
-  glo = "";
-  $(document).ready(function () {
+	NProgress.start();
+	NProgress.inc(0.6);
+	url = "/arxiv?id="+$('#arxiv-id').val();
+	$.ajax({
+	    type: "POST",
+	    url: url,
+	    dataFilter: function(msg) {
+		NProgress.inc(0.4);
+		NProgress.inc(0.3);
+		NProgress.done();
+		return msg;
+	    },
+	    success: function (msg) {
+		if (msg == "{}"){
+		    $('#arxiv-response').html("<div class='alert alert-danger'><strong> No record associated to that ID was found! </strong></div>");
+		    NProgress.inc();
+		    NProgress.inc(0.3);
+		    NProgress.done();
+		    $('#modal-arxiv-data').modal('show');
+		    return;
+		}
+		if (msg == "{N}"){
+		    $('#arxiv-response').html("<div class='alert alert-warning'><strong> More than one record was found for the search term!</strong></div>");
+		    NProgress.inc();
+		    NProgress.inc(0.3);
+		    NProgress.done();
+		    $('#modal-arxiv-data').modal('show');
+		    return;
+		}
+		
+		new_msg = JSON.parse(msg);
+		NProgress.inc();
+		
+		$('#arxiv-response').html("<div class='table-responsive col-md-12'><table class='table-hover'><tr class='responsive'><td>");
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Title:</strong></span><span class='col-md-8' style='font-weight:normal;'>" +new_msg['title']['title']+"</span>");
+		$('#arxiv-response').append("<br><hr><br>");  
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Author:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['author']+"</span>");
+		$('#arxiv-response').append("<br><hr>");   
+		$('#arxiv-response').append("<span class='col-md-4'><strong>DOI:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['doi']+"</span>");
+		$('#arxiv-response').append("<br><hr>");    
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Abstract:</strong></span><textarea class='col-md-8' style='font-weight:normal;'>"+new_msg['abstract']['summary']+"</textarea>");
+		$('#arxiv-response').append("<br><br><br></td></tr></table></div>");
+		NProgress.inc(0.3);
+		NProgress.done();
+		$('#modal-arxiv-data').modal('show');  
+		response_data = new_msg;
+		
+		
+	    }  
+	});
+	
+	
 
-  $('#arxiv-id').on('change', function() {
-  id_arxiv = this.value;
-  console.log(id_arxiv);
-  });
-
-
-  $('#btn-import-arxiv').click(function() {
-  var arxiv_id = id_arxiv;
-  //var base_url = "http://export.arxiv.org/api/query?search_query=" + arxiv_id;
-  var base_url = "https://inspirehep.net/search?p="+arxiv_id+"&of=recjson&ot=title,collaboration,full_url,doc_url,url_code,prep_ref,jour_ref,doi,url";
-  console.log(base_url);
-  $.ajax({
-         url: base_url,
-         success: function( data ){
-            glo = data;
-            console.log('success');
-            $('#arxiv-response').html(data);  
-            $('#modal-arxiv-data').modal('show');  
-           }
-  });
-  
-  });
-
-  
-  })
-
+    });
+    
+    
+    $('#accept-data').click( function(){
+	
+	if (response_data) {
+            $('#title').val(new_msg['title']['title']);
+            $('#title-group').addClass('has-danger');
+            $('#description').val(new_msg['abstract']['summary']);
+            $('#doi').val(new_msg['doi']);
+	}
+	$('#modal-arxiv-data').modal('hide');
+	$('#import-data-panel').hide(); 
+    });
+    
+    $('#reject-data').click( function(){
+	$('#modal-arxiv-data').modal('hide');
+	$('#import-data-panel').hide();
+    });
+    
+    
+})
+***/
 
 </script>
 {% endblock %}
