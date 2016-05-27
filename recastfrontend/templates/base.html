@@ -45,10 +45,8 @@
    src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js">
 </script>
 
-
-<script type="text/javascript" async 
-	src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
+<!--
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
 <script type="text/x-mathjax-config">
       MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
@@ -64,18 +62,19 @@
           }
         });
 </script>
+-->
 
 <style>
 @import url('http://fonts.googleapis.com/css?family=Lato');
 body,h6,h5,h4,h3,h2,h1,html {
-  font-family: "Lato";
+    font-family: "Lato";
 }
 body {
-  background-color:#F6F5EE;	
+    background-color:#F6F5EE;	
 }
 
 .badge {
-  background-color:#777;
+    background-color:#777;
 }
 
 .form-group.required .control-label:after {
@@ -146,7 +145,7 @@ body {
       <div class="collapse navbar-collapse" id="recast-navigation">
         <ul class="nav navbar-nav">
           <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
+	  <!-- <li><a href="/about">About</a></li>-->
           <li><a href="/analyses">Analysis Catalogue</a></li>
           <li><a href="/requests">Requests</a></li>
 	  {% if current_user and not current_user.is_anonymous %}
@@ -208,40 +207,91 @@ body {
 
 <div class="container-fluid">
     {% block container %}
+    
     {% endblock %}
 </div>
 
 
-<!--
+<br><br><br><br>
+
+
+<!-- footer -->
 <footer class="footer">
-  <div class="container">
-    <p class="text-muted">Footer place</p>
-  </div>
-</footer>
- -->
+  <div class="container-fluid col-md-12" style="background-color:#033c73;color:white;">
+  
+  <br><br>
+
+  <span class="col-md-offset-2 col-md-4">
+
+    <ul class="list-unstyled" style="color:white;">
+
+      <li>
+	<a href="{{url_for('about')}}" style="color:white;">
+	  <strong>
+	  About
+	  </strong>
+	</a>
+      </li>
+      
+      <li>
+	<a href="#" style="color:white;">
+	  <strong>
+	    API
+	  </strong>
+	</a>
+      </li>
+      
+      <li>
+	<a href="#" style="color:white;">
+	  <strong>
+	    Contact
+	  </strong>
+	</a>
+      </li>
+
+      </ul>
+
+  </span>
+  
+  <span class="col-md-4">
+    
+  </span>
+    
+  <span class="col-md-2">
+    
+  </span>
+
+  <span class="col-md-12 text-center">
+    Copyright (c) 2016
+    <br><br><br><br><br>
+  </span>
+</div>
+
+<footer>
+
 <script type="text/javascript">
     
-  $(document).ready(function(e){
-      $('.search-panel .dropdown-menu').find('a').click(function(e) {
-	  e.preventDefault();
-	  var param = $(this).attr("href").replace("#","");
-	  var concept = $(this).text();
-	  $('.search-panel span#search_concept').text(concept);
-	  $('.input-group #search_param').val(param);
-	  document.getElementById("filter").value = concept;
-      });
-
-      $('#nav').affix({
-	  offset: {
-	      top: $('header').height()
-	      }
-      });
+ $(document).ready(function(e){
+     $('.search-panel .dropdown-menu').find('a').click(function(e) {
+	 e.preventDefault();
+	 var param = $(this).attr("href").replace("#","");
+	 var concept = $(this).text();
+	 $('.search-panel span#search_concept').text(concept);
+	 $('.input-group #search_param').val(param);
+	 document.getElementById("filter").value = concept;
+     });
+     
+     $('#nav').affix({
+	 offset: {
+	     top: $('header').height()
+	 }
+     });
       
-  });
-			  
+ });
+ 
 </script>
 <script type="text/javascript" src="../static/recast.js"></script>
 	
-<br><br><br><br><br><br><br><br><br><br><br>		
+
 </body>
 </html>

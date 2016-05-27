@@ -3,6 +3,7 @@
 //angular App
 angular.module('recastApp', [])
     .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
+	/* home page controller */
 	var self = this;
 	self.analyses = 0;
 	self.requests = 0;
@@ -40,28 +41,48 @@ angular.module('recastApp', [])
     }])
 
     
-    .controller('parameterCtrl', ['$http', 'IDService', function($http, ris) {
+    .controller('parameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
+	/* Controller to add parameter */
 	var self = this;
+
+	self.items = function() {
+	    return coordinates.items();
+	};
+
+	self.addCoordinate = function() {
+	    coordinates.push();
+	};
+
 	self.addParameter = function(rid) {
+	    console.log("add parameter");
 	    ris.setID(rid);
+	    coordinates.clear();
+	    coordinates.push();
 	    $('#zip-file-request-page').val('');
 	    $('#modal-add-parameter').modal('show');	    
 	};
+
 	self.submit = function() {
 	    self.hideModal();
 	    NProgress.start();
 	    NProgress.inc(0.4);
 	    var form_data = new FormData();
 	    form_data.append('file', self.zipFile);
-	    for (var k in self.parameter){
-		form_data.append(k, self.parameter[k]);
+
+	    for (var k in self.items()){
+		parameter = {};
+		parameter.name = self.items()[k].name;
+		parameter.value = self.items()[k].value;
+		par = angular.toJson(parameter);
+		form_data.append(k, par);
 	    }
+
 	    $http({
 		method: 'POST',
 		url:'/add-parameter/'+ris.getID(),
 		data: form_data,		
 		headers: {'Content-Type': undefined},
-		trnasformRequest: angular.identity
+		transformRequest: angular.identity
 	    })
 		.success(function(response){
 		    NProgress.inc(0.5);
@@ -79,6 +100,7 @@ angular.module('recastApp', [])
     }])
 
     .controller('coordinateCtrl', ['$http', 'IDService', function($http, prs) {
+	/* Controller to add coordinate on request page */
 	var self = this;
 	self.addCoordinate = function(pid) {
 	    prs.setID(pid);
@@ -97,9 +119,59 @@ angular.module('recastApp', [])
 		});
 	};
 	self.hideModal = function() {
-	    console.log('hide modal');
 	    $('#modal-add-coordinate').modal('hide');
 	};
+    }])
+
+    .controller('arxivImportCtrl', ['$http', 'IDService', function($http, id_service) {
+	
+	var self = this;
+	self.arxiv_id;
+	self.example = "this";
+	self.here = "hello";
+	self.title = "";
+	self.collaboration = "";
+	self.doi = "";
+	self.abstract = "";
+	
+	self.import = function() {
+	    console.log("clicked");
+	    console.log(self.arxiv_id);
+	    $('#modal-arxiv-data').modal('show');
+	    $http.post('/arxiv?id='+self.arxiv_id)
+		.then(function(response) {
+		    console.log(response);
+		    self.title = response.data['title'];
+		    self.collaboration = response.data['collaboration'];
+		    self.doi = response.data['doi'];
+		    self.abstract = response.data['description'];	
+		    console.log(self.title);
+		    console.log(self.collaboration);
+		    console.log(self.doi);
+		    console.log(self.abstract);
+		});
+	};
+    }])
+
+    .factory('ItemService', [function() {
+	items = [];
+
+	return {
+	    push: function() {
+		items.push({
+		    name: "",
+		    value: "",
+		    namePlaceholder: "Name",
+		    valuePlaceholder: "Value",
+		});
+	    },
+	    clear: function() {
+		items = [];
+	    },
+	    items: function() {
+		return items;
+	    }
+	}
     }])
 
     .factory('IDService', [function() {

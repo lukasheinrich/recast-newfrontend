@@ -2,24 +2,15 @@ recastfrontend:
   build: .
   ports:
    - "5000:5000"
+  environment:
+   - RECAST_DBPATH=postgresql://postgres:postgres@postgres:5432/postgres
   volumes:
    - ./recastfrontend:/recast-newfrontend/recastfrontend
    - ./config.yaml:/recast-newfrontend/recastfrontend/resources/defaultconfig.yaml
   links:
-   - db
-   - cache
-   - celery
-
-db:
-  image: postgres
-  
-celery:
-  image: celery
-
-cache:
-  image: redis
-  ports:
-   - "6379:6379"
+   - postgres
+   - redis
+   - api
 
 api:
   image: cbora/recastrestapi:0.1
@@ -27,9 +18,30 @@ api:
    - ./config.yaml:/recast-rest-api/recastrestapi/resources/defaultconfig.yaml
   ports:
    - "6000:5000"
-  
-es:
-  image: elasticsearch
+  links:
+   - postgres
+
+data:
+  image: postgres:latest
+  volumes:
+    - /var/lib/postgresql
+  command: "true"
+
+postgres:
+  restart: always
+  image: postgres:latest
+  volumes_from:
+    - data
   ports:
-   - "9200:9200"
+    - "5432:5432"
+redis:
+  restart: always
+  image: redis:latest
+  ports:
+    - "6379:6379"
+  
+#es:
+#  image: elasticsearch
+#  ports:
+#   - "9200:9200"
   

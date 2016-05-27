@@ -9,7 +9,7 @@
   {{ run_condition_form.hidden_tag() }}
   <br><br>
   
-  <div class="panel panel-default" id="import-data-panel">
+  <div class="panel panel-default" id="import-data-panel" ng-controller="arxivImportCtrl as ctrl">
     <div class="panel-heading">Import from Arxiv</div>
     <div class="panel-content">
       <br>
@@ -19,12 +19,12 @@
       <div class="form-group">
 	<label class="control-label col-md-3">Arxiv ID</label>
 	<div class="col-md-offset-1 col-md-6">
-	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="">
+	  <input class="form-control" id="arxiv-id" name="arxiv-id" type="text" value="" ng-model="ctrl.arxiv_id">
 	  <p class="text-muted"><small>e.g. 1503.03290</small></p>
 	</div>
 	<br><br><br><br>
 	<div class="col-md-10">
-	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv">Import</button>
+	  <button class="btn btn-success pull-right" type="button" id="btn-import-arxiv" ng-click="ctrl.import()">Import</button>
 	</div>
       </div>
     </div>
@@ -34,7 +34,7 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">Analysis</div>
-    <div class="panel-content">
+    <div class="panel-content" ng-controller="arxivImportCtrl as ctrl">
       <br><br>
       <div class="form-group required" id="title-group">
 	<label class="control-label col-md-3" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
@@ -139,15 +139,34 @@
 </form>
 
 <!-- Modal for arxiv import -->
-<div id="modal-arxiv-data" class="modal fade slide left" tabindex="0" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="modal-arxiv-data" class="modal fade slide left" tabindex="0" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="arxivImportCtrl as ctrl">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h3 class="modal-title" id="myModalLabel">Fields Imported from Arxiv:</h3>
       </div>
-      <div class="modal-body">
-	<div id="arxiv-response"></div>
+      <div class="modal-body" class="col-md-12">
+	<div id="arxiv-response" class="col-md-12 container-fluid">
+	  
+	  <div class="row">
+	    <input ng-model="ctrl.here">
+	    <div class="col-md-4">Title: </div>
+	    <div class="col-md-8" ng-bind="ctrl.here"></div>
+	    
+
+	    <div class="col-md-4">Collaboration: </div>
+	    <div class="col-md-8" ng-bind="ctrl.collaboration"></div>
+	    
+	    <div class="col-md-4">DOI: </div>
+	    <div class="col-md-8" ng-bind="ctrl.doi"></div>
+	    
+	    <div class="col-md-4">Abstract: </div>
+	    <div class="col-md-8" ng-bind="ctrl.abstract"></div>
+
+	  </div>
+      
+	</div>
       </div>
       <div class="modal-footer">
 	<button class="btn btn-danger" id="reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
@@ -163,95 +182,95 @@
 
 
 <script type="text/javascript">
+ 
+/**
+glo = "";
+response_data = "";
+$(document).ready(function () {
+     
+    $('#arxiv-id').on('change', function() {
+	id_arxiv = this.value;
+    });
+     
+    $('#btn-import-arxiv').click(function() {
+	
   
+	NProgress.start();
+	NProgress.inc(0.6);
+	url = "/arxiv?id="+$('#arxiv-id').val();
+	$.ajax({
+	    type: "POST",
+	    url: url,
+	    dataFilter: function(msg) {
+		NProgress.inc(0.4);
+		NProgress.inc(0.3);
+		NProgress.done();
+		return msg;
+	    },
+	    success: function (msg) {
+		if (msg == "{}"){
+		    $('#arxiv-response').html("<div class='alert alert-danger'><strong> No record associated to that ID was found! </strong></div>");
+		    NProgress.inc();
+		    NProgress.inc(0.3);
+		    NProgress.done();
+		    $('#modal-arxiv-data').modal('show');
+		    return;
+		}
+		if (msg == "{N}"){
+		    $('#arxiv-response').html("<div class='alert alert-warning'><strong> More than one record was found for the search term!</strong></div>");
+		    NProgress.inc();
+		    NProgress.inc(0.3);
+		    NProgress.done();
+		    $('#modal-arxiv-data').modal('show');
+		    return;
+		}
+		
+		new_msg = JSON.parse(msg);
+		NProgress.inc();
+		
+		$('#arxiv-response').html("<div class='table-responsive col-md-12'><table class='table-hover'><tr class='responsive'><td>");
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Title:</strong></span><span class='col-md-8' style='font-weight:normal;'>" +new_msg['title']['title']+"</span>");
+		$('#arxiv-response').append("<br><hr><br>");  
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Author:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['author']+"</span>");
+		$('#arxiv-response').append("<br><hr>");   
+		$('#arxiv-response').append("<span class='col-md-4'><strong>DOI:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['doi']+"</span>");
+		$('#arxiv-response').append("<br><hr>");    
+		$('#arxiv-response').append("<span class='col-md-4'><strong>Abstract:</strong></span><textarea class='col-md-8' style='font-weight:normal;'>"+new_msg['abstract']['summary']+"</textarea>");
+		$('#arxiv-response').append("<br><br><br></td></tr></table></div>");
+		NProgress.inc(0.3);
+		NProgress.done();
+		$('#modal-arxiv-data').modal('show');  
+		response_data = new_msg;
+		
+		
+	    }  
+	});
+	
+	
 
-  glo = "";
-  response_data = "";
-  $(document).ready(function () {
-
-  $('#arxiv-id').on('change', function() {
-  id_arxiv = this.value;
-  });
-
-  $('#btn-import-arxiv').click(function() {
-
-  
-  NProgress.start();
-  NProgress.inc(0.6);
-  url = "/arxiv?id="+$('#arxiv-id').val();
-  $.ajax({
-      type: "POST",
-      url: url,
-      dataFilter: function(msg) {
-          NProgress.inc(0.4);
-          NProgress.inc(0.3);
-          NProgress.done();
-          return msg;
-      },
-      success: function (msg) {
-         if (msg == "{}"){
-           $('#arxiv-response').html("<div class='alert alert-danger'><strong> No record associated to that ID was found! </strong></div>");
-           NProgress.inc();
-           NProgress.inc(0.3);
-           NProgress.done();
-           $('#modal-arxiv-data').modal('show');
-           return;
-          }
-         if (msg == "{N}"){
-           $('#arxiv-response').html("<div class='alert alert-warning'><strong> More than one record was found for the search term!</strong></div>");
-           NProgress.inc();
-           NProgress.inc(0.3);
-           NProgress.done();
-           $('#modal-arxiv-data').modal('show');
-           return;
-          }
-       
-         new_msg = JSON.parse(msg);
-         NProgress.inc();
-
-          $('#arxiv-response').html("<div class='table-responsive col-md-12'><table class='table-hover'><tr class='responsive'><td>");
-         $('#arxiv-response').append("<span class='col-md-4'><strong>Title:</strong></span><span class='col-md-8' style='font-weight:normal;'>" +new_msg['title']['title']+"</span>");
-         $('#arxiv-response').append("<br><hr><br>");  
-         $('#arxiv-response').append("<span class='col-md-4'><strong>Author:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['author']+"</span>");
-	  $('#arxiv-response').append("<br><hr>");   
-         $('#arxiv-response').append("<span class='col-md-4'><strong>DOI:</strong></span><span class='col-md-8' style='font-weight:normal;'>"+new_msg['doi']+"</span>");
-         $('#arxiv-response').append("<br><hr>");    
-         $('#arxiv-response').append("<span class='col-md-4'><strong>Abstract:</strong></span><textarea class='col-md-8' style='font-weight:normal;'>"+new_msg['abstract']['summary']+"</textarea>");
-         $('#arxiv-response').append("<br><br><br></td></tr></table></div>");
-         NProgress.inc(0.3);
-         NProgress.done();
-         $('#modal-arxiv-data').modal('show');  
-         response_data = new_msg;
-  
-
-      }  
-  });
-
-
-
-  });
-
-
-  $('#accept-data').click( function(){
-  
-       if (response_data) {
-          $('#title').val(new_msg['title']['title']);
-          $('#title-group').addClass('has-danger');
-          $('#description').val(new_msg['abstract']['summary']);
-          $('#doi').val(new_msg['doi']);
-       }
-       $('#modal-arxiv-data').modal('hide');
-       $('#import-data-panel').hide(); 
-  });
-  
-  $('#reject-data').click( function(){
-      $('#modal-arxiv-data').modal('hide');
-      $('#import-data-panel').hide();
-  });
-
-  
-  })
-
+    });
+    
+    
+    $('#accept-data').click( function(){
+	
+	if (response_data) {
+            $('#title').val(new_msg['title']['title']);
+            $('#title-group').addClass('has-danger');
+            $('#description').val(new_msg['abstract']['summary']);
+            $('#doi').val(new_msg['doi']);
+	}
+	$('#modal-arxiv-data').modal('hide');
+	$('#import-data-panel').hide(); 
+    });
+    
+    $('#reject-data').click( function(){
+	$('#modal-arxiv-data').modal('hide');
+	$('#import-data-panel').hide();
+    });
+    
+    
+})
+***/
 
 </script>
 {% endblock %}

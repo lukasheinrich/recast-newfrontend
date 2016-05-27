@@ -284,7 +284,11 @@ def createDeposition(ZENODO_ACCESS_TOKEN, request_uuid, current_user, descriptio
       }
                       }
   response = requests.post(url, data=json.dumps(deposition_data), headers=headers)
-  deposition_id = response.json()['id']
+  if response.ok:
+	  deposition_id = response.json()['id']
+  else:
+	  print "Failed to create a deposition on Zenodo"
+	  deposition_id = -1
   return deposition_id
 
 def uploadToZenodo(ZENODO_ACCESS_TOKEN, deposition_id, file_uuid, zip_file):
@@ -293,8 +297,15 @@ def uploadToZenodo(ZENODO_ACCESS_TOKEN, deposition_id, file_uuid, zip_file):
              ZENODO_ACCESS_TOKEN)
   json_data_file = {"filename": file_uuid}
   files = {'file': open(secure_filename(zip_file.filename), 'rb')}
-  response_file = requests.post(url, data=json_data_file, files=files)
-  deposition_file_id = response_file.json()['id']
+  response_file = requests.post(url, 
+								data=json_data_file,
+								files=files)
+  print response_file.status_code
+  if response_file.ok:
+	  deposition_file_id = response_file.json()['id']
+  else:
+	  print "Failed to upload file to Zenodo"
+	  deposition_file_id = -1
   return deposition_file_id
   
 def publish(ZENODO_ACCESS_TOKEN, deposition_id):

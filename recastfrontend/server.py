@@ -6,7 +6,8 @@ from boto3.session import Session
 import asynctasks
 import synctasks
 
-from flask import Flask, redirect, jsonify, session, request, url_for, render_template, flash
+from flask import Flask, redirect, jsonify, session
+from flask import request, url_for, render_template, flash
 from flask.ext import login as login
 from frontendconfig import config as frontendconf
 from recastdb.database import db
@@ -690,6 +691,9 @@ def rows_to_dict(rows):
 def arxiv():
   if request.args.has_key('id'):
     arxiv_id = request.args.get('id')
+  else:
+	#No id found return an error
+	return
   print arxiv_id
   fields = "title,author,doi,abstract,corporate_name"
   url = "https://inspirehep.net/search?p={}&of=recjson&ot={}".format(arxiv_id,fields)
@@ -698,23 +702,33 @@ def arxiv():
 
   if not response.content or len(response.json()) > 1 or len(response.json()) == 0:
     """No record found"""
-    return "{}"
+    return
   if len(response.json()) > 1:
     """More than one record found"""
-    return "{N}"
+    return
   
-  ret = response.json()[0]
-  ret = json.dumps(ret)
-  return ret
+  result = response.json()[0]
+  
+  data = {}
+  data['title'] = result['title']['title'] or None
+  data['collaboration'] = result['corporate_name'][0]['collaboration'] or None
+  data['doi'] = result['doi'][0] or None
+  data['description'] = result['abstract'][1]['summary']
+  return jsonify(data)
   
 @app.route("/add-parameter/<int:request_id>", methods=['GET', 'POST'])
+@login.login_required
 def add_parameter_point(request_id):
-  coordinate = request.form['value']
-  coordinate_name = request.form['name']
-  zip_file = request.files['file']
 
-  request_query = db.session.query(dbmodels.ScanRequest).filter(
-    dbmodels.ScanRequest.id == request_id).one()
+  request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()
+  
+  zenodo_deposition_id = request_query.zenodo_deposition_id
+
+  point_request_id = synctasks.createPointRequest(app,
+                                                  request_id,
+                                                  login.current_user
+                                                  )  
+  zip_file = request.files['file']
 
   file_uuid = str(uuid.uuid1())
   zip_file.save(zip_file.filename)
@@ -726,40 +740,46 @@ def add_parameter_point(request_id):
                         file_uuid)
     
   deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                request_query.zenodo_deposition_id,
+                                                zenodo_deposition_id,
                                                 file_uuid,
                                                 zip_file)
   
-  point_request_id = synctasks.createPointRequest(app,
-                                                  request_id,
-                                                  login.current_user
-                                                  )
-
-  synctasks.createPointCoordinate(app,
-                                  login.current_user,
-                                  coordinate_name,
-                                  coordinate,
-                                  point_request_id
-                                  )
-
   synctasks.createRequestArchive(app,
                                  login.current_user,
                                  point_request_id,
                                  file_uuid,
                                  deposition_file_id,
                                  zip_file.filename)
-  return ""
 
-
+  for k in request.form:
+	coordinate = json.loads(request.form[k])
+	if k == 'file':
+	  continue
+	  
+	if coordinate.has_key('value'):
+	  value = coordinate['value']
+	  name = None
+	  if coordinate.has_key('name'):
+		name = coordinate['name']
+                
+	  synctasks.createPointCoordinate(app,
+                                          login.current_user,
+                                          name,
+                                          float(value),
+                                          point_request_id
+          )	  								    
+  response = {}
+  response['success'] = True
+  return jsonify(response)
 
 @app.route("/add-coordinate", methods=['GET', 'POST'])
 @app.route("/add-coordinate/<int:point_request_id>", methods=['GET', 'POST'])
 def add_coordinate(point_request_id):
+  
   if request.method == 'POST':
     
     point_request_query = db.session.query(dbmodels.PointRequest).filter(
       dbmodels.PointRequest.id == point_request_id).one()
-
 
     data = json.loads(request.data.decode())
     coordinate = data['value']
@@ -768,12 +788,13 @@ def add_coordinate(point_request_id):
                                                           login.current_user,
                                                           coordinate_name,
                                                           coordinate,
-                                                          point_request_query.id)
+                                                          point_request_query.id
+    )
     #return point_coordinate_id
-    return ""
 
   return ""
-           
+  
+
 @app.route("/analysis-number")
 def analysis_number():
   analyses = db.session.query(dbmodels.Analysis).all()
