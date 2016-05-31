@@ -19,4 +19,4 @@
     docker-compose -f carina-compose.yml up -d
     docker exec -it recastflaskfrontend_recastfrontend_1 recast-frontend-admin create_db -c /configvolume/config.yml
     docker exec -it recastflaskfrontend_recastfrontend_1 recast-frontend fill_db -c /configvolume/config.yml
-    #edit /etc/hosts
+    #edit /etc/hosts so that ip shown in `docker ps` matches carinarecast.com
