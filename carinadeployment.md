@@ -1,5 +1,14 @@
 ###deploying the frontend on carina
 
+
+#### directory structure
+    \
+     +- recast-flask-frontend
+	 |	\- carina-compose.yml 
+     +- recast-rest-api
+
+#### deployment recipe
+
     carina create recastfrontend --wait
     eval $(carina env recastfrontend)
     docker volume create --name datavolume
