@@ -14,7 +14,5 @@ RUN groupadd -r recast && useradd -r -g recast recast
 EXPOSE 5000
 EXPOSE 6379
 
-USER recast
-
-
-CMD ["/run.sh"]
+#USER recast
+#CMD ["/run.sh"]

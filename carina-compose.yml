@@ -1,0 +1,51 @@
+version: '2' 
+services:
+  postgres:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - datavolume:/pgdata
+    environment:
+      - PGDATA=/pgdata
+
+  redis:
+    restart: always
+    image: redis:latest
+
+  celeryworker:
+    build: .
+    command: 'recast-frontend celery --config /configvolume/config.yml'
+    volumes:
+     - configvolume:/configvolume
+    environment:
+     - C_FORCE_ROOT=yes
+    links:
+     - redis
+  
+  recastfrontend:
+    build: .
+    command: 'recast-frontend server --config /configvolume/config.yml'
+    ports:
+     - "5000:5000"
+    volumes:
+     - configvolume:/configvolume
+    links:
+     - postgres
+     - redis
+     - api
+
+  api:
+    command: bash -c 'sleep 10 && recast-api server --config /configvolume/config.yml'
+    build: ../recast-rest-api
+    volumes:
+     - configvolume:/configvolume
+    ports:
+     - "6000:5000"
+    links:
+     - postgres
+
+volumes:
+  configvolume:
+    external: true
+  datavolume:
+    external: true
