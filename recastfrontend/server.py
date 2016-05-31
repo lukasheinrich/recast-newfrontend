@@ -62,8 +62,8 @@ login_manager.init_app(app)
 @app.route("/")
 def home():
   all_users = dbmodels.User.query.all()
-  celeryapp.set_current()
-  asynctasks.hello_world.delay()
+  #celeryapp.set_current()
+  #asynctasks.hello_world.delay()
   return render_template('home.html', user_data = all_users)
 
 @app.route("/about")
@@ -722,55 +722,78 @@ def add_parameter_point(request_id):
 
   request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()
   
-  zenodo_deposition_id = request_query.zenodo_deposition_id
-
   point_request_id = synctasks.createPointRequest(app,
                                                   request_id,
                                                   login.current_user
-                                                  )  
-  zip_file = request.files['file']
-
-  file_uuid = str(uuid.uuid1())
-  zip_file.save(zip_file.filename)
-
-  synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                        AWS_SECRET_ACCESS_KEY,
-                        AWS_S3_BUCKET_NAME,
-                        zip_file,
-                        file_uuid)
-    
-  deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                zenodo_deposition_id,
-                                                file_uuid,
-                                                zip_file)
-  
-  synctasks.createRequestArchive(app,
-                                 login.current_user,
-                                 point_request_id,
-                                 file_uuid,
-                                 deposition_file_id,
-                                 zip_file.filename)
-
+                                                  )
   for k in request.form:
-	coordinate = json.loads(request.form[k])
-	if k == 'file':
-	  continue
-	  
-	if coordinate.has_key('value'):
-	  value = coordinate['value']
-	  name = None
-	  if coordinate.has_key('name'):
-		name = coordinate['name']
-                
-	  synctasks.createPointCoordinate(app,
-                                          login.current_user,
-                                          name,
-                                          float(value),
-                                          point_request_id
-          )	  								    
+    coordinate = json.loads(request.form[k])
+    if k == 'file':
+      continue
+    
+    if coordinate.has_key('value'):
+      value = coordinate['value']
+      name = None
+      if coordinate.has_key('name'):
+	name = coordinate['name']
+        
+	synctasks.createPointCoordinate(app,
+                                        login.current_user,
+                                        name,
+                                        float(value),
+                                        point_request_id
+        )	  								    
   response = {}
   response['success'] = True
   return jsonify(response)
+
+@app.route("/add-basic-request/<int:point_request_id>", methods=['GET', 'POST'])
+@login.login_required
+def add_basic_request(point_request_id):
+
+  if request.method == 'POST':
+    
+    point_request_query = db.session.query(dbmodels.PointRequest).filter(
+      dbmodels.PointRequest.id == point_request_id).one()
+    
+    request_query = db.session.query(dbmodels.ScanRequest).filter(
+      dbmodels.ScanRequest.id == point_request_query.scan_request_id).one()
+
+    zenodo_deposition_id = request_query.zenodo_deposition_id
+
+    if request.files['file']:
+      zip_file = request.files['file']
+      
+      file_uuid = str(uuid.uuid1())
+      zip_file.save(zip_file.filename)
+      
+      synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                            AWS_SECRET_ACCESS_KEY,
+                            AWS_S3_BUCKET_NAME,
+                            zip_file,
+                            file_uuid)
+      
+      deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                    zenodo_deposition_id,
+                                                    file_uuid,
+                                                    zip_file)
+      
+      synctasks.createRequestArchive(app,
+                                     login.current_user,
+                                     point_request_id,
+                                     file_uuid,
+                                     deposition_file_id,
+                                     zip_file.filename)
+      response = {}
+      response['success'] = True
+      return jsonify(response)
+    else:
+      return 
+  else:
+    return 
+    
+    
+
 
 @app.route("/add-coordinate", methods=['GET', 'POST'])
 @app.route("/add-coordinate/<int:point_request_id>", methods=['GET', 'POST'])

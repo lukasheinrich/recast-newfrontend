@@ -54,20 +54,17 @@ angular.module('recastApp', [])
 	};
 
 	self.addParameter = function(rid) {
-	    console.log("add parameter");
 	    ris.setID(rid);
 	    coordinates.clear();
 	    coordinates.push();
-	    $('#zip-file-request-page').val('');
 	    $('#modal-add-parameter').modal('show');	    
 	};
 
 	self.submit = function() {
 	    self.hideModal();
 	    NProgress.start();
-	    NProgress.inc(0.4);
 	    var form_data = new FormData();
-	    form_data.append('file', self.zipFile);
+	    //form_data.append('file', self.zipFile);
 
 	    for (var k in self.items()){
 		parameter = {};
@@ -76,7 +73,8 @@ angular.module('recastApp', [])
 		par = angular.toJson(parameter);
 		form_data.append(k, par);
 	    }
-
+	    NProgress.inc(0.4);
+	    
 	    $http({
 		method: 'POST',
 		url:'/add-parameter/'+ris.getID(),
@@ -98,6 +96,47 @@ angular.module('recastApp', [])
 	    $('#modal-add-parameter').modal('hide');
 	};
     }])
+
+
+    .controller('BasicRequestCtrl', ['$http', 'IDService', function($http, prs) {
+	/* Controller to add file on request page */
+	var self = this;
+	self.addBasicRequest = function(pid) {
+	    console.log('add basic request modal');	   
+	    prs.setID(pid);
+	    $('#zip-file-request-page').val('');
+	    $('#modal-add-basic-request').modal('show');
+	};
+
+	self.submit = function() {
+	    self.hideModal();
+	    NProgress.start();	    
+	    var form_data = new FormData();
+	    form_data.append('file', self.zipFile);
+	    NProgress.inc(0.4);
+	    
+	    $http({
+		'method': 'POST',
+		url: '/add-basic-request/'+prs.getID(),
+		data: form_data,
+		headers: {'Content-Type': undefined},
+		transformRequest: angular.identity
+	    })
+		.success(function(response){
+		    NProgress.inc(0.5);
+		    NProgress.done();		   
+		    location.reload();
+		})
+		.error(function(err){
+		    NProgress.done();
+		});
+	};
+
+	self.hideModal = function() {
+	    $('#modal-add-basic-request').modal('hide');
+	};
+    }])
+
 
     .controller('coordinateCtrl', ['$http', 'IDService', function($http, prs) {
 	/* Controller to add coordinate on request page */
@@ -122,6 +161,7 @@ angular.module('recastApp', [])
 	    $('#modal-add-coordinate').modal('hide');
 	};
     }])
+
 
     .controller('arxivImportCtrl', ['$http', 'IDService', function($http, id_service) {
 	
@@ -154,8 +194,8 @@ angular.module('recastApp', [])
     }])
 
     .factory('ItemService', [function() {
+	/* list stateful service */
 	items = [];
-
 	return {
 	    push: function() {
 		items.push({
