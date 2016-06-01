@@ -9,7 +9,7 @@ setup(
   packages=find_packages(),
   include_package_data = True,
   install_requires = [
-    'Flask',
+    'Flask==0.10.1',
     'Flask-Login',
     'Flask-SQLAlchemy',
     'Flask-WTF',

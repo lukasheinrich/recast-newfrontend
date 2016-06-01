@@ -62,8 +62,8 @@ login_manager.init_app(app)
 @app.route("/")
 def home():
   all_users = dbmodels.User.query.all()
-  celeryapp.set_current()
-  asynctasks.hello_world.delay()
+  #celeryapp.set_current()
+  #asynctasks.hello_world.delay()
   return render_template('home.html', user_data = all_users)
 
 @app.route("/about")
@@ -95,9 +95,6 @@ def login_user():
     return redirect(url_for('signup'))
   
   return redirect(url_for('home'))
-  
-
-# Forms --------------------------------------------------------------------------------
 
 def confirmUserInDB(user):
   try:
@@ -177,60 +174,6 @@ def user_form():
     flash('failure! form did not validate and was not processed', 'danger')
     
   return render_template('form.html', form=userform)
-
-
-@app.route("/modelform", methods=('POST', 'GET'))
-@login.login_required
-def model_form():
-  model_form = forms.ModelSubmitForm()
-
-  if model_form.validate_on_submit():
-    synctasks.createModelFromForm(app,model_form,login.current_user)
-    flash('success! Model form validated and was processed', 'success')
-    
-  elif model_form.is_submitted():
-    print model_form.errors
-    flash('failure! Model form did not validate and was not processed', 'danger')
-    
-  return render_template('form.html', form=model_form)
-             
-@app.route("/runform", methods=('GET', 'POST'))
-@login.login_required
-def run_condition_form():
-  run_condition_form = forms.RunConditionSubmitForm()
-
-  if run_condition_form.validate_on_submit():
-    synctasks.createRunConditionFromForm(app, run_condition_form, login.current_user)
-    flash('success! run condition added to db', 'success')
-  elif run_condition_form.is_submitted():
-    print run_condition_form.errors
-    flash('failure! run condition not added', 'failure')
-    
-  return render_template('form.html', form=run_condition_form)
-
-@app.route("/scanrequestform", methods=('GET', 'POST'))
-@login.login_required
-def scan_request_form():
-  scan_request_form = forms.ScanRequestSubmitForm()
-  
-  analysis  = dbmodels.Analysis.query.all()
-  scan_request_form.analysis_choice.choices = [(str(a.id), a.id) for a in analysis]
-
-  models = dbmodels.Model.query.all()
-  scan_request_form.model_choice.choices = [(str(m.id), m.description_of_model) for m in models]
-  
-  requesters = dbmodels.User.query.all()
-  scan_request_form.requester_choice.choices = [(str(r.id), r.name) for r in requesters]
-
-  
-  if scan_request_form.validate_on_submit():
-    synctasks.createScanRequestFromForm(app, scan_request_form, login.current_user)
-    flash('success!', 'success')
-  elif scan_request_form.is_submitted():
-    print scan_request_form.errors
-    flash('failure!', 'failure')
-    
-  return render_template('form.html', form=scan_request_form)
 
 @app.route("/editsubscription", methods=['GET', 'POST'], defaults={'id':0})
 @app.route("/editsubscription/<int:id>", methods=['GET', 'POST'])
@@ -371,40 +314,7 @@ def request_form(id):
     
   return render_template('request_form.html', form=request_form,
                          parameter_points_form=parameter_point_form, analysis = analysis[0])
-  
-@app.route("/pointrequestform", methods=('GET', 'POST'))
-@login.login_required
-def point_request_form():
-  point_request_form = forms.PointRequestSubmitForm()
-  
-  models = dbmodels.Model.query.all()
-  point_request_form.model_choice.choices = [(str(m.id), m.description_of_model) for m in models]
-  
-  scan_requests = dbmodels.ScanRequest.query.all()
-  point_request_form.scan_request_choice.choices = [(str(s.id), s.id) for s in scan_requests]
 
-  if point_request_form.validate_on_submit():
-    synctasks.createPointRequestFromForm(app, point_request_form, login.current_user)
-    flash('success!', 'success')
-  elif point_request_form.is_submitted():
-    print point_request_form.errors
-    flash('failure!', 'failure')
-      
-  return render_template('form.html', form = point_request_form)
-
-@app.route("/basicrequestform", methods=('GET', 'POST'))
-@login.login_required
-def basic_request_form():
-  basic_request_form = forms.BasicRequestSubmitForm()
-  
-  if basic_request_form.validate_on_submit():
-    synctasks.createBasicRequestFromForm(app, basic_request_form, login.current_user)
-    flash('success!', 'success')
-  elif basic_request_form.is_submitted():
-    print basic_request_form.errors
-    flash('failure!', 'failure')
-
-  return render_template('form.html', form = basic_request_form)
 
 @app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
 @app.route('/subscribe/<int:id>')
@@ -434,41 +344,49 @@ def contact(id):
 
   return render_template('contact.html', form = contact_form)
 
-# Views -------------------------------------------------------------------------------------
-@app.route("/analysis/<int:id>", methods=['GET', 'POST'])
-def analysis(id):
-  query = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
-  return render_template('analysis.html', analysis=query[0])
-
-@app.route("/analyses", methods=['GET', 'POST'])
+# Views
+@app.route('/analyses', methods=['GET', 'POST'], defaults={'ruuid': None})
+@app.route('/analyses/<string:ruuid>', methods=['GET', 'POST'])
 @login.login_required
-def analyses():
-  if request.args.has_key('sort'):
-    query  = db.session.query(dbmodels.Analysis).order_by(dbmodels.Analysis.title).all()
+def analyses(ruuid):
+
+  if ruuid:
+    query = db.session.query(dbmodels.Analysis).filter(
+      dbmodels.Analysis.uuid == ruuid).all()
+
+    return render_template('analysis.html', analysis=query[0])
+  
+  else:
+    if request.args.has_key('sort'):
+      query  = db.session.query(dbmodels.Analysis).order_by(dbmodels.Analysis.title).all()
+      return render_template('analyses_views.html', analyses = query)
+      
+    if request.args.has_key('max_results'):
+      pass
+      
+    query = db.session.query(dbmodels.Analysis).all()
     return render_template('analyses_views.html', analyses = query)
 
-  if request.args.has_key('max_results'):
-    pass
-
-  query = db.session.query(dbmodels.Analysis).all()
-  return render_template('analyses_views.html', analyses = query)
-
-
-@app.route('/requests', methods=['GET', 'POST'])
+@app.route('/requests', methods=['GET', 'POST'], defaults={'ruuid': None})
+@app.route('/requests/<string:ruuid>', methods=['GET', 'POST'])
 @login.login_required
-def requests_views():
-  if request.args.has_key('sort'):
-    query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
+def request_views(ruuid):
+
+  if ruuid:
+    query = db.session.query(dbmodels.ScanRequest).filter(
+      dbmodels.ScanRequest.uuid == ruuid).all()
+
+    return render_template('request.html',
+                           request = query[0],
+                           bucket_name=AWS_S3_BUCKET_NAME)
+  else:    
+    if request.args.has_key('sort'):
+      query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
+      return render_template('request_views.html', requests = query)
+
+    query = db.session.query(dbmodels.ScanRequest).all()
     return render_template('request_views.html', requests = query)
-
-  query = db.session.query(dbmodels.ScanRequest).all()
-  return render_template('request_views.html', requests = query)
-
-@app.route('/request/<int:id>', methods=['GET', 'POST'])
-@login.login_required
-def request_view(id):  
-  query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == id).all()
-  return render_template('request.html', request = query[0], bucket_name=AWS_S3_BUCKET_NAME)
+  
 
 @app.route('/subscriptions')
 @login.login_required
@@ -483,34 +401,6 @@ def users():
   users = rows_to_dict(query)
   return render_template('viewer.html', rows = users, title= dbmodels.User.__table__)
 
-
-@app.route("/models")
-@login.login_required
-def models():
-  query = db.session.query(dbmodels.Model).all()
-  models = rows_to_dict(query)
-  return render_template('viewer.html', rows = models, title= dbmodels.Model.__table__)
-
-@app.route("/scanrequests")
-@login.login_required
-def scan_requests():
-  query = db.session.query(dbmodels.ScanRequest).all()
-  scanrequests = rows_to_dict(query)
-  return render_template('viewer.html', rows = scanrequests, title= dbmodels.ScanRequest.__table__)
-
-@app.route("/pointrequests")
-@login.login_required
-def point_requests():
-  query = db.session.query(dbmodels.PointRequest).all()
-  pointrequests = rows_to_dict(query)
-  return render_template('viewer.html', rows = pointrequests, title = dbmodels.PointRequest.__table__)
-
-@app.route("/basicrequests")
-@login.login_required
-def basic_requests():
-  query = db.session.query(dbmodels.BasicRequest).all()
-  basicrequests = rows_to_dict(query)
-  return render_template('viewer.html', rows = basicrequests, title = dbmodels.BasicRequest.__table__)
 
 @app.route("/links")
 @login.login_required
@@ -722,55 +612,75 @@ def add_parameter_point(request_id):
 
   request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()
   
-  zenodo_deposition_id = request_query.zenodo_deposition_id
-
   point_request_id = synctasks.createPointRequest(app,
                                                   request_id,
                                                   login.current_user
-                                                  )  
-  zip_file = request.files['file']
-
-  file_uuid = str(uuid.uuid1())
-  zip_file.save(zip_file.filename)
-
-  synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                        AWS_SECRET_ACCESS_KEY,
-                        AWS_S3_BUCKET_NAME,
-                        zip_file,
-                        file_uuid)
-    
-  deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                zenodo_deposition_id,
-                                                file_uuid,
-                                                zip_file)
-  
-  synctasks.createRequestArchive(app,
-                                 login.current_user,
-                                 point_request_id,
-                                 file_uuid,
-                                 deposition_file_id,
-                                 zip_file.filename)
-
+                                                  )
   for k in request.form:
-	coordinate = json.loads(request.form[k])
-	if k == 'file':
-	  continue
-	  
-	if coordinate.has_key('value'):
-	  value = coordinate['value']
-	  name = None
-	  if coordinate.has_key('name'):
-		name = coordinate['name']
-                
-	  synctasks.createPointCoordinate(app,
-                                          login.current_user,
-                                          name,
-                                          float(value),
-                                          point_request_id
-          )	  								    
+    coordinate = json.loads(request.form[k])
+    if k == 'file':
+      continue
+    
+    if coordinate.has_key('value'):
+      value = coordinate['value']
+      name = None
+      if coordinate.has_key('name'):
+	name = coordinate['name']
+        
+	synctasks.createPointCoordinate(app,
+                                        login.current_user,
+                                        name,
+                                        float(value),
+                                        point_request_id
+        )	  								    
   response = {}
   response['success'] = True
   return jsonify(response)
+
+@app.route("/add-basic-request/<int:point_request_id>", methods=['GET', 'POST'])
+@login.login_required
+def add_basic_request(point_request_id):
+
+  if request.method == 'POST':
+    
+    point_request_query = db.session.query(dbmodels.PointRequest).filter(
+      dbmodels.PointRequest.id == point_request_id).one()
+    
+    request_query = db.session.query(dbmodels.ScanRequest).filter(
+      dbmodels.ScanRequest.id == point_request_query.scan_request_id).one()
+
+    zenodo_deposition_id = request_query.zenodo_deposition_id
+
+    if request.files['file']:
+      zip_file = request.files['file']
+      
+      file_uuid = str(uuid.uuid1())
+      zip_file.save(zip_file.filename)
+      
+      synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                            AWS_SECRET_ACCESS_KEY,
+                            AWS_S3_BUCKET_NAME,
+                            zip_file,
+                            file_uuid)
+      
+      deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
+                                                    zenodo_deposition_id,
+                                                    file_uuid,
+                                                    zip_file)
+      
+      synctasks.createRequestArchive(app,
+                                     login.current_user,
+                                     point_request_id,
+                                     file_uuid,
+                                     deposition_file_id,
+                                     zip_file.filename)
+      response = {}
+      response['success'] = True
+      return jsonify(response)
+    else:
+      return 
+  else:
+    return 
 
 @app.route("/add-coordinate", methods=['GET', 'POST'])
 @app.route("/add-coordinate/<int:point_request_id>", methods=['GET', 'POST'])
@@ -795,18 +705,21 @@ def add_coordinate(point_request_id):
   return ""
   
 
-@app.route("/analysis-number")
-def analysis_number():
+@app.route("/homestats")
+def homestats():
   analyses = db.session.query(dbmodels.Analysis).all()
   requests = db.session.query(dbmodels.ScanRequest).all()
   
-  
-
   data = {}
   data['analyses'] = len(analyses)
   data['requests'] = len(requests)
   return jsonify(data)
 
-@app.route("/response/<int:response_id>")
-def response(response_id):
-  return render_template('response.html')
+@app.route("/results/<string:ruuid>")
+def results(ruuid):
+  
+  query = db.session.query(dbmodels.PointResponse).filter(
+    dbmodels.PointResponse.uuid == ruuid).one()
+
+  
+  return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)

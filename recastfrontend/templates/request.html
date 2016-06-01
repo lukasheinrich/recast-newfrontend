@@ -62,7 +62,7 @@
 	    &nbsp;analysis&nbsp;
 	  </span>
 	</strong>
-	<a href="{{ url_for('.analysis', id=request.analysis.id) }}">
+	<a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
 	  <span id="analysis-title">{{ request.analysis.title }}
 	  </span>
 	</a>
@@ -96,7 +96,7 @@
 
     <div>
     </div>
-    <div ng-controller="coordinateCtrl as ctrl">
+    <div ng-controller="BasicRequestCtrl as ctrl">
       {% for point_request in request.scan_points %}
       {% if loop.index0 > 0 %}
       <span>
@@ -114,10 +114,30 @@
 	<div class="col-md-12">
 	  <div class="col-md-4">	  
 	    <br><br>
-	    <a class="btn btn-success btn-sm" href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}">
+	    {% if point_request.requests[0] %}
+	    <a class="btn btn-success btn-sm"
+	       href="{{"https://s3.amazonaws.com/"+ bucket_name +"/"+ point_request.requests[0].file_name[0].file_name }}"
+	       download="{{point_request.requests[0].file_name[0].orginal_file_name}}"
+	       >
+
+	    {% else %}
+	    <a class="btn btn-success btn-sm disabled" href="#" download="Null">
+	      {% endif %}
 	      <i class="glyphicon glyphicon-download"></i>&nbsp;Download File</a>
 	    <br><br>
+
+	    <!-- view response stuff -->
+	    {% if point_request.point_responses %}
+	    <a class="btn btn-info btn-sm"
+	       href="{{ url_for('.results', ruuid=point_request.point_responses.uuid) }}">
+	      <i class="glyphicon glyphicon-eye-open"></i>
+	      &nbsp;View Response
+	    </a>
+	    {% else %}
 	    <a class="btn btn-info btn-sm disabled" href="#"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;View Response</a>
+	    {% endif %}
+
+	    
 	    <br><br>
 	  </div>
 	  <div class="table-responsive col-md-8">
@@ -149,9 +169,15 @@
 		  {% endfor %}	    
 	      </tbody>
 	    </table>
-	    <span><button type="button" id="btn-add-coordinate-{{loop.index0}}" class="btn btn-primary btn-sm pull-right" ng-click="ctrl.addCoordinate({{point_request.id}})"><i class="glyphicon glyphicon-plus"></i>&nbsp;New Coordinate</button>
+	    
+	    <span>
+	      <button type="button" id="btn-add-coordinate-{{loop.index0}}" class="btn btn-primary btn-sm pull-right" ng-click="ctrl.addBasicRequest({{point_request.id}})">
+		<i class="glyphicon glyphicon-plus">
+		</i>&nbsp;Add Basic Request
+	      </button>
 	      <br><br>
 	    </span>
+	    
 	  </div><!-- end of div table responsive -->
 	</div>
 	
@@ -180,7 +206,7 @@
 	    <div ng-repeat="item in ctrl.items()">
 	      
 	      <div class="form-group required">
-		<label class="control-label col-md-4" for="parameter-point">Coordinate:</label>
+		<label class="control-label col-md-3" for="parameter-point">Coordinate:</label>
 		<div class="col-md-4">
 		  <input class="form-control" ng-model="item.name" id="coordinate-name" name="coordinate-name" type="textt" value="" placeholder="Name">		
 		  <p class="text-muted"><small>Optional name</small></p>
@@ -192,20 +218,13 @@
 		</div>		    		      
 	      </div>
 			    
-	    </div>
+	    </div><!-- ng repeat -->
 	    
 	    <div class="col-md-12">
 	      <button class="btn btn-success btn-xs pull-right" type="button" ng-click="ctrl.addCoordinate()"><i class="glyphicon glyphicon-remove"></i>&nbsp;Add&nbsp;Coordinate</button>
 	    </div>
+	    <br>
 	    
-	    <div class="form-group required">
-	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
-	      <div class="col-md-6">
-		<input id="zip-file-request-page" file-model="ctrl.zipFile" name="zip-file" type="file">
-		<p class="text-muted"><small>.zip extension allowed</small></p>
-	      </div>
-	    </div>
-			
 	  </div>
 	</form>    
       </div><!-- end of modal body -->
@@ -222,39 +241,38 @@
 
 
 
-<div id="modal-add-coordinate" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="coordinateCtrl as ctrl">
+<div id="modal-add-basic-request" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="BasicRequestCtrl as ctrl">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
       </div>
-      <form id="form-add-coordinate" method="post" class="form-horizontal">
+      
 	<div class="modal-body">
-	  <div id="form-data-coordinate">
-	    
-	    <div class="form-group required">
-	      <label class="control-label col-md-3" for="coordinate">Coordinate:</label>
-	      <div class="col-md-4">
-		<input class="form-control" ng-model="ctrl.coordinate.name" id="coordinate-name-2" name="coordinate-name" type="text" value="" placeholder="Name">
-		<p class="text-muted"><small>Optional name</small></p>
-	      </div>
 
-	      <div class="col-md-4">
-		<input class="form-control" id="coordinate-value-2" ng-model="ctrl.coordinate.value" name="coordinate-value" type="text" value="" placeholder="Value">
-		<p class="text-muted"><small>Required value of type "float" </small></p>
-	      </div>	      
+	  <form id="form-add-coordinate" method="post" class="form-horizontal">
+
+	    <div class="form-group required">
+	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
+	      
+	      <div class="col-md-6">
+		<input id="zip-file-requesst-page" file-model="ctrl.zipFile" name="zip-file" type="file">
+		<p class="text-muted"><small>.zip extension allowed</small></p>
+	      </div>
 	    </div>
-	  </div>
+	    
+	  </form>
+	  
 	</div><!-- end modal body -->
 	
 	<div class="modal-footer">
 	  <button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
 	  <button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-	  </div>
 	</div>
-      </form>
-    </div>
+
+	
+    </div>    
   </div>
 </div>
 
