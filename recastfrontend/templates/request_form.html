@@ -3,9 +3,8 @@
 {% block container %}
 
 <div class="container">
-<form method="post" class="form-horizontal" enctype="multipart/form-data">
+<form method="post" class="form-horizontal" role="form" action="/request_form">
   {{ form.hidden_tag() }}
-  {{ parameter_points_form.hidden_tag() }}
   <br><br>
   <div class="panel panel-default">
     <div class="panel-heading">Request </div>
@@ -53,77 +52,7 @@
     </div>
   </div>
     
-  <div class="panel panel-default">
-    <div class="panel-heading">  Request Parameter Points </div>
-    <div class="panel-content">
-      <!-- Request Parameter Point form --> 
-
-      <br><br>
-      <!--<div id="copy-parameter-point" class="container-fluid">-->
-      <div id="request-parameter-1" class="container-fluid">
-	  <div class="panel panel-default col-md-10 col-md-offset-1">
-	      <div class="panel-content">
-		  <!-- <button type="button" class="close">&times;</button>-->
-		  <br><br>
-		  
-		  <div class="form-group required">
-		      <label class="control-label col-md-4" for="{{ parameter_points_form.value_point_coordinate.id }}" id="parameter_1"> {{ parameter_points_form.value_point_coordinate.label.text }} </label>
-		      <div id="point-coordinate" class="coordinate col-md-8">
-			  <div class="col-md-5">
-			      {{ parameter_points_form.name_point_coordinate(class='form-control', placeholder='Name') }}
-			      <p class="text-muted"><small>Required</small></p>
-			  </div>	
-			  <div class="col-md-5">
-			      {{ parameter_points_form.value_point_coordinate(class='form-control', placeholder='Value') }}
-			      <p class="text-muted"><small>Required value of type "float"</small></p>
-			  </div>
-			  <div class="col-md-2"></div>
-			  
-		      </div>	      
-		  </div>
-		  
-		  <div class="form-group">
-		      <div id="point-coordinate-placeholder-1" class="col-md-offset-4 col-md-8">
-			  <!-- <div class="col-md-offset-4 col-md-8">-->
-		      </div>
-		  </div>
-		  
-		  <div class="col-md-offset-8 col-md-4">
-		      <!--<button id="btn-add-point-coordinate" type="button" class="btn btn-info btn-xs pull-left col-md-offset-1"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add point coordinate</button>-->
-		      <button id="btn-add-point-coordinate" type="button" class="btn btn-info btn-xs pull-left col-md-offset-1 btn-add-point-coordinate"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add point coordinate</button>
-		  </div>
-
-		  <br><br>
-		  <div class="form-group required">
-		      <label class="control-label col-md-4" for="{{ parameter_points_form.zip_file.id }} "><i class="fa fa-file-zip-o"></i>&nbsp;{{ parameter_points_form.zip_file.label.text }} </label>
-		      <div class="col-md-6">
-			  {{ parameter_points_form.zip_file }}
-			  <p class="text-muted"><small>.zip extension allowed</small></p>
-			  <!--	      <button type="button" class="btn btn-info">Upload file</button>	      -->
-		      </div>
-		  </div>
-		  
-	      </div>
-	  </div> <!--- End of each parameter point  -->
-      </div> <!-- Example of parameter point to copy -->
-      
-      <div id="placeholder">
-	
-      </div>
-      
-      <!-- onclick="arxiv(1602.07646)" -->
-      
-
-
-      <div class="col-md-11">
-	<button id="btn-add-parameter-point" type="button" class="btn btn-success pull-right"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add parameter</button>
-      </div>
-      <br><br><br>
-			       
-
-    </div> <!-- End of parameter point panel -->
-  </div>
-    
+  
   <br><br>
   <div>
     <div class="col-md-12">
@@ -138,105 +67,6 @@
   
 
 </div>
-
-<script type="text/javascript">
-    
- $(document).ready(function() {
-     
-     
-     $('#btn-add-point-coordinate').on('click', function() {
-	      addPointCoordinate($(this));
-     });
-
-
-     $('#btn-add-parameter-point').click(function() {
-
-	 var $div = $('div[id^="request-parameter"]:last');
-	 var num = parseInt($div.prop("id").match(/\d+/g),10)+1;
-	 
-	 $('#request-parameter-1').clone()
-				  .find("input:text").val("").end()
-				  .find("input:file").val("").end()
-				  .find("div[id^='point-coordinate-placeholder']").empty()
-				  .prop('id', 'point-coordinate-placeholder-'+num).end()
-				  .find("button[id^='btn-add-point-coordinate']").prop('id', 'btn-add-point-coordinate-'+num).end()
-				  .prop('id', 'request-parameter-'+num).appendTo('#placeholder');
-	 
-	 
-	 /* Assign ids to new parameter points from 0..N-1 */
-	 var removeButton = $("<button type='button' class='close'><i class='glyphicon glyphicon-remove' style='color:blue;'></i></button>");
-	 removeButton.click(function() {
-	     $(this).parent().parent().remove();
-	 });
-
-	 $('#request-parameter-'+num).children().first().prepend(removeButton);
-
-	 $('#request-parameter-'+num+' button[id^="btn-add-point-coordinate-"'+num)
-	     .click( function() {
-		 addPointCoordinate($(this));
-	     }); 
-
-	 /*Generate IDs for newly created inputs */
-	 $('#request-parameter-'+num+' input[id^="value_point_coordinate"]')
-	     .prop('id', 'value_point_coordinate_'+num+'-1')
-	     .attr('name', 'value_point_coordinate_'+num+'-1');
-	 
-	 $('#request-parameter-'+num+' input[id^="name_point_coordinate"]')
-	     .prop('id', 'name_point_coordinate_'+num+'-1')
-	     .attr('name', 'name_point_coordinate_'+num+'-1');
-	 
-	 $('#request-parameter-'+num+' input[id^="zip_file"]')
-	     .prop('id', 'zip_file_'+num)
-	     .attr('name', 'zip_file_'+num);
-	 
-	 $('#request-parameter-'+num+' label[for^="value_point_coordinate"]')
-	     .text('Parameter '+num);
-	 
-	 $('#request-parameter-'+num+' label[for^="zip_file"]')
-	     .text('Zip File '+num);
-     });
-
-     function addPointCoordinate($btn) {
-	 
-
-	 /*find the last point coordinate in this parameter */
-	 var $div = $btn.parent().parent().find('input[id^="value_point_coordinate"]:last');
-	 var num = parseInt($div.prop("id").substr($div.prop("id").indexOf("-")+1))+1;  //get its ID
-	 
-	 $div = $btn.parent().parent().parent().parent();
-	 var prefix = parseInt($div.prop("id").match(/\d+/g),10);
-
-	 $btn.parent().siblings().find('div.coordinate').clone()
-		.find("input:text").val("").end() //clear fields
-		.find("input[id^='value_point_coordinate']").val("here").end() //useless
-		.find("input[id^='name']").val(num).end()   //useless
-		.prop('id', 'point-coordinate_'+prefix+'-'+num) //change id of container div
-		.removeClass('col-md-8')  //for better layout
-		.removeClass('coordinate') //not needed
-	 	.appendTo('#point-coordinate-placeholder-'+prefix);
-	 
-	 var removeButton = $("<button type='button' class='btn btn-default'><i class='glyphicon glyphicon-remove'></i></button>");
-	 removeButton.click( function() {
-	     $btn.parent().remove();
-	 });
-	 //$('#point_coordinate_'+num).append(removeButton);
-	 //removeButton.appendTo('#point_coordinate_'+num);
-
-	 $('#point-coordinate_'+prefix+'-'+num+' input[id^="value_point_coordinate"]')
-	     .prop('id', 'value_point_coordinate_'+prefix+'-'+num)
-	     .attr('name', 'value_point_coordinate_'+prefix+'-'+num)
-	     .val("finally");
-	 
-	 $('#point-coordinate_'+prefix+'-'+num+' input[id^="name"]')
-	     .prop('id', 'name_point_coordinate_'+prefix+'-'+num)
-	     .attr('name', 'name_point_coordinate_'+prefix+'-'+num);
-     }     
- })
-
-
-
-
-</script>
             
   
 

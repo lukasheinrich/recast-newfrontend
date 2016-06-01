@@ -196,45 +196,12 @@ def edit_request(id):
 @login.login_required
 def request_form(id):
   request_form = forms.RequestSubmitForm()
-  
-  parameter_point_form = forms.RequestParameterPointsSubmitForm()
-  
+    
   analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   request_form.analysis_id.data = analysis[0].id
 
   if request.method == 'POST':
     if request_form.validate_on_submit():
-
-      ''' Simple algorithm to gather the fields added dynamically 
-           what we eventually want is to group all point_coordinate_X-y in the corresp. X's list
-                where X is the parameter number and Y is the point coordinate(Axis)
-      '''
-      dict_value = {'1': 1} # for the initial parameter point, already present in WTForm
-      for k in request.form.keys():
-        if 'value_point_coordinate_' in k:
-          #Get the Parameter number 
-          #substring between last '_' and '-'
-          parameter_number = int((re.search('coordinate_(.*)-', k)).group(1))
-          if dict_value.has_key(str(parameter_number)):
-            dict_value[str(parameter_number)] += 1
-          else:
-            dict_value[str(parameter_number)] = 1
-            
-        
-      parameter_list = []
-      for k, v in dict_value.iteritems():
-        parameter = []
-        i = 1
-        if k == '1':
-          parameter.append('value_point_coordinate')
-          v -= 1
-        while v > 0:
-          value_id_name = 'value_point_coordinate_'+str(k)+'-'+str(i)
-          if  request.form.has_key(value_id_name):
-            parameter.append(value_id_name)
-            v -= 1
-          i += 1
-        parameter_list.append(parameter)
       
       request_uuid = str(uuid.uuid1())
       deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
@@ -249,61 +216,6 @@ def request_form(id):
       request_id = synctasks.createRequest(app, 
                                            request_form, 
                                            login.current_user)
-
-      for parameter in parameter_list:
-        print parameter
-        #this is where I create a new Point request and retrieve its ID
-        point_request_id = synctasks.createPointRequest(app,
-                                                        request_id,
-                                                        login.current_user)
-        #Upload file on AWS and save into DB
-        if parameter[0] == "value_point_coordinate":
-          parameter_number = 1
-          zip_file_form_name = 'zip_file'
-        else:
-          parameter_number = int((re.search('coordinate_(.*)-', parameter[0])).group(1))
-          zip_file_form_name = 'zip_file_'+str(parameter_number)
-
-
-        print zip_file_form_name
-        zip_file = request.files[zip_file_form_name]
-        
-        file_uuid = str(uuid.uuid1())
-        
-        zip_file.save(zip_file.filename)
-        
-        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                              AWS_SECRET_ACCESS_KEY,
-                              AWS_S3_BUCKET_NAME,
-                              zip_file,
-                              file_uuid)
-        
-        deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                      deposition_id,
-                                                      file_uuid,
-                                                      zip_file)
-        
-        '''Uncomment when the website goes live'''
-        #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
-                  
-        synctasks.createRequestArchive(app,
-                                       login.current_user,
-                                       point_request_id,
-                                       file_uuid,
-                                       deposition_file_id,
-                                       zip_file.filename)
-        for coordinate in parameter:
-          #Add each Point coordinate
-          name_id_name = coordinate.replace("value", "name")
-          coordinate_value = request.form[coordinate]
-          coordinate_name = request.form[name_id_name]
-          
-          synctasks.createPointCoordinate(app,
-                                          login.current_user,
-                                          coordinate_name,
-                                          coordinate_value,
-                                          point_request_id)
-
       flash('success!', 'success')
       return redirect(url_for('analyses'))
   
@@ -313,7 +225,7 @@ def request_form(id):
       filename = None
     
   return render_template('request_form.html', form=request_form,
-                         parameter_points_form=parameter_point_form, analysis = analysis[0])
+                         analysis = analysis[0])
 
 
 @app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
