@@ -5,11 +5,19 @@ angular.module('recastApp', [])
     .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
 	/* home page controller */
 	var self = this;
-	self.analyses = 0;
-	self.requests = 0;
+	self.analyses = "-";
+	self.requests = "-";
 	
-	$interval( function() {
-	    $http.get('/analysis-number')
+	$http.get('/homestats')
+	    .then(function(response) {
+		self.analyses = response.data.analyses;
+		self.requests = response.data.requests;
+	    });
+	
+	
+	
+	$interval( function() {	    
+	    $http.get('/homestats')
 		.then(function(response) {
 		    self.analyses = response.data.analyses;
 		    self.requests = response.data.requests;
