@@ -1,5 +1,8 @@
 FROM python:2.7
 
+RUN apt-get update && apt-get install -y nano
+ENV TERM xterm
+
 # Copy source code
 WORKDIR /recast-newfrontend
 COPY . /recast-newfrontend/
