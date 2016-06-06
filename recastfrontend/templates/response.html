@@ -60,9 +60,10 @@
 	<h4> File of the point response </h4>
 
 	
-	<a class="btn btn-success btn-sm"
-	   href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ pointresponse.archives[0].file_name}}"
-	   download="{{pointresponse.archives[0].original_file_name}}">
+	<a download="{{pointresponse.archives[0].original_file_name}}"
+	   class="btn btn-success btn-sm"
+	   href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ pointresponse.archives[0].file_name}}"	  
+	   >
 	  <i class="glyphicon glyphicon-download"></i>&nbsp;Download File
 	</a>
 	{% endif %}

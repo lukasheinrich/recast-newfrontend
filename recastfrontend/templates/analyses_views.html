@@ -48,11 +48,11 @@
 	    </h4>
 	    <br><br>
 	    
-	    <div class="more">{{ analysis.description }}</div>
+	    <div>{{ analysis.description }}</div>
 	  
 	    <br><br>
 	    
-	    <div class="">
+	    <div class="text-center">
 	      <span class="badge">
 		<i class="glyphicon glyphicon-user"></i>
 		&nbsp;{{analysis.user.name}}
@@ -69,7 +69,7 @@
 
 	    <br>
 	    
-	    <div class="">
+	    <div class="text-center">
 	      <a href="{{ url_for('.analyses', ruuid=analysis.uuid) }}">
 		<span class="label label-default">
 		  <i class="glyphicon glyphicon-eye-open"></i>

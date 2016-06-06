@@ -19,8 +19,13 @@
       href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
 
 <!-- font awesome for icons -->
-<link rel="stylesheet" 
+<!--<link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  -->
+
+<script src="https://use.fontawesome.com/53761399c2.js"></script>
+<link rel="stylesheet"
+      href="https://cdn.rawgit.com/ScoopThemes/Oleose/master/assets/css/font-awesome.min.css">
 
 <script type="text/javascript" src="../static/sweetalert.min.js"></script>
 <link rel="stylesheet" href="../static/sweetalert.css">
@@ -63,16 +68,16 @@
         });
 </script>
 -->
-
+<!--     background-color:#F6F5EE; -->
 <style>
 @import url('http://fonts.googleapis.com/css?family=Lato');
 body,h6,h5,h4,h3,h2,h1,html {
     font-family: "Lato";
 }
 body {
-    background-color:#F6F5EE;	
-}
-
+    background-color:#f0f3f4;
+ }
+ 
 .badge {
     background-color:#777;
 }
@@ -92,8 +97,22 @@ body {
     width: 100%;
     z-index: 10;
 }
-
-
+ html {
+     position: relative;
+     min-height: 100%;
+ }
+ body {
+     margin-bottom: 200px;
+ }
+ .footer {
+     position: absolute;
+     bottom: 0;
+     width: 100%;
+     height: 200px;
+     background-color:#033c73;
+     color:white;
+     padding-bottom:0;
+ }
 
 </style>
 
@@ -206,7 +225,7 @@ body {
 </div>
 </div>
 
-<div class="container-fluid">
+<div class="container">
 
     <div class="row col-md-12">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -230,15 +249,15 @@ body {
 
 
 <!-- footer -->
-<footer class="footer">
-  <div class="container-fluid col-md-12" style="background-color:#033c73;color:white;">
-  
+
+<div class="footer container-fluid col-md-12">
+    
   <br><br>
-
+  
   <span class="col-md-offset-2 col-md-4">
-
+    
     <ul class="list-unstyled" style="color:white;">
-
+      
       <li>
 	<a href="{{url_for('about')}}" style="color:white;">
 	  <strong>
@@ -263,7 +282,7 @@ body {
 	</a>
       </li>
 
-      </ul>
+    </ul>
 
   </span>
   
@@ -275,37 +294,34 @@ body {
     
   </span>
 
-  <span class="col-md-12 text-center">
-    Copyright (c) 2016
-    <br><br><br><br><br>
+  <span class="col-md-12">
+      <p class="text-center"> Copyright (c) 2016 </p>
+    <br><br><br>
   </span>
+  
 </div>
-
-<footer>
 
 <script type="text/javascript">
     
- $(document).ready(function(e){
-     $('.search-panel .dropdown-menu').find('a').click(function(e) {
-	 e.preventDefault();
-	 var param = $(this).attr("href").replace("#","");
-	 var concept = $(this).text();
-	 $('.search-panel span#search_concept').text(concept);
-	 $('.input-group #search_param').val(param);
+$(document).ready(function(e){
+    $('.search-panel .dropdown-menu').find('a').click(function(e) {
+	e.preventDefault();
+	var param = $(this).attr("href").replace("#","");
+	var concept = $(this).text();
+	$('.search-panel span#search_concept').text(concept);
+	$('.input-group #search_param').val(param);
 	 document.getElementById("filter").value = concept;
-     });
-     
-     $('#nav').affix({
-	 offset: {
-	     top: $('header').height()
-	 }
-     });
-      
- });
+    });
+    
+    $('#nav').affix({
+	offset: {
+	    top: $('header').height()
+	}
+    });
+    
+});
  
 </script>
 <script type="text/javascript" src="../static/recast.js"></script>
-	
-
 </body>
 </html>

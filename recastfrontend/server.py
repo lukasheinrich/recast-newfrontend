@@ -522,16 +522,12 @@ def arxiv():
 @login.login_required
 def add_parameter_point(request_id):
 
-  request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()
-  
+  request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()  
   point_request_id = synctasks.createPointRequest(app,
                                                   request_id,
-                                                  login.current_user
-                                                  )
+                                                  login.current_user)
   for k in request.form:
     coordinate = json.loads(request.form[k])
-    if k == 'file':
-      continue
     
     if coordinate.has_key('value'):
       value = coordinate['value']
@@ -543,11 +539,11 @@ def add_parameter_point(request_id):
                                         login.current_user,
                                         name,
                                         float(value),
-                                        point_request_id
-        )	  								    
+                                        point_request_id)
   response = {}
   response['success'] = True
   return jsonify(response)
+
 
 @app.route("/add-basic-request/<int:point_request_id>", methods=['GET', 'POST'])
 @login.login_required
@@ -610,8 +606,7 @@ def add_coordinate(point_request_id):
                                                           login.current_user,
                                                           coordinate_name,
                                                           coordinate,
-                                                          point_request_query.id
-    )
+                                                          point_request_query.id)
     #return point_coordinate_id
 
   return ""
@@ -635,3 +630,7 @@ def results(ruuid):
 
   
   return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)
+
+@app.errorhandler(404)
+def page_not_found(e):
+  return render_template('404.html'), 404
