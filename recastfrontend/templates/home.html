@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 
 {% block container %}
+<!--<div class="container-fluid" style="background-image: url(http://cache.boston.com/universal/site_graphics/blogs/bigpicture/lhc_08_01/lhc10.jpg);">-->
 <div class="container">
   <!-- <div class='col-md-10'> -->
+  
     
-  <div class="card card-default text-xs-center text-center" style="box-shadow: 1px 1px 1px 4px #f2efef;">
-    <div class="card-block" >
+  <div class="card card-default text-xs-center text-center">
+    <div class="card-block" style="color:black">
       <blockquote class="card-blockquote">
      <h3>RECAST is a framework for extending the impact of existing analyses performed by  high-energy physics experiments.</h3>
       <ol><li>Anyone can add <em>analyses</em> to the Analysis Catalog</li>
@@ -23,10 +25,11 @@
   </span>
 
   <div class="row" ng-controller="HomeCtrl as ctrl">
+    
     <div class="col-md-6">
       <div class="card-deck-wrapper">
 	<div class="card-deck">
-	  <div class="card" style="box-shadow: 1px 1px 1px 5px #f2efef;">
+	  <div class="card card-on-deck">
 	    <div class="card-block">
 	      <br><br>	      <br><br>
 	      <h2 class="card-title text-center">
@@ -40,7 +43,7 @@
 	    </div>
 	  </div>
 	  
-	  <div class="card" style="box-shadow: 1px 1px 1px 5px #f2efef;">
+	  <div class="card card-on-deck">
 	    <div class="card-block">
 	      <br><br><br><br>
 	      <h2 class="card-title text-center">
@@ -52,23 +55,21 @@
 	      <br><br>
 	    </div>
 	  </div>
+
+
 	  
 	</div>
-      </div>
-
-
-  
+      </div>  
     </div>
+
+    
     <div class="col-md-6">
-      <div class="container-fluid hidden-sm hidden-xs hidden-lg">
-	<div class="card">
-	  <div class="card-header">Latest Requests</div>
-	  <div class="card-block">
-	    (Placeholder)
-	    <br><br><br><br>	      <br><br><br><br>	      <br><br><br><br>
-	  </div>
+
+
+	  
 	</div>
-      </div>
+      </div>  
+      
     </div>
   </div>
 </div>	

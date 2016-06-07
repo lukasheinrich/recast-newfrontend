@@ -287,10 +287,10 @@ def request_views(ruuid):
   if ruuid:
     query = db.session.query(dbmodels.ScanRequest).filter(
       dbmodels.ScanRequest.uuid == ruuid).all()
-
-    return render_template('request.html',
-                           request = query[0],
-                           bucket_name=AWS_S3_BUCKET_NAME)
+    return newrequest(ruuid)
+    #return render_template('request.html',
+    #request = query[0],
+    #bucket_name=AWS_S3_BUCKET_NAME)
   else:    
     if request.args.has_key('sort'):
       query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
@@ -298,8 +298,20 @@ def request_views(ruuid):
 
     query = db.session.query(dbmodels.ScanRequest).all()
     return render_template('request_views.html', requests = query)
-  
 
+@app.route('/newrequests', methods=['GET', 'POST'], defaults={'ruuid': 'a545f3d2-ca5c-496e-abeb-3f9f6e597010'})  
+@app.route('/newrequests/<string:ruuid>', methods=['GET', 'POST'])
+def newrequest(ruuid):
+  if id:
+    query = db.session.query(dbmodels.ScanRequest).filter(
+      dbmodels.ScanRequest.uuid == ruuid).all()
+    return render_template('newrequest.html',
+                           request = query[0],
+                           bucket_name = AWS_S3_BUCKET_NAME)
+  
+                           
+  
+  
 @app.route('/subscriptions')
 @login.login_required
 def subscriptions():
@@ -631,6 +643,31 @@ def results(ruuid):
   
   return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)
 
+@app.route("/parameter-data/<string:ruuid>")
+def parameter_data(ruuid):
+  query = db.session.query(dbmodels.PointRequest).filter(    
+    dbmodels.PointRequest.uuid == ruuid).one()
+  response = {}
+
+  response['data'] = render_template('parameterdata.html',
+                                     pointrequest=query,
+                                     bucket_name=AWS_S3_BUCKET_NAME)
+
+  response['success'] = "true"
+  return jsonify(response)
+
+@app.route("/pointresponse-data/<string:ruuid>")
+def pointresponse_data(ruuid):
+  query = db.session.query(dbmodels.PointResponse).filter(
+    dbmodels.PointResponse.uuid == ruuid).one()
+
+  response = {}
+  response['data'] = render_template('responsedata.html',
+                                     pointresponse=query)
+  response['success'] = "true"
+  return jsonify(response)
+
 @app.errorhandler(404)
 def page_not_found(e):
   return render_template('404.html'), 404
+

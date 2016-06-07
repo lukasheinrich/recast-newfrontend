@@ -32,7 +32,7 @@
 	
 	{% for analysis in analyses %}
 	
-	<div class="card" style="box-shadow:box-shadow: 1px 1px 1px 5px #f2efef;">
+	<div class="card card-on-deck">
 	  <div class="card-block">
 	    <h4 class="text-center">
 	      <a href="{{ url_for('.analyses', ruuid=analysis.uuid) }}">
@@ -98,6 +98,13 @@
 
       </div>
 
+      <div class="col-md-12 card card-stats">
+	<a href="#">
+	  <br>
+	  <h4 class="text-center">Load more...</h4>
+	  <br>
+	</a>
+      </div>
     </div>
   </div>
 </div>
