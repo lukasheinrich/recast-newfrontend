@@ -64,7 +64,9 @@ def home():
   all_users = dbmodels.User.query.all()
   #celeryapp.set_current()
   #asynctasks.hello_world.delay()
+  #return render_template('new-home.html')
   return render_template('home.html', user_data = all_users)
+
 
 @app.route("/about")
 def about():
@@ -671,3 +673,59 @@ def pointresponse_data(ruuid):
 def page_not_found(e):
   return render_template('404.html'), 404
 
+@app.route("/search-results")
+def search_results():
+  print request.args
+  return render_template('search-results.html', search_term=request.args.get('search'))
+
+@app.route("/search-ajax")
+def search_ajax():
+  pass
+
+@app.route("/search-analyses/<string:query>")
+def search_analyses(query):
+
+  doc_type = 'analysis'
+  results = synctasks.search(ELASTIC_SEARCH_URL,
+                             ELASTIC_SEARCH_AUTH,
+                             ELASTIC_SEARCH_INDEX,
+                             doc_type,
+                             query)
+  ids = []
+
+  for entry in search_data['hits']['hits']:
+    ids.append(entry['_source']['id'])
+
+  ids.sort()
+  analyses = db.session.query(dbmodels.Analysis).filter(
+    dbmodels.Analysis.id.in_(ids)).all()
+                               
+  response = {}
+  response['data'] = render_template('analysis-search-results.html', query=analyses)
+  response['success'] = True
+
+  return jsonify(response)
+
+@app.route("/search-results/<string:query>")
+def search_requests(query):
+
+  doc_type = 'requests'
+  results = synctasks.search(ELASTIC_SEARCH_URL,
+                             ELASTIC_SEARCH_AUTH,
+                             ELASTIC_SEARCH_INDEX,
+                             doc_type,
+                             query)
+  ids = []
+  
+  for entry in search_data['hits']['hits']:
+    ids.append(entry['_source']['id'])
+
+  ids.sort()
+  request_results = db.session.query(dbmodels.ScanRequest).filter(
+    dbmodels.ScanRequest.id.in_(ids)).all()
+
+  response = {}
+  response['data'] = render_template('request-search_results.html', query=request_results)
+  response['success'] = True
+  
+  return jsonify(response)

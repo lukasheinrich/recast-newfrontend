@@ -4,96 +4,55 @@
 
 <div class="container">
     <div class="row">
-	
+
 	<div class="col-md-12">
-	    <br>      
-	    <div class="card col-md-12"  style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
-	<h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
-	<br>
-	<div class="text-center">
-	  <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
-
-	  {% if request.post_date %}
-	  
-	  <span class="label label-default">{{ request.post_date }}</span>
-	  {% endif %}
-	  
-	  {% if request.description_of_model %}
-	  <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span> 
-	  {% endif %}
-	  
-	
-      
-	  {% if request.status %}
-	  <span class="label label-warning"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}</span>
-	  {% endif %}
-	
-	
-	  {% if request.uuid %}	     
-	  <span><p> </p> </span>
-	  
-	  <span class="label label-primary">
-
-	    <i class="glyphicon glyphicon-tags"></i>
-	    <strong>uuid:</strong>{{ request.uuid }}
-	  </span>
-	
-	  {% endif %}
-	</div>
-	
-	<br><br>
-	<span>
-	  <strong>
-	    <span>
-	      <i class="glyphicon glyphicon-pencil"></i>
-	      &nbsp;analysis&nbsp;
-	    </span>
-	  </strong>
-	  <a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
-	    <span id="analysis-title">{{ request.analysis.title }}
-	    </span>
-	  </a>
-	  <span class="label label-primary">
-	    {{ request.analysis.collaboration }}
-	  </span>
-	</span>
-      
-	<br><br>
-	<strong>Reason for request</strong>
-	<br>
-	{{ request.reason_for_request }}
-	<br>
-	<br>
-	<strong>Additional information</strong>
-	<br>
-	{{request.additional_information }}
-	<br><br>
-      
-
-            </div>      
-	</div>
-
-	
-	<div class="col-md-12">
-	    <br><br>
 	    <div class="card col-md-12" style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
 		<br>
-		<h3>Parameters
-
-		    <span ng-controller="parameterCtrl as ctrl">
-			<button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-primary pull-right">
-			    <i class="glyphicon glyphicon-plus"></i>
-			    &nbsp;Add Parameter
-			</button>		   
+		<h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
+		<br>
+		<div class="text-center">
+		    <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
+		    
+		    {% if request.post_date %}
+		    
+		    <span class="label label-default">{{ request.post_date }}</span>
+		    {% endif %}
+		    
+		    {% if request.description_of_model %}
+		    <span class="label label-primary">
+			<i class="glyphicon glyphicon-tag"></i>
+			&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}
+		    </span> 
+		    {% endif %}
+		    
+	
+      
+		    {% if request.status %}
+		    <span class="label label-warning">
+			<i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}
 		    </span>
-		</h3>
+		    {% endif %}
+	
+		    
+		    {% if request.uuid %}	     
+		    <span><p> </p> </span>
+	  
+		    <span class="label label-primary">
+
+			<i class="glyphicon glyphicon-tags"></i>
+			<strong>uuid:</strong>{{ request.uuid }}
+		    </span>
+	
+		    {% endif %}
+		</div>
+		
 		
 		<br>
 		<span class="hidden-lg hidden-md">
 		    <br><br>
 		</span>
 		
-		<div class="col-md-3">
+		<div class="col-md-3 scroll-area">
 		    <table class="table col-md-12 table-bordered table-hover">
 			<thead>
 				<tr>
@@ -108,7 +67,7 @@
 				
 				
 				<td>
-					<span class="col-md-12" ng-click="ctrl.showParameter('{{pointrequest.uuid}}', {{loop.index0+1}})">
+					<span class="col-md-12" ng-click="ctrl.showParameter('{{pointrequest.uuid}}', {{loop.index0+1}})" style="cursor:pointer">
 					    
 					    <h5><strong>PARAMETER {{loop.index0+1}}</strong></h5>
 
@@ -117,12 +76,12 @@
 					<br><br>
 					<span class="col-md-12">
 					    <span class="col-md-6">
-						<span class="label label-primary pull-left">
+						<span class="label label-default pull-left">
 						    {{ pointrequest.point_coordinates[:]|length }} coordinates
 						</span>
 					    </span>
 					    <span class="col-md-6">
-						<span class="label label-primary pull-right">
+						<span class="label label-default pull-right">
 						    {{ pointrequest.requests[:]|length}} basic requests
 						</span>
 					    </span>
@@ -133,13 +92,66 @@
 			</tbody>
 		    </table>		    
 		</div>
-		<div class="col-md-9" ng-controller="showParameterCtrl as ctrl">
+		<div class="col-md-9 scroll-area" ng-controller="showParameterCtrl as ctrl">
 		    <span class="col-md-12">			
 			<span bind-html-compile="ctrl.mydata()"></span>
 		    </span>			 
 		</div>
+		<div class="col-md-12">
+		    <div class="col-md-3">
+			<span ng-controller="parameterCtrl as ctrl">
+			    <button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-primary pull-left">
+				<i class="glyphicon glyphicon-plus"></i>
+				&nbsp;Add Parameter
+			    </button>		   
+			</span>
+		    </div>
+		    <div class="col-md-9"></div>
+		    <div class="col-md-12">			
+			<br><br>
+		    </div>
+		</div>
 	    </div>
 	</div>
+
+
+
+	
+	
+	<div class="col-md-12">
+	    <br>      
+	    <div class="card col-md-12"  style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
+		<br><br>
+		<span>
+		    <strong>
+			<span>
+			    <i class="glyphicon glyphicon-pencil"></i>
+			    &nbsp;analysis&nbsp;
+			</span>
+		    </strong>
+		    <a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
+			<span id="analysis-title">{{ request.analysis.title }}
+			</span>
+		    </a>
+		    <span class="label label-primary">
+			{{ request.analysis.collaboration }}
+		    </span>
+		</span>
+		
+		<br><br>
+		<strong>Reason for request</strong>
+		<br>
+		{{ request.reason_for_request }}
+		<br>
+		<br>
+		<strong>Additional information</strong>
+		<br>
+		{{request.additional_information }}
+		<br><br>
+      
+
+            </div>      
+	</div>	
 	
     </div>    
 </div>

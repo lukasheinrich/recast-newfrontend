@@ -173,6 +173,22 @@ angular.module('recastApp', ['ngSanitize'])
 	};
     }])
 
+    .controller('SearchCtrl', ['$http', function($http) {
+	/* Controller to search */
+	var self = this;
+	self.requests = function() {
+
+	};
+
+	self.analysis = function(search_term) {
+	    console.log('analysis');
+		    
+	};
+
+	console.log("search page");
+
+    }])
+
     .controller('showParameterCtrl', ['$http', 'DataService', 'IDService', function($http, ajaxresponse, parameterIndex) {
 	/* controller to show parameter data on request page */
 
@@ -212,12 +228,7 @@ angular.module('recastApp', ['ngSanitize'])
     .controller('ParameterResponseCtrl', ['$http', 'DataService', function($http, ajaxresponse){
 	/* Controller to fecth Point response data */
 	var self = this;
-	//ajaxresponse.set("");
-	//ajaxresponse.clear();
-	//ajaxresponse.setresponsedata("this is a test");
-	//console.log("logging");
 	self.mydata = function() {
-	    //return response.get();
 	    return ajaxresponse.getresponsedata();
 	};
 
@@ -237,7 +248,6 @@ angular.module('recastApp', ['ngSanitize'])
 		    NProgress.inc(0.5);
 		    NProgress.done();
 		    console.log("fetched response data");
-		    //ajaxresponse.set
 		    ajaxresponse.setresponsedata(response.data);
 		    ajaxresponse.show();
 		})
@@ -356,6 +366,30 @@ angular.module('recastApp', ['ngSanitize'])
 		responsedata.data = "";
 	    }	   
 	};	
+    }])
+
+    .factory('AnalysisService', [function() {
+	data = "";
+	return {
+	    get: function() {
+		return data;
+	    },
+	    set: function(val) {
+		data = val;
+	    }	    
+	};
+    }])
+
+    .factory('RequestService', [function() {
+	data = "";
+	return {
+	    get: function() {
+		return data;
+	    },
+	    set: function(val) {
+		data = val;
+	    }
+	};
     }])
 
     .factory('IDService', [function() {

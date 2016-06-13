@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+{% block container %}
+
+<div class="container">
+    <div class="row">
+	
+	<ul class="nav nav-pills">
+	    <li class="active"><a data-toggle="pill" href="#search-results-analysis">Analyses</a></li>
+	    <li><a data-toggle="pill" href="#search-results-requests">Requests</a></li>
+	</ul>
+
+
+	<div class="tab-content" ng-controller="SearchCtrl as ctrl">
+	    <div id="search-results-analysis" class="tab-pane fade in active">
+		<h3>Analyses results</h3>
+		<p>
+		    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+		</p>
+		<span ng-bind="ctrl.analysis('{{searchterm}}')"></span>
+	    </div>
+	    
+
+	    <div id="search-results-requests" class="tab-pane fade">
+		<h3>Requests results</h3>
+		<p>
+		    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+		</p>
+		<spn ng-bind="ctrl.requests('{{searchterm}}')"></span>
+	    </div>	    
+	</div>
+	
+    </div>
+</div>
+
+
+{% endblock %}
