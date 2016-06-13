@@ -1,0 +1,95 @@
+{% block container %}
+
+
+<div class="col-md-12">
+
+    <div class="card-columns">
+	{% for request in requests %}
+	<div class="card card-on-deck">
+	    <h4 class="text-center">
+		<a href="{{ url_for('.request_views', ruuid=request.uuid) }}">
+		    <strong>{{ request.title }}</strong>
+		</a>
+	    </h4>
+	    <br>
+
+	    {% if request.post_date %}
+	    <span class="label label-default">
+		<i class="glyphicon glyphicon-time"></i>
+		&nbsp;<strong>Post date:</strong>
+		&nbsp;<span class="more">{{request.pot_date}}</span>
+	    </span>
+	    {% endif %}
+
+	    {% if request.status == "Complete" or request.status == "complete" %}
+	    &nbsp;&nbsp;
+	    <span class="label label-success">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;<strong>Processing Status:</strong>&nbsp;
+		<span class="more">{{ request.status }}</span>
+	    </span>
+	    {% else %}
+	    &nbsp;&nbsp;
+	    <span class="label label-danger">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;<strong>Status:</strong>
+		&nbsp;
+		<span class="more">{{ request.status }}</span>
+	    </span>
+	    {% endif %}
+
+	    {% if request.description_of_model %}
+	    <br><br>
+	    <span class="label label-default">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;<strong>Model:</strong>&nbsp;
+		<span class="more">{{request.description_of_model}}</span>
+	    </span>
+	    {% endif %}
+
+	    <br><br>
+	    <p class="card-text">
+		<strong>Reason for request:</strong>&nbsp;&nbsp;
+		<span class="request-body">
+		    {{ request.reason_for_request }}
+		</span>
+	    </p>
+	    <br>
+
+	    <span class="label label-info">
+		{{ request.analysis.collaboration }}
+	    </span>
+	    &nbsp;&nbsp;
+	    <a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
+		<span class="analysis-title">
+		    {{ request.analysis.title }}
+		</span>
+	    </a>
+	    <br><br><br>
+
+	    <span>
+		<span class="badge">
+		    <i class="glyphicon glyphicon-user"></i>
+		    &nbsp;{{ request.requester.name }}
+		</span>
+		<span class="badge">
+		    {{ request.scan_points[:]|length}}&nbsp;parameter points
+		</span>
+		<span class="label label-primary pull-right">
+		    <a href="{{ url_for('.request_views', ruuid=request.uuid) }}">
+			<i class="glyphicon glyphicon-eye-open"></i>
+			view
+		    </a>
+		</span>
+	    </span>
+		    
+	</div>
+
+	{% endblock %}
+	
+    </div>
+
+</div>
+
+
+{% endblock %}

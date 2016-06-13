@@ -19,8 +19,13 @@
       href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
 
 <!-- font awesome for icons -->
-<link rel="stylesheet" 
+<!--<link rel="stylesheet" 
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  -->
+
+<script src="https://use.fontawesome.com/53761399c2.js"></script>
+<link rel="stylesheet"
+      href="https://cdn.rawgit.com/ScoopThemes/Oleose/master/assets/css/font-awesome.min.css">
 
 <script type="text/javascript" src="../static/sweetalert.min.js"></script>
 <link rel="stylesheet" href="../static/sweetalert.css">
@@ -42,8 +47,11 @@
 
 <!-- Angular 1 -->
 <script
-   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js">
+   src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js">  
 </script>
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-sanitize.js"></script>
 
 <!--
 <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -63,16 +71,16 @@
         });
 </script>
 -->
-
+<!--     background-color:#F6F5EE; -->
 <style>
 @import url('http://fonts.googleapis.com/css?family=Lato');
 body,h6,h5,h4,h3,h2,h1,html {
     font-family: "Lato";
 }
 body {
-    background-color:#F6F5EE;	
-}
-
+    background-color:#f0f3f4;
+ }
+ 
 .badge {
     background-color:#777;
 }
@@ -92,9 +100,85 @@ body {
     width: 100%;
     z-index: 10;
 }
+ html {
+     position: relative;
+     min-height: 100%;
+ }
+ body {
+     margin-bottom: 200px;
+ }
+ .footer {
+     position: absolute;
+     bottom: 0;
+     width: 100%;
+     height: 200px;
+     background-color:#033c73;
+     color:white;
+     padding-bottom:0;
+}
+.body-color {
+    background-color:#f0f3f4;
+}
+
+ .home-color {
+     background-color: transparent;
+     color:#033c73;
+ }
+
+ .home-font-size-1 {
+     font-size: 90px;
+     font-weight: 700;     
+ }
+ .home-font-size-2 {
+     font-size: 70px;
+     font-weight: 700;
+ }
+
+ #custom-search-input{
+     padding: 3px;
+     border: solid 1px #E4E4E4;
+     border-radius: 6px;
+     background-color: #fff;
+ }
+
+ #custom-search-input input{
+     border: 0;
+     box-shadow: none;
+ }
+
+ *:-moz-placeholder {
+     color: #033c73;
+     opacity: 1;
+ }
+
+ *::-moz-placeholder {
+     color: #033c73;
+     opacity: 1;     
+ }
+
+ *::-webkit-input-placeholder {
+     color: #033c73;
+ }
+ #custom-search-input button{
+     margin: 2px 0 0 0;
+     background: none;
+     box-shadow: none;
+     border: 0;
+     color: #666666;
+     padding: 0 8px 0 10px;
+     border-left: solid 1px #ccc;
+ }
 
 
+ #custom-search-input .glyphicon-search{
+     font-size: 23px;
+ }
 
+ .scroll-area {
+     overflow: auto;
+     height: 300px;
+ }
+ 
 </style>
 
 
@@ -106,7 +190,7 @@ body {
 <header style="background-color:white;">
   <!-- <nav class="navbar navbar-default" role="navigation"> -->
   
-  <div class="card container-fluid hidden-sm hidden-xs">
+  <div class="card-flat container-fluid hidden-sm hidden-xs">
     <span class="col-md-1">
     </span>
     <span class="col-md-1">
@@ -166,6 +250,7 @@ body {
 
         </ul>
 
+	<!--
 	<form class="navbar-form navbar-left hidden-md" role="search" action="/search" method="post">
 	  <div class="input-group">
 	    <div class="input-group-btn search-panel">
@@ -188,6 +273,7 @@ body {
 	  </div>
 	  <input hidden type="text" name="filter" value="" id="filter">
 	</form>
+	-->
         <ul class="nav navbar-nav navbar-right">
 	    <!--- current_user -->
 	    {% if current_user and not current_user.is_anonymous %}
@@ -206,7 +292,7 @@ body {
 </div>
 </div>
 
-<div class="container-fluid">
+<div class="container">
 
     <div class="row col-md-12">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -230,15 +316,15 @@ body {
 
 
 <!-- footer -->
-<footer class="footer">
-  <div class="container-fluid col-md-12" style="background-color:#033c73;color:white;">
-  
+
+<div class="footer container-fluid col-md-12">
+    
   <br><br>
-
+  
   <span class="col-md-offset-2 col-md-4">
-
+    
     <ul class="list-unstyled" style="color:white;">
-
+      
       <li>
 	<a href="{{url_for('about')}}" style="color:white;">
 	  <strong>
@@ -263,7 +349,7 @@ body {
 	</a>
       </li>
 
-      </ul>
+    </ul>
 
   </span>
   
@@ -275,37 +361,34 @@ body {
     
   </span>
 
-  <span class="col-md-12 text-center">
-    Copyright (c) 2016
-    <br><br><br><br><br>
+  <span class="col-md-12">
+      <p class="text-center"> Copyright &copy; 2016 </p>
+    <br><br><br>
   </span>
+  
 </div>
-
-<footer>
 
 <script type="text/javascript">
     
- $(document).ready(function(e){
-     $('.search-panel .dropdown-menu').find('a').click(function(e) {
-	 e.preventDefault();
-	 var param = $(this).attr("href").replace("#","");
-	 var concept = $(this).text();
-	 $('.search-panel span#search_concept').text(concept);
-	 $('.input-group #search_param').val(param);
+$(document).ready(function(e){
+    $('.search-panel .dropdown-menu').find('a').click(function(e) {
+	e.preventDefault();
+	var param = $(this).attr("href").replace("#","");
+	var concept = $(this).text();
+	$('.search-panel span#search_concept').text(concept);
+	$('.input-group #search_param').val(param);
 	 document.getElementById("filter").value = concept;
-     });
-     
-     $('#nav').affix({
-	 offset: {
-	     top: $('header').height()
-	 }
-     });
-      
- });
+    });
+    
+    $('#nav').affix({
+	offset: {
+	    top: $('header').height()
+	}
+    });
+    
+});
  
 </script>
 <script type="text/javascript" src="../static/recast.js"></script>
-	
-
 </body>
 </html>

@@ -64,7 +64,9 @@ def home():
   all_users = dbmodels.User.query.all()
   #celeryapp.set_current()
   #asynctasks.hello_world.delay()
+  #return render_template('new-home.html')
   return render_template('home.html', user_data = all_users)
+
 
 @app.route("/about")
 def about():
@@ -196,45 +198,12 @@ def edit_request(id):
 @login.login_required
 def request_form(id):
   request_form = forms.RequestSubmitForm()
-  
-  parameter_point_form = forms.RequestParameterPointsSubmitForm()
-  
+    
   analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
   request_form.analysis_id.data = analysis[0].id
 
   if request.method == 'POST':
     if request_form.validate_on_submit():
-
-      ''' Simple algorithm to gather the fields added dynamically 
-           what we eventually want is to group all point_coordinate_X-y in the corresp. X's list
-                where X is the parameter number and Y is the point coordinate(Axis)
-      '''
-      dict_value = {'1': 1} # for the initial parameter point, already present in WTForm
-      for k in request.form.keys():
-        if 'value_point_coordinate_' in k:
-          #Get the Parameter number 
-          #substring between last '_' and '-'
-          parameter_number = int((re.search('coordinate_(.*)-', k)).group(1))
-          if dict_value.has_key(str(parameter_number)):
-            dict_value[str(parameter_number)] += 1
-          else:
-            dict_value[str(parameter_number)] = 1
-            
-        
-      parameter_list = []
-      for k, v in dict_value.iteritems():
-        parameter = []
-        i = 1
-        if k == '1':
-          parameter.append('value_point_coordinate')
-          v -= 1
-        while v > 0:
-          value_id_name = 'value_point_coordinate_'+str(k)+'-'+str(i)
-          if  request.form.has_key(value_id_name):
-            parameter.append(value_id_name)
-            v -= 1
-          i += 1
-        parameter_list.append(parameter)
       
       request_uuid = str(uuid.uuid1())
       deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
@@ -249,61 +218,6 @@ def request_form(id):
       request_id = synctasks.createRequest(app, 
                                            request_form, 
                                            login.current_user)
-
-      for parameter in parameter_list:
-        print parameter
-        #this is where I create a new Point request and retrieve its ID
-        point_request_id = synctasks.createPointRequest(app,
-                                                        request_id,
-                                                        login.current_user)
-        #Upload file on AWS and save into DB
-        if parameter[0] == "value_point_coordinate":
-          parameter_number = 1
-          zip_file_form_name = 'zip_file'
-        else:
-          parameter_number = int((re.search('coordinate_(.*)-', parameter[0])).group(1))
-          zip_file_form_name = 'zip_file_'+str(parameter_number)
-
-
-        print zip_file_form_name
-        zip_file = request.files[zip_file_form_name]
-        
-        file_uuid = str(uuid.uuid1())
-        
-        zip_file.save(zip_file.filename)
-        
-        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                              AWS_SECRET_ACCESS_KEY,
-                              AWS_S3_BUCKET_NAME,
-                              zip_file,
-                              file_uuid)
-        
-        deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                      deposition_id,
-                                                      file_uuid,
-                                                      zip_file)
-        
-        '''Uncomment when the website goes live'''
-        #synctasks.publish(ZENODO_ACCESS_TOKEN,deposition_id)
-                  
-        synctasks.createRequestArchive(app,
-                                       login.current_user,
-                                       point_request_id,
-                                       file_uuid,
-                                       deposition_file_id,
-                                       zip_file.filename)
-        for coordinate in parameter:
-          #Add each Point coordinate
-          name_id_name = coordinate.replace("value", "name")
-          coordinate_value = request.form[coordinate]
-          coordinate_name = request.form[name_id_name]
-          
-          synctasks.createPointCoordinate(app,
-                                          login.current_user,
-                                          coordinate_name,
-                                          coordinate_value,
-                                          point_request_id)
-
       flash('success!', 'success')
       return redirect(url_for('analyses'))
   
@@ -313,7 +227,7 @@ def request_form(id):
       filename = None
     
   return render_template('request_form.html', form=request_form,
-                         parameter_points_form=parameter_point_form, analysis = analysis[0])
+                         analysis = analysis[0])
 
 
 @app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
@@ -375,10 +289,10 @@ def request_views(ruuid):
   if ruuid:
     query = db.session.query(dbmodels.ScanRequest).filter(
       dbmodels.ScanRequest.uuid == ruuid).all()
-
-    return render_template('request.html',
-                           request = query[0],
-                           bucket_name=AWS_S3_BUCKET_NAME)
+    return newrequest(ruuid)
+    #return render_template('request.html',
+    #request = query[0],
+    #bucket_name=AWS_S3_BUCKET_NAME)
   else:    
     if request.args.has_key('sort'):
       query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
@@ -386,8 +300,20 @@ def request_views(ruuid):
 
     query = db.session.query(dbmodels.ScanRequest).all()
     return render_template('request_views.html', requests = query)
-  
 
+@app.route('/newrequests', methods=['GET', 'POST'], defaults={'ruuid': 'a545f3d2-ca5c-496e-abeb-3f9f6e597010'})  
+@app.route('/newrequests/<string:ruuid>', methods=['GET', 'POST'])
+def newrequest(ruuid):
+  if id:
+    query = db.session.query(dbmodels.ScanRequest).filter(
+      dbmodels.ScanRequest.uuid == ruuid).all()
+    return render_template('newrequest.html',
+                           request = query[0],
+                           bucket_name = AWS_S3_BUCKET_NAME)
+  
+                           
+  
+  
 @app.route('/subscriptions')
 @login.login_required
 def subscriptions():
@@ -610,16 +536,12 @@ def arxiv():
 @login.login_required
 def add_parameter_point(request_id):
 
-  request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()
-  
+  request_query = db.session.query(dbmodels.ScanRequest).filter(dbmodels.ScanRequest.id == request_id).one()  
   point_request_id = synctasks.createPointRequest(app,
                                                   request_id,
-                                                  login.current_user
-                                                  )
+                                                  login.current_user)
   for k in request.form:
     coordinate = json.loads(request.form[k])
-    if k == 'file':
-      continue
     
     if coordinate.has_key('value'):
       value = coordinate['value']
@@ -631,11 +553,11 @@ def add_parameter_point(request_id):
                                         login.current_user,
                                         name,
                                         float(value),
-                                        point_request_id
-        )	  								    
+                                        point_request_id)
   response = {}
   response['success'] = True
   return jsonify(response)
+
 
 @app.route("/add-basic-request/<int:point_request_id>", methods=['GET', 'POST'])
 @login.login_required
@@ -698,8 +620,7 @@ def add_coordinate(point_request_id):
                                                           login.current_user,
                                                           coordinate_name,
                                                           coordinate,
-                                                          point_request_query.id
-    )
+                                                          point_request_query.id)
     #return point_coordinate_id
 
   return ""
@@ -723,3 +644,88 @@ def results(ruuid):
 
   
   return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)
+
+@app.route("/parameter-data/<string:ruuid>")
+def parameter_data(ruuid):
+  query = db.session.query(dbmodels.PointRequest).filter(    
+    dbmodels.PointRequest.uuid == ruuid).one()
+  response = {}
+
+  response['data'] = render_template('parameterdata.html',
+                                     pointrequest=query,
+                                     bucket_name=AWS_S3_BUCKET_NAME)
+
+  response['success'] = "true"
+  return jsonify(response)
+
+@app.route("/pointresponse-data/<string:ruuid>")
+def pointresponse_data(ruuid):
+  query = db.session.query(dbmodels.PointResponse).filter(
+    dbmodels.PointResponse.uuid == ruuid).one()
+
+  response = {}
+  response['data'] = render_template('responsedata.html',
+                                     pointresponse=query)
+  response['success'] = "true"
+  return jsonify(response)
+
+@app.errorhandler(404)
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+@app.route("/search-results")
+def search_results():
+  print request.args
+  return render_template('search-results.html', search_term=request.args.get('search'))
+
+@app.route("/search-ajax")
+def search_ajax():
+  pass
+
+@app.route("/search-analyses/<string:query>")
+def search_analyses(query):
+
+  doc_type = 'analysis'
+  results = synctasks.search(ELASTIC_SEARCH_URL,
+                             ELASTIC_SEARCH_AUTH,
+                             ELASTIC_SEARCH_INDEX,
+                             doc_type,
+                             query)
+  ids = []
+
+  for entry in search_data['hits']['hits']:
+    ids.append(entry['_source']['id'])
+
+  ids.sort()
+  analyses = db.session.query(dbmodels.Analysis).filter(
+    dbmodels.Analysis.id.in_(ids)).all()
+                               
+  response = {}
+  response['data'] = render_template('analysis-search-results.html', query=analyses)
+  response['success'] = True
+
+  return jsonify(response)
+
+@app.route("/search-results/<string:query>")
+def search_requests(query):
+
+  doc_type = 'requests'
+  results = synctasks.search(ELASTIC_SEARCH_URL,
+                             ELASTIC_SEARCH_AUTH,
+                             ELASTIC_SEARCH_INDEX,
+                             doc_type,
+                             query)
+  ids = []
+  
+  for entry in search_data['hits']['hits']:
+    ids.append(entry['_source']['id'])
+
+  ids.sort()
+  request_results = db.session.query(dbmodels.ScanRequest).filter(
+    dbmodels.ScanRequest.id.in_(ids)).all()
+
+  response = {}
+  response['data'] = render_template('request-search_results.html', query=request_results)
+  response['success'] = True
+  
+  return jsonify(response)

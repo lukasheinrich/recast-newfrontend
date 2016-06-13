@@ -19,7 +19,7 @@
    
     {% for request in requests %}
     
-    <div class="card" style="box-shadow: 1px 1px 1px 5px #f2efef;">
+    <div class="card card-on-deck">
       <div class="card-block">
 	<h4 class="text-center"><a href="{{ url_for('.request_views', ruuid=request.uuid) }}"><strong>{{ request.title }}</strong></a></h4>
 	<br>

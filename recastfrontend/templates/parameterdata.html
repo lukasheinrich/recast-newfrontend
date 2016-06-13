@@ -1,0 +1,134 @@
+<div class="col-md-12">
+
+    <div class="card-flat col-md-12">
+	<div class="col-md-12">
+	    <h3> Parameter <span ng-bind=ctrl.parNumber()></span>
+		<span ng-controller="ParameterResponseCtrl as ctrl">
+		    {% if pointrequest.point_responses %}
+		    <button class="btn btn-info pull-right" ng-click="ctrl.fetchresponse('{{ pointrequest.point_responses.uuid}}')">
+			<i class="glyphicon glyphicon-eye-open"></i>
+			&nbsp;Parameter&nbsp;Response
+		    </button>
+		    {% else %}
+		    <button class="btn btn-info pull-right disabled">
+			<i class="glyphicon glyphicon-eye-open"></i>
+			&nbsp;Parameter&nbsp;Response
+		    </button>
+		    {% endif %}			
+		</span>
+	    </h3>
+		</div>
+
+
+	<div class="col-md-12" ng-controller="ParameterResponseCtrl as ctrl">
+	    <br><br>
+	    <span bind-html-compile="ctrl.mydata()">		
+	    </span>
+	</div>
+
+	
+
+	<div class="table-responsive col-md-12">
+	    <table class="table col-md-12 table-bordered table-hover" style="background-color: #F5F5F5">
+		<thead>
+		    <tr>
+			<th>
+			    <span class="col-md-6" style="display:inline-block;">Coordinate</span>
+			    <span class="col-md-6" style="display:inline-block;">Value</span>
+			</th>
+		    </tr>
+		</thead>
+		
+		<tbody>
+		    {% for coordinate in pointrequest.point_coordinates %}
+		    <tr>
+			<td>
+			    <span class="col-md-6" style="display:inline-block;">
+				{% if coordinate.title %}
+				{{ coordinate.title }}
+				{% else %}
+				coordinate {{ loop.index0 }}
+				{% endif %}
+				
+			    </span>
+			    <span class="col-md-6" style="display:inline-block;">
+				{{ coordinate.value }}
+			    </span>
+			</td>
+		    </tr>
+		    {% endfor %}
+		</tbody>
+	    </table>
+	</div>
+	
+	
+	<div class="table-responsive col-md-12">
+	    <table class="table table-bordered" style="background-color:FFFAFA">
+		<thead>
+		    <tr>
+			<th>
+			    <span class="col-md-4" style="display:inline-block;">Name</span>
+			    <span class="col-md-4" style="display:inline-block;">Basic File</span>
+			    <span class="col-md-4" style="display:inline-block;">Response</span>
+			</th>
+		    </tr>
+		</thead>
+		<tbody>
+		    {% for basicrequest in pointrequest.requests %}
+		    <tr>
+			<td>
+			    <span class="col-md-4" style="display:inline-block;">
+				{{ basicrequest.file_name.original_file_name }}
+			    </span>
+			    <span class="col-md-4" style="display:inline-block;">
+				{% if basicrequest.file_name.file_name %}
+				<a class="btn btn-success btn-sm"
+				   href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ basicrequest.file_name.file_name}}"
+				   download="{{basicrequest.file_name.original_file_name}}">
+				    <i class="glyphicon glyphicon-cloud-download"></i>
+				    &nbsp;Download File
+				</a>
+				{% else %}
+				<a class="btn btn-success btn-sm disabled">
+				    <i class="glyphicon glyphicon-cloud-download disabled"></i>
+				</a>
+				{% endif %}
+			    </span>
+			    
+			    <span class="col-md-4" style="display:inline-block;">
+				{% if basicrequest.basic_responses[0] %}
+				<a class="btn btn-info btn-sm"
+				   href="{{ url_for('.results', ruuid=basicrequest.basci_responses[0].uuid)}}">
+				    <i class="glyphicon glyphicon-eye-open"></i>
+				    &nbsp;Basic&nbsp;Response
+				</a>
+				{% else %}
+				<a class="btn btn-info btn-sm disabled">
+				    <i class="glyphicon glyphicon-eye-open"></i>
+				    &nbsp;Basic&nbsp;Response
+				</a>
+				{% endif %}
+			    </span>
+			</td>
+		    </tr>
+		    {% endfor %}
+		</tbody>
+	    </table>
+	</div>
+	
+
+	<div class="col-md-offset-9" ng-controller="BasicRequestCtrl as brCtrl">
+	    <button class="btn btn-primary" ng-click="brCtrl.addBasicRequest({{pointrequest.id}})">
+		<i class="glyphicon glyphicon-plus"></i>
+		&nbsp;Add Basic Request
+	    </button>
+	    <br><br>
+	</div>
+				    
+    </div>
+</div>
+			    
+
+
+
+				

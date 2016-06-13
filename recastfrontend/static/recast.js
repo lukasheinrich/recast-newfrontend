@@ -1,7 +1,7 @@
 // Javascript file for Recast
 
 //angular App
-angular.module('recastApp', [])
+angular.module('recastApp', ['ngSanitize'])
     .controller('HomeCtrl', ['$http', '$interval', function($http, $interval) {
 	/* home page controller */
 	var self = this;
@@ -48,6 +48,33 @@ angular.module('recastApp', [])
 	};
     }])
 
+    .directive('bindHtmlCompile', ['$compile', function($compile) {
+	/* Directive that compiles binded html
+	   allows ng-click and other similar directives to fire on binded html
+	   source:
+	   https://github.com/incuna/angular-bind-html-compile/blob/master/angular-bind-html-compile.js
+	*/
+	return {
+	    restrict: 'A',
+	    link: function (scope, element, attrs) {
+		scope.$watch(function () {
+		    return scope.$eval(attrs.bindHtmlCompile);
+		}, function (value) {
+		    // In case value is a TrustedValueHolderType, sometimes it
+		    // needs to be explicitly called into a string in order to
+		    // get the HTML string.
+		    element.html(value && value.toString());
+		    // If scope is provided use it, otherwise use parent scope
+		    var compileScope = scope;
+		    if (attrs.bindHtmlScope) {
+			compileScope = scope.$eval(attrs.bindHtmlScope);
+		    }
+		    $compile(element.contents())(compileScope);
+		});
+	    }
+	};
+
+    }])
     
     .controller('parameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
 	/* Controller to add parameter */
@@ -116,6 +143,7 @@ angular.module('recastApp', [])
 	    $('#modal-add-basic-request').modal('show');
 	};
 
+	    
 	self.submit = function() {
 	    self.hideModal();
 	    NProgress.start();	    
@@ -143,6 +171,91 @@ angular.module('recastApp', [])
 	self.hideModal = function() {
 	    $('#modal-add-basic-request').modal('hide');
 	};
+    }])
+
+    .controller('SearchCtrl', ['$http', function($http) {
+	/* Controller to search */
+	var self = this;
+	self.requests = function() {
+
+	};
+
+	self.analysis = function(search_term) {
+	    console.log('analysis');
+		    
+	};
+
+	console.log("search page");
+
+    }])
+
+    .controller('showParameterCtrl', ['$http', 'DataService', 'IDService', function($http, ajaxresponse, parameterIndex) {
+	/* controller to show parameter data on request page */
+
+	var self = this;
+	ajaxresponse.set("");
+	parameterIndex.setID(0);
+	
+	self.mydata = function() {
+	    return ajaxresponse.get();
+	};
+
+	self.parNumber = function() {
+	    return parameterIndex.getID();
+	};
+	
+	self.showParameter = function(uuid, index) {
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    ajaxresponse.set("<h3>Loading...</h3>");
+	    parameterIndex.setID(index);
+	    NProgress.inc(0.3);
+	    $http.get('/parameter-data/'+uuid)
+		.success(function(response) {
+		    NProgress.inc(0.5);
+		    NProgress.done();		    
+		    ajaxresponse.set(response.data);
+		    console.log(response.data);
+		})
+		.error(function(err) {
+		    NProgress.done();
+		    //error handling
+		});	    
+	};
+
+    }])
+
+    .controller('ParameterResponseCtrl', ['$http', 'DataService', function($http, ajaxresponse){
+	/* Controller to fecth Point response data */
+	var self = this;
+	self.mydata = function() {
+	    return ajaxresponse.getresponsedata();
+	};
+
+	self.hideresponse = function() {
+	    NProgress.start();
+	    NProgress.inc(0.7);	    
+	    NProgress.done();
+	    return ajaxresponse.hide();
+	};
+
+	self.fetchresponse = function(uuid) {
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    ajaxresponse.clear();
+	    $http.get('/pointresponse-data/'+uuid)
+		.success(function(response) {
+		    NProgress.inc(0.5);
+		    NProgress.done();
+		    console.log("fetched response data");
+		    ajaxresponse.setresponsedata(response.data);
+		    ajaxresponse.show();
+		})
+		.error(function(err) {
+		    //error handling
+		});
+	};
+	
     }])
 
 
@@ -220,6 +333,63 @@ angular.module('recastApp', [])
 		return items;
 	    }
 	}
+    }])
+
+    .factory('DataService', [function() {
+	mydata = "";
+	responsedata = {show: 0, data: ""};
+	return {
+	    get: function() {
+		return mydata;
+	    },
+	    set: function(val) {
+		mydata = val;
+	    },
+	    show: function() {
+		responsedata.show = 1;
+	    },
+	    hide: function() {
+		responsedata.show = 0;
+	    },
+	    getresponsedata: function() {
+		if (responsedata.show){
+		    return responsedata.data;
+		}else {
+		    return "";
+		}
+	    },
+	    setresponsedata: function(mydata) {
+		responsedata.data = mydata;
+	    },
+	    clear: function() {
+		responsedata.show = 0;
+		responsedata.data = "";
+	    }	   
+	};	
+    }])
+
+    .factory('AnalysisService', [function() {
+	data = "";
+	return {
+	    get: function() {
+		return data;
+	    },
+	    set: function(val) {
+		data = val;
+	    }	    
+	};
+    }])
+
+    .factory('RequestService', [function() {
+	data = "";
+	return {
+	    get: function() {
+		return data;
+	    },
+	    set: function(val) {
+		data = val;
+	    }
+	};
     }])
 
     .factory('IDService', [function() {
