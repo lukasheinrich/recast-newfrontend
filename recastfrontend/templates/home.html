@@ -1,76 +1,189 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block container %}
-<!--<div class="container-fluid" style="background-image: url(http://cache.boston.com/universal/site_graphics/blogs/bigpicture/lhc_08_01/lhc10.jpg);">-->
-<div class="container">
-  <!-- <div class='col-md-10'> -->
-  
-    
-  <div class="card card-default text-xs-center text-center">
-    <div class="card-block" style="color:black">
-      <blockquote class="card-blockquote">
-     <h3>RECAST is a framework for extending the impact of existing analyses performed by  high-energy physics experiments.</h3>
-      <ol><li>Anyone can add <em>analyses</em> to the Analysis Catalog</li>
-	<li>Anyone can upload alternative signals in the LHE format and <em>request</em> that any given analysis is "recast" for their alternative model (Note: this is a request, there is no obligation for the experiments to respond.)</li>
-	<li>Anyone can <em>subscribe</em> to an analysis to be informed of activity associated with the analysis</li>
-	<li>Experimentalists can accept the request, process these alternative signals with the full simulation, reconstruction, and analysis selection.  If they are authorized by their collaboration, then they can respond with an authoritative <em>result</em> for the selection efficiency and cross-section limits for the alternative signal.  Note, anyone can provide a non-authoritative result, for instance one based on fast simulation. </li>
-	<li>Anyone can <em>view</em> the results associated with a request. </li>
-      </ol><p>For more information, see the About page and the original <a href="http://arxiv.org/abs/1010.2506">White Paper</a>.</p>
-      </blockquote>
+    <title>RECAST - An Analysis Reinterpretation Framework</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/base.css">
+    <link rel="stylesheet" href="../static/home.css">
+
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top top-bar">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar-collapse"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style="padding: 0" href="/">
+                <div class="pull-left recast-logo"></div>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse menu" id="navbar-collapse">
+            <ul>
+                <li><a href="/about">About</a></li>
+                <li><a href="/analyses">Analysis Catalogue</a></li>
+                <li><a href="/requests">Requests</a></li>
+                <li><a href="/logout/" class="emphasise">Log in</a></li>
+            </ul>
+
+        </div>
     </div>
-  </div>
-  
-  <span>
-    <br>
-  </span>
+</nav>
 
-  <div class="row" ng-controller="HomeCtrl as ctrl">
-    
-    <div class="col-md-6">
-      <div class="card-deck-wrapper">
-	<div class="card-deck">
-	  <div class="card card-on-deck">
-	    <div class="card-block">
-	      <br><br>	      <br><br>
-	      <h2 class="card-title text-center">
-		<a href="{{url_for('analyses')}}" class="card-link">
-                  <span ng-bind="ctrl.analyses"></span>		  
-		   Analysis
-		</a>
-	      </h2>
-	      
-	      <br><br>	      <br><br>
-	    </div>
-	  </div>
-	  
-	  <div class="card card-on-deck">
-	    <div class="card-block">
-	      <br><br><br><br>
-	      <h2 class="card-title text-center">
-		<a href="{{url_for('request_views')}}" class="card-link">
-		  <span ng-bind="ctrl.requests"></span>
-		  Requests
-		</a>
-	      </h2>
-	      <br><br>
-	    </div>
-	  </div>
+<div class="clearfix"></div>
 
+<div class="hero-content container-fluid">
+    <div class="row-fluid">
+        <div class="col-md-9 col-sm-9">
+            <h4>A framework for extending the impact of existing
+                analyses performed by high-energy physics experiments.</h4>
 
-	  
-	</div>
-      </div>  
+            <br/>
+            <a href="/analyses" class="btn btn-md btn-info">View Analyses</a>
+            <a href="/requests" class="btn btn-md btn-info">View Current
+                Requests</a>
+        </div>
+        <div class="col-md-3 col-sm-3">
+            <img src="../static/img/recast-atom.svg" width="100%">
+        </div>
     </div>
+</div>
+<div class="clearfix"></div>
 
-    
-    <div class="col-md-6">
+<div class="container-fluid home-usp">
+    <div class="row-fluid text-center">
+
+        <h3>How it works</h3>
+
+        <br/>
 
 
-	  
-	</div>
-      </div>  
-      
+        <div class="row-fluid usp" id="request">
+
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <img src="../static/img/recast-submit.svg" width="100%">
+            </div>
+            <div class="col-md-7 text-left usp-text">
+                <h4>Request</h4>
+                <p>Upload alternative signals in the LHE format and request
+                    that
+                    any
+                    given analysis is "recast" for an alternative model.</p>
+
+                <p class="text-muted">Note: this is a request, there is no
+                    obligation
+                    for the experiments to respond.</p>
+            </div>
+            <div class="col-md-1"></div>
+
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row-fluid usp" id="subscribe">
+
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <img src="../static/img/recast-subscribe.svg" width="100%">
+            </div>
+            <div class="col-md-7 text-left usp-text">
+                <h4>Subscribe</h4>
+                <p>Anyone can subscribe to an analysis to be informed of
+                    activity associated with the analysis</p>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row-fluid usp" id="subscribe">
+
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <img src="../static/img/recast-review.svg" width="100%">
+            </div>
+            <div class="col-md-7 text-left usp-text">
+                <h4>Recast</h4>
+                <p>Experimentalists can accept the request, process these
+                    alternative signals with the full simulation,
+                    reconstruction, and analysis selection.</p>
+
+                <p>If authorized by their collaboration, they can respond with
+                    an authoritative result for the selection efficiency and
+                    cross-section limits for the alternative signal.</p>
+
+                <p class="text-muted">Note, anyone can provide a
+                    non-authoritative result, for instance one based on a fast
+                    simulation.</p>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
     </div>
-  </div>
-</div>	
-{% endblock %}
+</div>
+
+<div class="footer">
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="col-md-1">
+                <img src="../static/img/recast-logo-mark.svg" width="100%">
+            </div>
+
+            <div class="col-md-3">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:">Email</a></li>
+                    <li><a href="">Github</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="http://diana-hep.org" target="_new">DIANA-HEP</a></li>
+                    <li><a href="http://analysis-preservation.cern.ch" target="_new">CERN Analysis Preservation Framework</a></li>
+                    <li><a href="http://hepdata.net" target="_new">HEPData</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-3">
+                <h4>About</h4>
+                <ul>
+
+                    <li><a href="/about">About</a></li>
+                    <li><a href="">Team</a></li>
+                    <li><a href="http://arxiv.org/abs/1010.2506" target="_new">White paper</a></li>
+                </ul>
+            </div>
+
+            <div class="col-md-2">
+                <img src="../static/img/diana-hep-logo.svg" width="100%">
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="col-md-12 text-center">
+                Copyright © 2016
+                <br/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
