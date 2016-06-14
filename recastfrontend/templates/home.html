@@ -36,7 +36,21 @@
                 <li><a href="/about">About</a></li>
                 <li><a href="/analyses">Analysis Catalogue</a></li>
                 <li><a href="/requests">Requests</a></li>
-                <li><a href="/logout/" class="emphasise">Log in</a></li>
+
+                {% if current_user and not current_user.is_anonymous %}
+                    <!-- current_user and not current_user.is_anonymous() -->
+                    <!-- re-check this!! -->
+                    <li><a href="{{ url_for('profile') }}"><i
+                            class="glyphicon glyphicon-user"></i>&nbsp; {{ current_user.name() }}
+                    </a></li>
+                    <li><a href="/logout"><i
+                            class="glyphicon glyphicon-log-out"></i>&nbsp;Logout</a>
+                    </li>
+                {% else %}
+                    <li><a href="/login" class="emphasise"><i
+                            class="glyphicon glyphicon-log-in"></i>&nbsp;Login</a>
+                    </li>
+                {% endif %}
             </ul>
 
         </div>
@@ -53,6 +67,7 @@
 
             <br/>
             <a href="/analyses" class="btn btn-md btn-info">View Analyses</a>
+            <span>&nbsp;</span>
             <a href="/requests" class="btn btn-md btn-info">View Current
                 Requests</a>
         </div>
@@ -133,6 +148,8 @@
             <div class="col-md-1"></div>
         </div>
 
+        <div class="clearfix"></div>
+
     </div>
 </div>
 
@@ -140,7 +157,7 @@
 
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="col-md-1">
+            <div class="col-md-1 hidden-sm-down hidden-xs-down">
                 <img src="../static/img/recast-logo-mark.svg" width="100%">
             </div>
 
@@ -155,9 +172,13 @@
             <div class="col-md-3">
                 <h4>Resources</h4>
                 <ul>
-                    <li><a href="http://diana-hep.org" target="_new">DIANA-HEP</a></li>
-                    <li><a href="http://analysis-preservation.cern.ch" target="_new">CERN Analysis Preservation Framework</a></li>
-                    <li><a href="http://hepdata.net" target="_new">HEPData</a></li>
+                    <li><a href="http://diana-hep.org"
+                           target="_new">DIANA-HEP</a></li>
+                    <li><a href="http://analysis-preservation.cern.ch"
+                           target="_new">CERN Analysis Preservation
+                        Framework</a></li>
+                    <li><a href="http://hepdata.net" target="_new">HEPData</a>
+                    </li>
                 </ul>
             </div>
 
@@ -167,7 +188,8 @@
 
                     <li><a href="/about">About</a></li>
                     <li><a href="">Team</a></li>
-                    <li><a href="http://arxiv.org/abs/1010.2506" target="_new">White paper</a></li>
+                    <li><a href="http://arxiv.org/abs/1010.2506" target="_new">White
+                        paper</a></li>
                 </ul>
             </div>
 
