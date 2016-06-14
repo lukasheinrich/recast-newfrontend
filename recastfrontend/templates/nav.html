@@ -1,0 +1,42 @@
+<nav class="navbar navbar-default navbar-fixed-top top-bar">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed"
+                    data-toggle="collapse" data-target="#navbar-collapse"
+                    aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style="padding: 0" href="/">
+                <div class="pull-left recast-logo"></div>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse menu" id="navbar-collapse">
+            <ul>
+                <li><a href="/about">About</a></li>
+                <li><a href="/analyses">Analysis Catalogue</a></li>
+                <li><a href="/requests">Requests</a></li>
+
+                {% if current_user and not current_user.is_anonymous %}
+                    <!-- current_user and not current_user.is_anonymous() -->
+                    <!-- re-check this!! -->
+                    <li><a href="{{ url_for('profile') }}"><i
+                            class="glyphicon glyphicon-user"></i>&nbsp; {{ current_user.name() }}
+                    </a></li>
+                    <li><a href="/logout"><i
+                            class="glyphicon glyphicon-log-out"></i>&nbsp;Logout</a>
+                    </li>
+                {% else %}
+                    <li><a href="/login" class="emphasise"><i
+                            class="glyphicon glyphicon-log-in"></i>&nbsp;Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+        </div>
+    </div>
+</nav>
