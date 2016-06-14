@@ -14,48 +14,8 @@
 
 </head>
 <body>
-<nav class="navbar navbar-default navbar-fixed-top top-bar">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed"
-                    data-toggle="collapse" data-target="#navbar-collapse"
-                    aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" style="padding: 0" href="/">
-                <div class="pull-left recast-logo"></div>
-            </a>
-        </div>
 
-        <div class="collapse navbar-collapse menu" id="navbar-collapse">
-            <ul>
-                <li><a href="/about">About</a></li>
-                <li><a href="/analyses">Analysis Catalogue</a></li>
-                <li><a href="/requests">Requests</a></li>
-
-                {% if current_user and not current_user.is_anonymous %}
-                    <!-- current_user and not current_user.is_anonymous() -->
-                    <!-- re-check this!! -->
-                    <li><a href="{{ url_for('profile') }}"><i
-                            class="glyphicon glyphicon-user"></i>&nbsp; {{ current_user.name() }}
-                    </a></li>
-                    <li><a href="/logout"><i
-                            class="glyphicon glyphicon-log-out"></i>&nbsp;Logout</a>
-                    </li>
-                {% else %}
-                    <li><a href="/login" class="emphasise"><i
-                            class="glyphicon glyphicon-log-in"></i>&nbsp;Login</a>
-                    </li>
-                {% endif %}
-            </ul>
-
-        </div>
-    </div>
-</nav>
+{% include "nav.html" %}
 
 <div class="clearfix"></div>
 
@@ -71,7 +31,7 @@
             <a href="/requests" class="btn btn-md btn-info">View Current
                 Requests</a>
         </div>
-        <div class="col-md-3 col-sm-3">
+        <div class="col-md-3 col-sm-3 hidden-xs">
             <img src="../static/img/recast-atom.svg" width="100%">
         </div>
     </div>
@@ -88,11 +48,11 @@
 
         <div class="row-fluid usp" id="request">
 
-            <div class="col-md-1"></div>
-            <div class="col-md-3">
+            <div class="col-md-1 hidden-xs hidden-sm"></div>
+            <div class="col-sm-5 col-md-3 hidden-xs">
                 <img src="../static/img/recast-submit.svg" width="100%">
             </div>
-            <div class="col-md-7 text-left usp-text">
+            <div class="col-sm-7 col-md-7 text-left usp-text">
                 <h4>Request</h4>
                 <p>Upload alternative signals in the LHE format and request
                     that
@@ -103,7 +63,7 @@
                     obligation
                     for the experiments to respond.</p>
             </div>
-            <div class="col-md-1"></div>
+            <div class="col-md-1 hidden-xs hidden-sm"></div>
 
         </div>
 
@@ -111,11 +71,11 @@
 
         <div class="row-fluid usp" id="subscribe">
 
-            <div class="col-md-1"></div>
-            <div class="col-md-3">
+            <div class="col-md-1 hidden-xs hidden-sm"></div>
+            <div class="col-sm-5 col-md-3 hidden-xs">
                 <img src="../static/img/recast-subscribe.svg" width="100%">
             </div>
-            <div class="col-md-7 text-left usp-text">
+            <div class="col-sm-7 col-md-7 text-left usp-text">
                 <h4>Subscribe</h4>
                 <p>Anyone can subscribe to an analysis to be informed of
                     activity associated with the analysis</p>
@@ -128,10 +88,10 @@
         <div class="row-fluid usp" id="subscribe">
 
             <div class="col-md-1"></div>
-            <div class="col-md-3">
+            <div class="col-sm-5 col-md-3 hidden-xs">
                 <img src="../static/img/recast-review.svg" width="100%">
             </div>
-            <div class="col-md-7 text-left usp-text">
+            <div class="col-sm-7 col-md-7 text-left usp-text">
                 <h4>Recast</h4>
                 <p>Experimentalists can accept the request, process these
                     alternative signals with the full simulation,
@@ -153,59 +113,9 @@
     </div>
 </div>
 
-<div class="footer">
-
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="col-md-1 hidden-sm-down hidden-xs-down">
-                <img src="../static/img/recast-logo-mark.svg" width="100%">
-            </div>
-
-            <div class="col-md-3">
-                <h4>Contact</h4>
-                <ul>
-                    <li><a href="mailto:">Email</a></li>
-                    <li><a href="">Github</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-3">
-                <h4>Resources</h4>
-                <ul>
-                    <li><a href="http://diana-hep.org"
-                           target="_new">DIANA-HEP</a></li>
-                    <li><a href="http://analysis-preservation.cern.ch"
-                           target="_new">CERN Analysis Preservation
-                        Framework</a></li>
-                    <li><a href="http://hepdata.net" target="_new">HEPData</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="col-md-3">
-                <h4>About</h4>
-                <ul>
-
-                    <li><a href="/about">About</a></li>
-                    <li><a href="">Team</a></li>
-                    <li><a href="http://arxiv.org/abs/1010.2506" target="_new">White
-                        paper</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-2">
-                <img src="../static/img/diana-hep-logo.svg" width="100%">
-            </div>
-
-            <div class="clearfix"></div>
-            <div class="col-md-12 text-center">
-                Copyright © 2016
-                <br/>
-            </div>
-        </div>
-    </div>
-</div>
-
+<div class="clearfix"></div>
+<br/>
+{% include "footer.html" %}
 
 </body>
 </html>
