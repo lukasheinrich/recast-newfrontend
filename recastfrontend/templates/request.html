@@ -28,22 +28,11 @@
 	
       
 		    {% if request.status %}
+		    &nbsp;
 		    <span class="label label-warning">
 			<i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}
 		    </span>
-		    {% endif %}
-	
-		    
-		    {% if request.uuid %}	     
-		    <span><p> </p> </span>
-	  
-		    <span class="label label-primary">
-
-			<i class="glyphicon glyphicon-tags"></i>
-			<strong>uuid:</strong>{{ request.uuid }}
-		    </span>
-	
-		    {% endif %}
+		    {% endif %}		   
 		</div>
 		
 		
