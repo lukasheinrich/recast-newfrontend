@@ -3,244 +3,197 @@
 {% block container %}
 
 <div class="container">
-  <div class="row">
+    <div class="row">
 
-  <div class="col-md-2">
-    <br><br><br>
-    <div class="panel panel-info">
-      <div class="panel-content">
-	<ul class="nav nav-pills nav-stacked">
-	  <li><a data-toggle="modal" href="#contactModal">Contact Requester</a></li>
-	  <li class="disabled"><a href="#">Edit</a></li>
-	</ul>
-      </div>
-    </div>    
-  </div>
-  
-  <div class="col-md-8">
-    <br><br><br>
-
-    <div class="card col-md-12" style="box-shadow: 1px 1px 1px 5px #f2efef;">
-      <h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
-      <br>
-      <div class="text-center">
-	<span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
-
-	{% if request.post_date %}
-	
-	<span class="label label-default">{{ request.post_date }}</span>
-	{% endif %}
-	
-	{% if request.description_of_model %}
-	<span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}</span> 
-	{% endif %}
-	
+	<div class="col-md-12">
+	    <div class="card col-md-12" style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
+		<br>
+		<h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
+		<br>
+		<div class="text-center">
+		    <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
+		    
+		    {% if request.post_date %}
+		    
+		    <span class="label label-default">{{ request.post_date }}</span>
+		    {% endif %}
+		    
+		    {% if request.description_of_model %}
+		    <span class="label label-primary">
+			<i class="glyphicon glyphicon-tag"></i>
+			&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}
+		    </span> 
+		    {% endif %}
+		    
 	
       
-	{% if request.status %}
-	<span class="label label-warning"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}</span>
-	{% endif %}
+		    {% if request.status %}
+		    <span class="label label-warning">
+			<i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}
+		    </span>
+		    {% endif %}
 	
+		    
+		    {% if request.uuid %}	     
+		    <span><p> </p> </span>
+	  
+		    <span class="label label-primary">
+
+			<i class="glyphicon glyphicon-tags"></i>
+			<strong>uuid:</strong>{{ request.uuid }}
+		    </span>
 	
-	{% if request.uuid %}	     
-	<span><p> </p> </span>
+		    {% endif %}
+		</div>
+		
+		
+		<br>
+		<span class="hidden-lg hidden-md">
+		    <br><br>
+		</span>
+		
+		<div class="col-md-3 scroll-area">
+		    <table class="table col-md-12 table-bordered table-hover">
+			<thead>
+				<tr>
+				    <th class="text-center">
+					<small>Displaying {{ request.scan_points[:]|length}} parameters</small>
+				    </th>
+				</tr>
+			    </thead>
+			<tbody ng-controller="ParameterViewCtrl as ctrl">
+			    {% for pointrequest in request.scan_points %}
+			    <tr>
+				
+				
+				<td>
+					<span class="col-md-12" ng-click="ctrl.fetchParameter('{{pointrequest.uuid}}', {{loop.index0+1}})" style="cursor:pointer">
+					    
+					    <h5><strong>PARAMETER {{loop.index0+1}}</strong></h5>
+
+					</span>
+
+					<br><br>
+					<span class="col-md-12">
+					    <span class="col-md-6">
+						<span class="label label-default pull-left">
+						    {{ pointrequest.point_coordinates[:]|length }} coordinates
+						</span>
+					    </span>
+					    <span class="col-md-6">
+						<span class="label label-default pull-right">
+						    {{ pointrequest.requests[:]|length}} basic requests
+						</span>
+					    </span>
+					</span>
+				    </td>
+			    </tr>
+			    {% endfor %}
+			</tbody>
+		    </table>		    
+		</div>
+		<div class="col-md-9 scroll-area" ng-controller="ParameterViewCtrl as ctrl">
+		    <span class="col-md-12">			
+			<span bind-html-compile="ctrl.parameterData()"></span>
+		    </span>			 
+		</div>
+		<div class="col-md-12">
+		    <div class="col-md-3">
+			<span ng-controller="AddParameterCtrl as ctrl">
+			    <button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-primary pull-left">
+				<i class="glyphicon glyphicon-plus"></i>
+				&nbsp;Add Parameter
+			    </button>		   
+			</span>
+		    </div>
+		    <div class="col-md-9"></div>
+		    <div class="col-md-12">			
+			<br><br>
+		    </div>
+		</div>
+	    </div>
+	</div>
+
+
+
 	
-	<span class="label label-primary">
-
-	  <i class="glyphicon glyphicon-tags"></i>
-	  <strong>uuid:</strong>{{ request.uuid }}
-	</span>
-	
-	{% endif %}
-      </div>
-      
-      <br><br>
-      <span>
-	<strong>
-	  <span>
-	    <i class="glyphicon glyphicon-pencil"></i>
-	    &nbsp;analysis&nbsp;
-	  </span>
-	</strong>
-	<a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
-	  <span id="analysis-title">{{ request.analysis.title }}
-	  </span>
-	</a>
-	<span class="label label-primary">
-	  {{ request.analysis.collaboration }}
-	</span>
-      </span>
-      
-      <br><br>
-      <strong>Reason for request</strong>
-      <br>
-      {{ request.reason_for_request }}
-      <br>
-      <br>
-      <strong>Additional information</strong>
-      <br>
-      {{request.additional_information }}
-      <br><br>
-      
-
-    </div>
-    <br><br>
-    <div class="container-fluid">
-      <br><br>
-    </div>
-    <div ng-controller="parameterCtrl as ctrl">
-      
-      <button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-primary pull-right" id="btn-add-parameter-point"><i class="glyphicon glyphicon-plus"></i>&nbsp;Add Parameter Point</button>
-	<br><br>
-    </div>
-
-    <div>
-    </div>
-    <div ng-controller="BasicRequestCtrl as ctrl">
-      {% for point_request in request.scan_points %}
-      {% if loop.index0 > 0 %}
-      <span>
-	<br><br>
-      </span>
-      {% endif %}
-
-
-      <div class="card col-md-12">
-	<br>	
-	<span class="col-md-3"><h4><strong>&nbsp;&nbsp;&nbsp;&nbsp;Parameter {{loop.index0+1}} </strong></h4></span>
-	<span class="col-md-2">
-
-	</span>
-	
-	<span class="col-md-6 pull-right">
-	  {% if point_request.point_responses %}
-	  <a class="btn btn-info btn-sm pull-right" href="{{ url_for('.results', ruuid=point_request.point_responses.uuid) }}">
-	    <i class="glyphicon glyphicon-eye-open"></i>
-	    &nbsp;View Response
-	  </a>
-	  {% else %}
-	  <a class="btn btn-info btn-sm disabled pull-right" href="#">
-	    <i class="glyphicon glyphicon-eye-open"></i>&nbsp;View Response</a>
-	  {% endif %}
-	</span>
-	<br><br><br>
 	
 	<div class="col-md-12">
-	  
-	  <div class="table-responsive col-md-12">
-	    <table class="table table-bordered">
-	      
-	      <thead>
-		<tr>
-		  <th>
-		    <span class="col-md-6" style="display:inline-block;">Coordinate</span>
-		    <span class="col-md-6" style="display:inline-block;">Value</span>
-		  </th>
-		</tr>
-	      </thead>
-	      
-	      <tbody>	  
-		{% for coordinate in point_request.point_coordinates %}		
-		<tr>
-		  <td>
-		    <span class="col-md-6" style="display:inline-block;">	     
-		      {%  if coordinate.title %}
-		      {{ coordinate.title }}
-		      {% else %}
-		      Coordinate {{ loop.index0 }}
-		      {% endif %}
-		      
+	    <br>      
+	    <div class="card col-md-12"  style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
+		<br><br>
+		<span>
+		    <strong>
+			<span>
+			    <i class="glyphicon glyphicon-pencil"></i>
+			    &nbsp;analysis&nbsp;
+			</span>
+		    </strong>
+		    <a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
+			<span id="analysis-title">{{ request.analysis.title }}
+			</span>
+		    </a>
+		    <span class="label label-primary">
+			{{ request.analysis.collaboration }}
 		    </span>
-		    <span class="col-md-6" style="display:inline-block;">
-		      {{ coordinate.value }}
-		    </span>
-		  </td>
-		</tr>	
-		{% endfor %}	    
-	      </tbody>
-	    </table>
-	  </div><!-- end of div table responsive -->
+		</span>
+		
+		<br><br>
+		<strong>Reason for request</strong>
+		<br>
+		{{ request.reason_for_request }}
+		<br>
+		<br>
+		<strong>Additional information</strong>
+		<br>
+		{{request.additional_information }}
+		<br><br>
+      
 
-	  <!-- basic -->
-	  
-	  <div class="table-responsive col-md-12">
-	    <h4>Basic request </h4>
-	    <table class="table table-bordered">
-	      <thead>
-		<tr>
-		  <th>
-		    <span class="col-md-4" style="display:inline-block;">Name</span>
-		    <span class="col-md-4" style="display:inline-block;">Basic File</span>
-		    <span class="col-md-4 text-right" style="display:inline-block;">Response</span>
-		  </th>
-		</tr>
-	      </thead>
-	      <tbody>
-		{% for basicrequest in point_request.requests[:] %}
-		<tr>
-		  <td>
-		    <span class="col-md-4" style="display:inline-block;">
-		      {{ basicrequest.file_name.original_file_name}}
-		    </span>
-
-		    <span class="col-md-4" style="display:inline-block;">
-		      {% if basicrequest.file_name.file_name %}		      		      
-		      <a class="btn btn-success btn-sm"
-			 href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ basicrequest.file_name.file_name }}"
-			 download="{{basicrequest.file_name.orginal_file_name}}">
-			<i class="glyphicon glyphicon-cloud-download"></i>
-			&nbsp;Download File
-			</a>
-			{% else %}
-			<a class="btn btn-success bt-sm disabled">			  
-			  <i class="glyphicon glyphicon-cloud-download"></i>&nbsp;Download File
-			</a>
-			{% endif %}			
-		    </span>
-		    
-		    <span class="col-md-4" style="display:inline-block;">
-		      {% if basicrequest.basic_responses[0] %}
-		      <a class="btn btn-info btn-sm pull-right"
-			 href="{{ url_for('.results', ruuid=basicrequest.bascic_response[0].uuid)}}">
-			<i class="glyphicon glyphicon-eye-open"></i>
-		      </a>
-			{% else %}
-		      <a class="btn btn-info btn-sm disabled pull-right">
-			<i class="glyphicon glyphicon-eye-open"></i>
-			View response
-		      </a>
-		      {% endif %}
-		    </span>
-		    
-		  </td>
-		</tr>
-		{% endfor %}
-	      </tbody>
-	    </table>
-	  </div><!-- end basic request table -->
-	  <span class="col-md-12">
-	    <br><br>
-	  </span>
-	  <span class="col-md-offset-9">
-	    <button type="button" id="btn-add-coordinate-{{loop.index0}}" class="btn btn-primary btn-sm" ng-click="ctrl.addBasicRequest({{point_request.id}})">
-	      <i class="glyphicon glyphicon-plus">
-	      </i>&nbsp;Add Basic Request
-	    </button>
-	    <br><br>
-	  </span>
-	    
-	</div>
+            </div>      
+	</div>	
 	
-      </div>
-      {% endfor %}  
-    </div><!-- ng-controller -->
-    
-  </div> <!-- End middle column -->
-  </div>
+    </div>    
 </div>
 
+<div id="modal-add-basic-request" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="BasicRequestCtrl as ctrl">
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
+	    </div>
+	    
+	    <div class="modal-body">
+		
+		<form id="form-add-coordinate" method="post" class="form-horizontal">
+
+		    <div class="form-group required">
+			<label class="control-label col-md-4" for="zip-file">Zip File:</label>
+			
+			<div class="col-md-6">
+			    <input id="zip-file-requesst-page" file-model="ctrl.zipFile" name="zip-file" type="file">
+			    <p class="text-muted"><small>.zip extension allowed</small></p>
+			</div>
+		    </div>
+		    
+		</form>
+		
+	    </div><!-- end modal body -->
+	
+	    <div class="modal-footer">
+		<button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+		<button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	    </div>
+
+	
+	</div>    
+    </div>
+</div>
+
+
 <!-- Modal for adding parameter point -->
-<div id="modal-add-parameter" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="parameterCtrl as ctrl">
+<div id="modal-add-parameter" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="AddParameterCtrl as ctrl">
   <div class="modal-dialog">
     <div class="modal-content">
       
@@ -250,7 +203,8 @@
       </div>
       
       <div class="modal-body">
-	<form id="form-add-parameter-point" method="post" class="form-horizontal" enctype="multipart/form-data">
+	  <form id="form-add-parameter-point" method="post" class="form-horizontal" novalidate
+		name="parameterForm">
 	  <div id="form-data">
 	    
 	    <div ng-repeat="item in ctrl.items()">
@@ -262,9 +216,10 @@
 		  <p class="text-muted"><small>Optional name</small></p>
 		</div>	   
 		
-		<div class="col-md-4">
-		  <input class="form-control" ng-model="item.value" id="coordinate-value" name="coordinate-value" type="text" value="" placeholder="Value">
+		<div class="col-md-4" ng-class="{ 'has-error': parameterForm.coordinate-value.$invalid }">
+		  <input class="form-control" ng-model="item.value" id="coordinate-value" name="coordinate-value" type="text" value="" placeholder="Value" required>
 		  <p class="text-muted"><small>Required value of type "float"</small></p>
+		  <span ng-show="item.value.$touched && item.value.$valid">Required value</small></p>
 		</div>		    		      
 	      </div>
 			    
@@ -289,91 +244,6 @@
   </div>
 </div>
 
-
-
-<div id="modal-add-basic-request" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="BasicRequestCtrl as ctrl">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
-      </div>
-      
-	<div class="modal-body">
-
-	  <form id="form-add-coordinate" method="post" class="form-horizontal">
-
-	    <div class="form-group required">
-	      <label class="control-label col-md-4" for="zip-file">Zip File:</label>
-	      
-	      <div class="col-md-6">
-		<input id="zip-file-requesst-page" file-model="ctrl.zipFile" name="zip-file" type="file">
-		<p class="text-muted"><small>.zip extension allowed</small></p>
-	      </div>
-	    </div>
-	    
-	  </form>
-	  
-	</div><!-- end modal body -->
-	
-	<div class="modal-footer">
-	  <button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-	  <button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-	</div>
-
-	
-    </div>    
-  </div>
-</div>
-
-
-<!-- Modal to contact requester -->
-<div id="contactModal" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="myModalLabel">Contact Requester</h3>
-      </div>
-
-      <div class="modal-body">
-	<form class="form-horizontal col-md-12" role="form">
-	  <div class="form-group">
-	    <label>Subject</label>
-	    <input class="form-control" type="text">
-	  </div>
-	  <div class="form-group">
-	    <label>Message</label>
-	    <textarea class="form-control" placeholder="Your message here.."></textarea>
-	  </div>
-
-	  <div class="form-group">
-	    <label>E-mail</label>
-	    <input class="form-control" placeholder="email@you.com" data-placement="top" type="text">
-	  </div>
-	  <div class="form-group">
-	    <button type="submit" class="btn btn-success pull-right">Send</button>
-	  </div>
-	</form>
-      </div>
-      <div class="modal-footer">
-	<button class="btn" data-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<script type="text/javascript">
-    
-$(document).ready(function() {
-    var analysis_content = $('#analysis-title').html();
-    $('#analysis-title').html(shortStr(analysis_content, analysis_content.length/2, 80));
-    
-});
-    
-
-  
-</script>  
-
 {% endblock %}
+
+
