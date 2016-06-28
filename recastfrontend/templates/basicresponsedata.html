@@ -1,13 +1,13 @@
 {% block container %}
 
 <div class="col-md-12">
-
+    <br>
     <div class="card card-on-deck card-info col-md-12" ng-controller="ParameterViewCtrl as ctrl">
 	<div class="col-md-12">
-	    <h4>Parameter Response
+	    <h4>Basic response
 		<span>
 		    
-		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideResponse()">
+		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideBasicResponse()">
 			Hide
 		    </button>
 		    <span>
@@ -22,37 +22,37 @@
 		<tbody>
 		    <tr>
 			<td><strong>lower 1 sig expected CLs</strong></td>
-			<td>{{ pointresponse.lower_1sig_expected_CLs }}</td>
+			<td>{{ basicresponse.lower_1sig_expected_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>lower 2 sig expected CLs</strong></td>
-			<td>{{ pointresponse.lower_2sig_expected_CLs }}</td>
+			<td>{{ basicresponse.lower_2sig_expected_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>expected CLs</strong></td>
-			<td>{{ pointresponse.expected_CLs }}</td>
+			<td>{{ basicresponse.expected_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>upper 1 sig expected CLs</strong></td>
-			<td>{{ pointresponse.upper_1sig_expected_CLs }}</td>
+			<td>{{ basicresponse.upper_1sig_expected_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>upper 2 sig expected CLs</strong></td>
-			<td>{{ pointresponse.upper_2sig_expected_CLs }}</td>
+			<td>{{ basicresponse.upper_2sig_expected_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>Observed CLs</strong></td>
-			<td>{{ pointresponse.observed_CLs }}</td>
+			<td>{{ basicresponse.observed_CLs }}</td>
 		    </tr>
 
 		    <tr>
 			<td><strong>log likelihood at references</strong></td>
-			<td>{{ pointresponse.log_likelihood_at_reference }}</td>
+			<td>{{ basicresponse.log_likelihood_at_reference }}</td>
 		    </tr>
 
 		</tbody>
@@ -61,27 +61,25 @@
 
 	<div class="col-md-12">
 	    Download File
-	    {% if pointresponse.archive %}
-	    <button type="button" class="btn btn-success btn-sm"
-		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archive.file_name }}"
-		    download = "{{ pointresponse.archive.original_file_name }}">
+	    {% if basicresponse.archives %}
+	    <a type="button" class="btn btn-success btn-sm"
+		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + basicresponse.archives.file_name }}"
+		    download="{{ basicresponse.archives.original_file_name }}">
 		<i class="glyphicon glyphicon-download"></i>
-		&nbsp;Download File
-	    </button>
+		&nbsp;Download
+	    </a>
 	    {% else %}
 	    <button type="button" class="btn btn-success btn-sm disabled">
 		<i class="glyphicon glyphicon-cloud-download"></i>
-		&nbsp;Download File
-	    </button>		    
+		&nbsp;Download
+	    </button>
 	    {% endif %}
-	  
 	</div>
 	<div class="col-md-12">
-	    <br>
+	    <br><br>
 	</div>
 	
-    </div>
-    
+    </div>    
 </div>
 
 {% endblock %}

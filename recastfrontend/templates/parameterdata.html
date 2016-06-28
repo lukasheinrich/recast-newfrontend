@@ -2,10 +2,10 @@
 
     <div class="card-flat col-md-12">
 	<div class="col-md-12">
-	    <h3> Parameter <span ng-bind=ctrl.parNumber()></span>
-		<span ng-controller="ParameterResponseCtrl as ctrl">
+	    <h3> Parameter <span ng-bind=ctrl.parIndex()></span>
+		<span ng-controller="ParameterViewCtrl as ctrl">
 		    {% if pointrequest.point_responses %}
-		    <button class="btn btn-info pull-right" ng-click="ctrl.fetchresponse('{{ pointrequest.point_responses.uuid}}')">
+		    <button class="btn btn-info pull-right" ng-click="ctrl.fetchResponse('{{ pointrequest.point_responses.uuid}}')">
 			<i class="glyphicon glyphicon-eye-open"></i>
 			&nbsp;Parameter&nbsp;Response
 		    </button>
@@ -20,9 +20,9 @@
 		</div>
 
 
-	<div class="col-md-12" ng-controller="ParameterResponseCtrl as ctrl">
+	<div class="col-md-12" ng-controller="ParameterViewCtrl as ctrl">
 	    <br><br>
-	    <span bind-html-compile="ctrl.mydata()">		
+	    <span bind-html-compile="ctrl.responseData()">		
 	    </span>
 	</div>
 
@@ -95,19 +95,24 @@
 				{% endif %}
 			    </span>
 			    
-			    <span class="col-md-4" style="display:inline-block;">
+			    <span class="col-md-4" style="display:inline-block;"
+				  ng-controller="ParameterViewCtrl as ctrl">
 				{% if basicrequest.basic_responses[0] %}
-				<a class="btn btn-info btn-sm"
-				   href="{{ url_for('.results', ruuid=basicrequest.basci_responses[0].uuid)}}">
+				<button class="btn btn-info btn-sm"
+				   ng-click="ctrl.fetchBasicResponse('{{basicrequest.basic_responses[0].uuid}}')">
 				    <i class="glyphicon glyphicon-eye-open"></i>
 				    &nbsp;Basic&nbsp;Response
-				</a>
+				</button>
 				{% else %}
-				<a class="btn btn-info btn-sm disabled">
+				<button class="btn btn-info btn-sm disabled">
 				    <i class="glyphicon glyphicon-eye-open"></i>
 				    &nbsp;Basic&nbsp;Response
-				</a>
+				</button>
 				{% endif %}
+			    </span>
+			    
+			    <span class="col-md-12" ng-controller="ParameterViewCtrl as brctrl">
+				<span bind-html-compile="brctrl.BasicResponseData()"></span>
 			    </span>
 			</td>
 		    </tr>

@@ -13,8 +13,30 @@
     <div class="pannel-content">
       
       <ul class="nav nav-pills nav-stacked">
-	<li><a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">Subscriptions&nbsp;<span class="badge pull-right">{{ analysis.subscriptions[:]|length }}</span></a></li>
+	{% if analysis.subscriptions[:] %}
+	<li>
+	  <a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">
+	    Subscriptions&nbsp;<span class="badge pull-right">{{ analysis.subscriptions[:]|length }}</span>
+	  </a>
+	</li>
+	{% else %}
+	<li class="disabled">
+	  <a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">
+	    Subscriptions&nbsp;<span class="badge pull-right">{{ analysis.subscriptions[:]|length }}</span>
+	  </a>
+	</li>
+	{% endif %}
+
+	{% if analysis.scan_requests[:] %}
 	<li><a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">Requests&nbsp;<span class="badge pull-right">{{ analysis.scan_requests[:]|length }}</span></a></li>
+	{% else %}
+	<li class="disabled">
+	  <a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">
+	    Requests&nbsp;<span class="badge pull-right">{{ analysis.scan_requests[:]|length }}</span>
+	  </a>
+	</li>
+	{% endif %}
+	
 	<li><a href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a></li>
 	<li><a href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a></li>
 	<li class="disabled"><a href="#">Edit</a></li>
