@@ -483,8 +483,10 @@ function RecastAddParameterPoint(e){
     return;
 }
 
-function shortStr(str, max_chars, min_thresh=10){
+function shortStr(str, max_chars, min_thresh){
     /* returns shortened string  */
+    if (min_tresh == 0) min_tresh = 10;
+    
     if (str.length > min_thresh){
 	return (str.substring(0, max_chars)+"...");
     }else{
