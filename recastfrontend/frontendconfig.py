@@ -17,7 +17,7 @@ def update_config(config):
 
 def mk_config():
   the_config = default_config()
-  the_config = update_config(the_config)
+  the_config = update_config(the_config)  
   if os.environ.has_key('RECASTCONTROLCENTER_CONFIG'):
     custom_config = yaml.load(open(os.environ['RECASTCONTROLCENTER_CONFIG']))
     the_config.update(**custom_config)

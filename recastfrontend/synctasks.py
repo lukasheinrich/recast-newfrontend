@@ -315,6 +315,14 @@ def publish(ZENODO_ACCESS_TOKEN, deposition_id):
   response = requests.post(url)
 
 def search(ES_HOST_NAME, ES_AUTH, ES_INDEX, doc_type, query_string):
+  """ Search function with ElasticSearch backend
+  
+  :param ES_HOST_NAME: elasticsearch link
+  :param ES_AUTH: username and password of elasticsearch
+  :param ES_INDEX: index of where to search
+  :param doc_type: request or analysis
+  :param query_string: string to search
+  """
   
   es = Elasticsearch([{'host': ES_HOST_NAME,
                        'port': 443,
@@ -333,3 +341,17 @@ def search(ES_HOST_NAME, ES_AUTH, ES_INDEX, doc_type, query_string):
       })
 
   return response
+
+
+def to_dict(query, query_instance=None):
+  """ Function to encode SQLAlchemy object to json
+
+  :param query: alchemy result query object
+  :param query_instance:
+  """
+
+  if hasattr(query, '__table__'):
+    return {c.name: str(getattr(query, c.name)) for c in query.__table__.columns}
+  else:
+    cols = query_instance.column_descriptions
+    return { cols[i]['name'] : query[i] for i in range(len(cols)) }

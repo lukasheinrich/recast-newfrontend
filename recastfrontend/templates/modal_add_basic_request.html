@@ -1,0 +1,34 @@
+<div id="modal-add-basic-request" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="BasicRequestCtrl as ctrl">
+    <div class="modal-dialog">
+	<div class="modal-content">
+	    <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
+	    </div>
+	    
+	    <div class="modal-body">
+		
+		<form id="form-add-coordinate" method="post" class="form-horizontal">
+
+		    <div class="form-group required">
+			<label class="control-label col-md-4" for="zip-file">Zip File:</label>
+			
+			<div class="col-md-6">
+			    <input id="zip-file-requesst-page" file-model="ctrl.zipFile" name="zip-file" type="file">
+			    <p class="text-muted"><small>.zip extension allowed</small></p>
+			</div>
+		    </div>
+		    
+		</form>
+		
+	    </div><!-- end modal body -->
+	
+	    <div class="modal-footer">
+		<button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
+		<button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+	    </div>
+
+	
+	</div>    
+    </div>
+</div>

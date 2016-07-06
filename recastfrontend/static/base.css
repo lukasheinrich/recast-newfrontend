@@ -8,10 +8,6 @@ body {
     background-color: white;
 }
 
-.badge {
-    background-color: #777;
-}
-
 .form-group.required .control-label:after {
     content: " *";
     color: red;
@@ -107,5 +103,23 @@ body {
 
 .scroll-area {
     overflow: auto;
-    height: 300px;
+    height: 600px;
+}
+
+.sub-header {
+    background-color: #edf1f5;
+    border-bottom: 2px solid #d0d8df;
+    margin-top: -5px;
+}
+
+.badge {
+    background: #e4e9ee none repeat scroll 0 0;
+    color: #0d3244;
+    border-style: solid;
+    border-width: 0.2px;
+}
+
+.label-default {
+    background: #3f729b none repeat scroll 0 0;
+    color: #fff;
 }

@@ -3,14 +3,22 @@
     <div class="card-flat col-md-12">
 	<div class="col-md-12">
 	    <h3> Parameter <span ng-bind=ctrl.parIndex()></span>
-		<span ng-controller="ParameterViewCtrl as ctrl">
+		<span class="pull-right" ng-controller="ParameterViewCtrl as ctrl">
 		    {% if pointrequest.point_responses %}
-		    <button class="btn btn-info pull-right" ng-click="ctrl.fetchResponse('{{ pointrequest.point_responses.uuid}}')">
+
+		    <button class="btn btn-info" ng-click="ctrl.fetchResponse('{{ pointrequest.point_responses.uuid}}')">
 			<i class="glyphicon glyphicon-eye-open"></i>
 			&nbsp;Parameter&nbsp;Response
 		    </button>
+		    &nbsp;
+		    <!--<a class="btn btn-danger" href="/download/response/{{pointrequest.uuid}}/json">-->
+		    <a class="btn btn-danger" href="{{ url_for('.download_response_json', ruuid=pointrequest.point_responses.uuid)}}" target="_blank" download="{{pointrequest.uuid}}.json">
+			<i class="glyphicon glyphicon-download-alt"></i>
+			&nbsp; Download
+		    </a>
+			
 		    {% else %}
-		    <button class="btn btn-info pull-right disabled">
+		    <button class="btn btn-info disabled">
 			<i class="glyphicon glyphicon-eye-open"></i>
 			&nbsp;Parameter&nbsp;Response
 		    </button>

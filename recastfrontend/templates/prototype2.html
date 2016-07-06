@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block container %}
+<div class="col-md-12 sub-header">
+    <h3> {{ request.title }}
+	<span class="pull-right" ng-controller="AddParameterCtrl as ctrl">
+	    <button class="btn btn-primary" ng-click="ctrl.addParameter({{request.id}})" type="button">
+		<i class="glyphicon glyphicon-plus"></i>
+		&nbsp;Add Parameter
+		</button>
+	</span>
+    </h3>
+</div>
+<div class="container-fluid">
+    <div class="row">
+
+	<div class="col-md-12 scroll-area">
+
+	    <!--First column -->
+	    <div class="col-md-2">
+
+		<table class="table col-md-12 table-bordered table-hover">
+
+			<tbody ng-controller="ParameterViewCtrl as ctrl">
+			    {% for pointrequest in request.scan_points %}
+
+			    <tr>
+				<td>
+				    <span class="col-md-12" ng-click="ctrl.fetchParameter('{{pointrequest.uuid}}', {{loop.index0+1}})" style="cursor:pointer">
+					<h5><strong> Parameter {{loop.index0+1}}</strong></h5>
+				    </span>
+
+				    <br><br>
+				    <span class="col-md-12">
+					<span class="col-md-6">
+					    <span class="label label-default pull-left">
+						{{ pointrequest.point_coordinates[:]|length }} coordinates
+					    </span>					    
+					</span>
+					<span class="col-md-6">
+					    <span class="label label-default pull-right">
+						{{ pointrequest.requests[:]|length}} basic requests
+					    </span>
+					</span>
+				    </span>
+				</td>
+			    </tr>
+			    {% endfor %}
+			</tbody>
+		    </table>
+		
+	    </div>
+
+	    <div class="col-md-7">
+				    <span class="col-md-12" ng-controller="ParameterViewCtrl as ctrl">
+			<span bind-html-compile="ctrl.parameterData()"></span>
+		    </span>		
+	    </div>
+
+	    <div class="col-md-3">
+		<br>
+		<div class=" col-md-12">
+		    
+
+		    <span>
+			<strong>
+			    <span>
+				<i class="glyphicon glyphicon-pencil"></i>
+				&nbsp;analysis&nbsp;
+				    </span>
+			</strong>
+				<a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
+				    <span id="analysis-title">{{ request.analysis.title }}
+				    </span>
+				</a>
+				<span class="label label-primary">
+				    {{ request.analysis.collaboration }}
+				</span>
+			    </span>
+			    
+			    <br><br>
+			    <strong>Reason for request</strong>
+			    <br>
+			    {{ request.reason_for_request }}
+			    <br>
+			    <br>
+			    <strong>Additional information</strong>
+			    <br>
+			    {{request.additional_information }}
+			    <br><br>
+			    
+			</div>
+		
+	    </div>
+	</div>
+    </div>
+</div>
+
+{% include "modal_add_parameter.html" %}
+{% include "modal_add_basic_request.html" %}
+
+{% endblock %}

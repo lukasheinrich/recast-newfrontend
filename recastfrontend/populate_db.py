@@ -34,7 +34,8 @@ analysis1 = models.Analysis(
     description="We report on a search for pair-produced particles both decaying into two jets, based on a data sample of 2.2/fb of proton-proton collisions collected at √s=7 TeV with the CMS detector at the LHC. We select events with at least four jets, require pairs of dijets with equal mass, and search for pair production of new particles. We set upper limits on the product of the resonance cross section, branching fraction into dijets, and acceptance. The cross section limit is compared with the predictions of a model of pair-produced colorons in which each coloron decays to qq~. We exclude pair production of colorons with mass between 320 and 580 GeV at 95% confidence level.",
     owner_id=user1.id, 
     run_condition_id=run_condition1.id, 
-    doi="DOI:/example"
+    doi="DOI:/example",
+    uuid=str(uuid.uuid4())
     )
 db.session.add(analysis1)
 db.session.commit()
@@ -53,7 +54,8 @@ analysis2 = models.Analysis(
     e_print='http://recast.perimeterinstitute.ca/1502.05686',
     description='Results of a search for decays of massive particles to fully hadronic final states are presented. This search uses 20.3 fb−1 of data collected by the ATLAS detector in √s = 8 TeV proton–proton collisions at the LHC. Signatures based on high jet multiplicities without requirements on the missing transverse momentum are used to search for R-parity-violating supersymmetric gluino pair production with subsequent decays to quarks. The analysis is performed using a requirement on the number of jets, in combination with separate requirements on the number of b-tagged jets, as well as a topological observable formed from the scalar sum of the mass values of large-radius jets in the event. Results are interpreted in the context of all possible branching ratios of direct gluino decays to various quark flavors. No significant deviation is observed from the expected Standard Model backgrounds estimated using jet-counting as well as data- driven templates of the total-jet-mass spectra. Gluino pair decays to ten or more quarks via intermediate neutralinos are excluded for a gluino with mass mg ̃ < 1 TeV for a neutralino mass mχ ̃01 = 500 GeV. Direct gluino decays to six quarks are excluded for mg ̃ < 917 GeV for light-flavor final states, and results for various flavor hypotheses are presented.',
     owner_id=user1.id,
-    run_condition_id=run_condition2.id
+    run_condition_id=run_condition2.id,
+    uuid = str(uuid.uuid4())
     )
 db.session.add(analysis2)
 db.session.commit()
@@ -66,14 +68,15 @@ request2 = models.ScanRequest(
     analysis_id=analysis2.id,
     requester_id=user1.id, 
     zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request2)
 db.session.commit()
 
 point_request2 = models.PointRequest(
     scan_request_id=request2.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid = str(uuid.uuid4())
     )
 db.session.add(point_request2)
 db.session.commit()
@@ -102,6 +105,64 @@ zip_file2 = models.RequestArchive(
 db.session.add(zip_file2)
 db.session.commit()
 
+scan_response2 = models.ScanResponse(
+    scan_request_id = request2.id,
+    uuid = str(uuid.uuid4())
+    )
+db.session.add(scan_response2)
+db.session.commit()
+
+parameter_response2 = models.PointResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 1.2,
+    lower_2sig_expected_CLs = 0.2,
+    expected_CLs = 21.1,
+    upper_1sig_expected_CLs = 21.2,
+    upper_2sig_expected_CLs = 12.1,
+    observed_CLs = 21.3,
+    log_likelihood_at_reference = 21.1,
+    scan_response_id = scan_response2.id,
+    point_request_id = point_request2.id
+    )
+db.session.add(parameter_response2)
+db.session.commit()
+
+
+basic_response2 = models.BasicResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 9.2,
+    lower_2sig_expected_CLs = 121.12,
+    expected_CLs = 21.1,
+    upper_1sig_expected_CLs = 1.1,
+    upper_2sig_expected_CLs = 1.4,
+    observed_CLs = 21.2,
+    log_likelihood_at_reference = 3.21,
+    point_response_id =  parameter_response2.id,
+    basic_request_id = basic_request2.id
+    )
+db.session.add(basic_response2)
+db.session.commit()
+
+parameter_archive2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_response_file.txt",
+    point_response_id = parameter_response2.id
+    )
+db.session.add(parameter_archive2)
+db.session.commit()
+
+basic_archive2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_response_file.txt",
+    basic_response_id = basic_response2.id
+    )
+db.session.add(basic_archive2)
+db.session.commit()
+    
+
+
 ##
 run_condition3 = models.RunCondition(
     name='8TeV',
@@ -119,7 +180,8 @@ analysis3 = models.Analysis(
     doi='10.1007/JHEP10(2013)189', 
     description='The results of a search for pair production of supersymmetric partners of the Standard Model third-generation quarks are reported. This search uses 20.1 fb-1 of pp collisions at sqrt{s}=8 TeV collected by the ATLAS experiment at the Large Hadron Collider. The lightest bottom and top squarks (b1 and t1 respectively) are searched for in a final state with large missing transverse momentum and two jets identified as originating from b-quarks. No excess of events above the expected level of Standard Model background is found. The results are used to set upper limits on the visible cross section for processes beyond the Standard Model. Exclusion limits at the 95% confidence level on the masses of the third-generation squarks are derived in phenomenological supersymmetric R-parity-conserving models in which either the bottom or the top squark is the lightest squark. The b1 is assumed to decay via b1->b chi0 and the t via t1->b chipm, with undetectable products of the subsequent decay of the chipm due to the small mass splitting between the chipm and the chi0.',
     owner_id=user1.id,
-    run_condition_id=run_condition3.id
+    run_condition_id=run_condition3.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(analysis3)
 db.session.commit()
@@ -132,28 +194,29 @@ request3 = models.ScanRequest(
     analysis_id=analysis3.id, 
     requester_id=user1.id,
     zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request3)
 db.session.commit()
 
 point_request3 = models.PointRequest(
     scan_request_id=request3.id,
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid = str(uuid.uuid4())
     )
 db.session.add(point_request3)
 db.session.commit()
 
 point_coordinate3  = models.PointCoordinate(
     value = 121.131,
-    point_request_id = point_request3.id
+    point_request_id = point_request3.id,
     )
 db.session.add(point_coordinate3)
 db.session.commit()
 
 basic_request3 = models.BasicRequest(
     point_request_id=point_request3.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
     )
 db.session.add(basic_request3)
 db.session.commit()
@@ -183,7 +246,8 @@ analysis4 = models.Analysis(
     inspire_URL='http://cdsweb.cern.ch/record/1370064',
     description='The results of a search for new physics in events with two same-sign isolated leptons (electrons, muons, or hadronically decaying tau-leptons), hadronic jets, and missing transverse energy in the final state are presented. These results are based on analysis of a data sample with a corresponding integrated luminosity of 0.98~fb−1 produced in \Pp\Pp collisions at a center-of-mass energy of 7~TeV collected by the CMS experiment at the LHC. The observed numbers of events agree with the standard model predictions, and no evidence for new physics is found. These observations are used to set upper limits on the number of events from new physics contributions and to constrain supersymmetric models.',
     owner_id=user1.id, 
-    run_condition_id=run_condition4.id
+    run_condition_id=run_condition4.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(analysis4)
 db.session.commit()
@@ -196,14 +260,15 @@ request4 = models.ScanRequest(
     analysis_id=analysis4.id, 
     requester_id=user1.id, 
     zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request4)
 db.session.commit()
 
 point_request4 = models.PointRequest(
     scan_request_id=request4.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request4)
 db.session.commit()
@@ -232,6 +297,61 @@ zip_file4 = models.RequestArchive(
 db.session.add(zip_file4)
 db.session.commit()
 
+scan_response4 = models.ScanResponse(
+    uuid = str(uuid.uuid4()),
+    scan_request_id = request4.id
+    )
+db.session.add(scan_response4)
+db.session.commit()
+
+parameter_response4 = models.PointResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 12.1,
+    lower_2sig_expected_CLs = 21.4,
+    expected_CLs = 0.1,
+    upper_1sig_expected_CLs = 14.12,
+    upper_2sig_expected_CLs = 32.1,
+    observed_CLs = 21.1,
+    log_likelihood_at_reference = 21.2,
+    scan_response_id = scan_response4.id,
+    point_request_id = point_coordinate4.id
+    )
+db.session.add(parameter_response4)
+db.session.commit()
+
+basic_response4 = models.BasicResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 1.2,
+    lower_2sig_expected_CLs = 21.3,
+    expected_CLs = 21.3,
+    upper_1sig_expected_CLs = 3.3,
+    upper_2sig_expected_CLs = 32.3,
+    observed_CLs = 32.3,
+    log_likelihood_at_reference = 32.3,
+    point_response_id = parameter_response4.id,
+    basic_request_id = basic_request4.id
+    )
+db.session.add(basic_response4)
+db.session.commit()
+
+parameter_archive4 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    point_response_id = parameter_response4.id
+    )
+db.session.add(parameter_archive4)
+db.session.commit()
+
+basic_archive4 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    basic_response_id = basic_response4.id
+    )
+db.session.add(basic_archive4)
+db.session.commit()
+
 
 request4_2 = models.ScanRequest(
     title="title for request 4.2",
@@ -241,14 +361,15 @@ request4_2 = models.ScanRequest(
     analysis_id=analysis4.id, 
     requester_id=user1.id, 
     zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request4_2)
 db.session.commit()
 
 point_request4_2 = models.PointRequest(
     scan_request_id=request4_2.id,
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request4_2)
 db.session.commit()
@@ -276,6 +397,62 @@ zip_file4_2 = models.RequestArchive(
 db.session.add(zip_file4_2)
 db.session.commit()
 
+scan_response4_2 = models.ScanResponse(
+    uuid = str(uuid.uuid4()),
+    scan_request_id = request4_2.id
+    )
+db.session.add(scan_response4_2)
+db.session.commit()
+
+parameter_response4_2 = models.PointResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 12.2,
+    lower_2sig_expected_CLs = 10.1,
+    expected_CLs = 32.1,
+    upper_1sig_expected_CLs = 32.3,
+    upper_2sig_expected_CLs = 43.4,
+    observed_CLs = 32.3,
+    log_likelihood_at_reference = 21.2,
+    scan_response_id = scan_response4_2.id,
+    point_request_id = point_request4_2.id
+    )
+db.session.add(parameter_response4_2)
+db.session.commit()
+
+basic_response4_2 = models.BasicResponse(
+    uuid = str(uuid.uuid4()),
+    lower_1sig_expected_CLs = 21.2,
+    lower_2sig_expected_CLs = 32.1,
+    expected_CLs = 32.2,
+    upper_1sig_expected_CLs = 32.2,
+    upper_2sig_expected_CLs = 45.3,
+    observed_CLs = 32.2,
+    log_likelihood_at_reference = 32.1,
+    point_response_id = parameter_response4_2.id,
+    basic_request_id = basic_request4_2.id
+    )
+db.session.add(basic_response4_2)
+db.session.commit()
+
+parameter_archive4_2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_file.txt",
+    point_response_id = parameter_response4_2.id
+    )
+db.session.add(parameter_archive4_2)
+db.session.commit()
+
+basic_archive4_2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    basic_response_id = basic_response4_2.id
+    )
+db.session.add(basic_archive4_2)
+db.session.commit()
+
+
 ##
 run_condition5 = models.RunCondition(
     name='7TeV'
@@ -291,7 +468,8 @@ analysis5 = models.Analysis(
     inspire_URL='http://inspirehep.net/search?p=find%20eprint%201201.109',
     description='An inclusive search for anomalous production of two prompt, isolated muons with the same electric charge is presented. The search is performed in a data sample corresponding to 1.6 fb^-1 of integrated luminosity collected in 2011 at sqrt(s) = 7 TeV with the ATLAS detector at the LHC. Muon pairs are selected by requiring two isolated muons of the same electric charge with pT > 20 GeV and abs(eta) < 2.5. Minimal requirements are placed on the rest of the event activity. The distribution of the invariant mass of the muon pair m(mumu) is found to agree well with the background expectation. Upper limits on the cross section for anomalous production of two muons with the same electric charge are placed as a function of m(mumu) within a fiducial region defined by the event selection. The fiducial cross- section limit constrains the like-sign top-quark pair-production cross section to be below 3.7 pb at 95% confidence level. The data are also analyzed to search for a narrow like-sign dimuon resonance as predicted for e.g. doubly charged Higgs bosons (H++/H--). Assuming pair production of H++/H-- bosons and a branching ratio to muons of 100% (33%), this analysis excludes masses below 355 (244) GeV and 251 (209) GeV for H++/H-- bosons coupling to left-handed and right-handed fermions, respectively.',
     owner_id=user1.id, 
-    run_condition_id=run_condition5.id
+    run_condition_id=run_condition5.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(analysis5)
 db.session.commit()
@@ -304,14 +482,15 @@ request5 = models.ScanRequest(
     analysis_id=analysis5.id, 
     requester_id=user1.id,
     zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request5)
 db.session.commit()
 
 point_request5 = models.PointRequest(
     scan_request_id=request5.id,
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request5)
 db.session.commit()
@@ -348,14 +527,15 @@ request5_2 = models.ScanRequest(
     analysis_id=analysis5.id,
     requester_id=user1.id,
     zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request5_2)
 db.session.commit()
 
 point_request5_2 = models.PointRequest(
     scan_request_id=request5_2.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request5_2)
 db.session.commit()
@@ -399,7 +579,8 @@ analysis6 = models.Analysis(
     inspire_URL='http://inspirehep.net/record/930002',
     description='A search for squarks and gluinos in events containing jets, missing transverse momentum and no electrons or muons is presented. The data were recorded in 2011 by the ATLAS experiment in sqrt(s)=7 TeV proton-proton collisions at the Large Hadron Collider. No excess above the Standard Model background expectation is observed in 1.04 fb^-1 of data. Gluino and squark masses below 700 GeV and 875 GeV respectively are excluded at the 95% confidence level in simplified models containing only squarks of the first two generations, a gluino octet and a massless neutralino. The exclusion limit increases to 1075 GeV for squarks and gluinos of equal mass. In MSUGRA/CMSSM models with tan(beta)=10, A_0=0 and mu> 0, squarks and gluinos of equal mass are excluded for masses below 950 GeV. These limits extend the region of supersymmetric parameter space excluded by previous measurements.',
     owner_id=user1.id, 
-    run_condition_id=run_condition6.id
+    run_condition_id=run_condition6.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(analysis6)
 db.session.commit()
@@ -412,14 +593,15 @@ request6 = models.ScanRequest(
     analysis_id=analysis6.id,
     requester_id=user1.id,
     zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request6)
 db.session.commit()
 
 point_request6 = models.PointRequest(
     scan_request_id=request6.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request6)
 db.session.commit()
@@ -456,14 +638,15 @@ request6_2 = models.ScanRequest(
     analysis_id=analysis6.id,
     requester_id=user1.id,
     zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request6_2)
 db.session.commit()
 
 point_request6_2 = models.PointRequest(
     scan_request_id=request6_2.id,
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request6_2)
 db.session.commit()
@@ -500,14 +683,15 @@ request6_3 = models.ScanRequest(
     analysis_id=analysis6.id,
     requester_id=user1.id,
     zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    uuid=str(uuid.uuid4())
     )
 db.session.add(request6_3)
 db.session.commit()
 
 point_request6_3 = models.PointRequest(
     scan_request_id=request6_3.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
+    uuid=str(uuid.uuid4())
     )
 db.session.add(point_request6_2)
 db.session.commit()
