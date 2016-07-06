@@ -13,6 +13,7 @@ setup(
     'Flask-Login',
     'Flask-SQLAlchemy',
     'Flask-WTF',
+    'flask-api',
     'click',
     'pyyaml',
     'celery',
