@@ -7,9 +7,13 @@
 	    <h4>Parameter Response
 		<span>
 		    
-		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideResponse()">
-			Hide
-		    </button>
+		    <a class="btn btn-warning btn-sm pull-right"
+		       href="{{ url_for('.download_response_json', ruuid=pointresponse.uuid)}}"
+		       target="_blank"
+		       download="{{ pointresponse.uuid }}.json">
+			<i class="glyphicon glyphicon-cloud-download"></i>
+			&nbsp;Download
+		    </a>
 		    <span>
 			<br>
 		    </span>

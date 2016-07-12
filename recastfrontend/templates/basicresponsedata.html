@@ -7,9 +7,13 @@
 	    <h4>Basic response
 		<span>
 		    
-		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideBasicResponse()">
-			Hide
-		    </button>
+		    <a class="btn btn-warning btn-sm pull-right"
+		       href="{{ url_for('.download_basic_response_json', ruuid=basicresponse.uuid)}}"
+		       target="_blank"
+		       download="{{ basicresponse.uuid}}.json">
+			<i class="glyphicon glyphicon-cloud-download"></i>
+			&nbsp;Download
+		    </a>
 		    <span>
 			<br>
 		    </span>

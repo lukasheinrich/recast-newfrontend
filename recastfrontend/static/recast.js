@@ -179,7 +179,11 @@ angular.module('recastApp', ['ngSanitize'])
 
 	self.parIndex = function() {
 	    return parameterIndex.getID();
-	}
+	};
+
+	self.accord = function() {
+	    console.log('accordion clicked');
+	};
 	    	
 	self.fetchParameter = function(uuid, index) {
 	    // show parameter data i.e: coords, basic requests, request buttons, etc.

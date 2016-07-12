@@ -20,6 +20,23 @@ db.session.add(user1)
 db.session.commit()
 
 
+user2 = models.User(
+    name='Admin',
+    email='admin@recast',
+    orcid_id = 'example123'
+    )
+db.session.add(user2)
+db.session.commit()
+
+token = models.AccessToken(
+    token = 'abcdef',
+    token_name = 'master token',
+    user_id = user2.id
+    )
+db.session.add(user2)
+db.session.commit()
+    
+
 run_condition1 = models.RunCondition(
     name='7TeV',
     description='2.2/fb'

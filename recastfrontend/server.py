@@ -294,8 +294,11 @@ def request_views(ruuid):
   if ruuid:
     query = db.session.query(dbmodels.ScanRequest).filter(
       dbmodels.ScanRequest.uuid == ruuid).all()
-    return render_template('request.html',
-                           request = query[0],
+    #return render_template('request.html',
+    #request = query[0],
+    #bucket_name=AWS_S3_BUCKET_NAME)
+    return render_template('prototype2.html',
+                           request=query[0],
                            bucket_name=AWS_S3_BUCKET_NAME)
   else:    
     if request.args.has_key('sort'):
@@ -659,10 +662,12 @@ def parameter_data(ruuid):
       dbmodels.PointRequest.uuid == ruuid).one()
     response = {}
     
-    response['data'] = render_template('parameterdata.html',
-                                     pointrequest=query,
-                                     bucket_name=AWS_S3_BUCKET_NAME)
-
+    #response['data'] = render_template('parameterdata.html',
+    #pointrequest=query,
+    #bucket_name=AWS_S3_BUCKET_NAME)
+    response['data'] = render_template('new_parameter_data.html',
+                                       pointrequest=query,
+                                       bucket_name=AWS_S3_BUCKET_NAME)
     response['success'] = "true"
     return jsonify(response)
 
@@ -752,11 +757,13 @@ def download_response_json(ruuid):
 @app.route('/download/basic-response/<string:ruuid>/json')
 def download_basic_response_json(ruuid):
 
+  print "download basic"
   try:
-    query = db.session.query(dbmodels.PointResponse).filter(
-      dbmodels.PointResponse.uuid == ruuid).one()
+    query = db.session.query(dbmodels.BasicResponse).filter(
+      dbmodels.BasicResponse.uuid == ruuid).one()
     query_json = synctasks.to_dict(query)
 
+    print "query"
     if not os.path.isdir(DATA_FOLDER):
       # check if data folder exist
       try:
@@ -766,6 +773,7 @@ def download_basic_response_json(ruuid):
         abort(500)
     name = str(uuid.uuid1())
     filename = '{}/{}.json'.format(DATA_FOLDER, name)
+    print filename
     target = open(filename, 'w')
     target.write(yaml.dump(query_json, default_style=False))
     target.close()
@@ -773,11 +781,14 @@ def download_basic_response_json(ruuid):
     return send_from_directory(directory=os.getcwd(), filename=filename)
 
   except MultipleResultsFound, e:
+    print "except 1"
     return abort(500)
 
   except NoResultFound, e:
+    print "except 2"
     return abort(500)
-        
+
+  print "returning nothing"
 
 @app.errorhandler(404)
 def page_not_found(e):
