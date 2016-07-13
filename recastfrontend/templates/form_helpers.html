@@ -1,0 +1,28 @@
+{% macro render_field(field, under_msg, required, glyphicon, additional=None) %}
+
+<div class="form-group {{required}}">
+    <label class="control-label col-md-3" for="{{field.id}}">
+	<i class="{{glyphicon}}"></i>
+	&nbsp;{{field.label}}
+    </label>
+
+    <div class="col-md-offset-1 col-md-6">
+	{% if additional %}
+	{{ field(class='form-control', rows="16") }}
+	{% else %}
+	{{ field(class='form-control')}}
+	{% endif %}
+	
+	{% if field.errors %}
+	<p class="text-muted text-danger"><small>
+	    {% for error in field.errors %}
+	    {{ error }} &nbsp;
+	    {% endfor %}
+	</small></p>
+	{% else %}
+	<p class="text-muted"><small>{{ under_msg }}</small></p>
+	{% endif %}
+    </div>
+</div>
+
+{% endmacro %}

@@ -228,8 +228,7 @@ def request_form(id):
   
     elif request_form.is_submitted():
       print request_form.errors
-      flash(request_form.errors, 'failure')
-      filename = None
+      flash('failure! form did not validate and was not processed','danger')
     
   return render_template('request_form.html', form=request_form,
                          analysis = analysis[0])

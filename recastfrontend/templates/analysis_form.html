@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block container %}
+{% from "form_helpers.html" import render_field %}
 
 <div class="container">
 
@@ -33,72 +34,22 @@
 
 
   <div class="panel panel-default">
-    <div class="panel-heading">Analysis</div>
-    <div class="panel-content" ng-controller="arxivImportCtrl as ctrl">
-      <br><br>
-      <div class="form-group required" id="title-group">
-	<label class="control-label col-md-3" required="required" for="{{ form.title.id }}"><i class="fa fa-book"></i>&nbsp;{{ form.title.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.title(class='form-control') }}
-	  <p class="text-muted"><small>Required.</small></p>
+      <div class="panel-heading">
+	  Analysis
+      </div>
+      <div class="panel-content" ng-controller="arxivImportCtrl as ctrl">
+	<br><br>
 
-	</div>
-      </div>
-      
-      <br>
-      <div class="form-group required">
-	<label class="control-label col-md-3" for="{{ form.collaboration.id }}"><i class="fa fa-users"></i>&nbsp;{{ form.collaboration.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.collaboration(class='form-control') }}
-	  <p class="text-muted"><small>Select collaboration.</small></p>
-	</div>
-      </div>
+	{{ render_field(form.title, "Required", "required", "fa fa-book") }}
+	{{ render_field(form.collaboration, "Select collaboration", "required", "fa fa-users") }}
+	{{ render_field(form.description, "Required", "required", "fa fa-pencil", "rows='16'") }}
+	{{ render_field(form.e_print, "Optional", "", "fa fa-bookmark") }}
+	{{ render_field(form.journal, "Optional", "", "fa fa-tag") }}
+	{{ render_field(form.doi, "Optional", "", "fa fa-link") }}
+	{{ render_field(form.inspire_URL, "Optional", "", "fa fa-link") }}
+	
 
-      <br>
-
-      <div class="form-group required">
-	<label class="control-label col-md-3" for="{{ form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.description.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.description(class='form-control', rows="16") }}
-	  <p class="text-muted"><small>Required.</small></p>
-	</div>
-      </div>
-
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.e_print.id }}"><i class="fa fa-bookmark"></i>&nbsp;{{ form.e_print.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.e_print(class='form-control') }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>  
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.journal.id }}"><i class="fa fa-tag"></i>&nbsp;{{ form.journal.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.journal(class='form-control') }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
-  
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.doi.id }}"><i class="fa fa-link"></i>&nbsp;{{ form.doi.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.doi(class='form-control') }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
-
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.inspire_URL.id }}"><i class="fa fa-link"></i>&nbsp;{{ form.inspire_URL.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.inspire_URL(class='form-control') }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
-      <br>
+	<br>
     </div>
   </div>
   
@@ -107,23 +58,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">Run Condition</div>
     <div class="panel-content">
-      <br><br>
-      <div class="form-group required">
-	<label class="control-label col-md-3" for="{{ run_condition_form.name.id }}"><i class="fa fa-book"></i>&nbsp;{{ run_condition_form.name.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ run_condition_form.name(class='form-control') }}
-	  <p class="text-muted"><small>Required.</small></p>
-	</div>
-      </div>
-      
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ run_condition_form.description.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ run_condition_form.description.label }}</label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ run_condition_form.description(class='form-control', rows="3") }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
+	<br><br>
+	{{ render_field(run_condition_form.name, "Required", "required", "fa fa-book") }}
+	{{ render_field(run_condition_form.description, "Required", "required", "fa fa-pencil") }}
       <br>
     </div>
   </div>
@@ -131,8 +68,14 @@
 
   <br><br>
   <div>
-    <button type="text" class="btn btn-danger pull-left"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-    <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
+      <button type="text" class="btn btn-danger pull-left">
+	  <i class="glyphicon glyphicon-remove"></i>
+	  &nbsp;Cancel
+      </button>
+      <button type="submit" class="btn btn-primary pull-right">
+	  <i class="glyphicon glyphicon-ok"></i>
+	  &nbsp;Submit
+      </button>
   </div>
   <br><br>      <br><br>      <br><br>
   

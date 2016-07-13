@@ -1,71 +1,56 @@
 {% extends "base.html" %}
 
 {% block container %}
-
-<div class="container">
-<form method="post" class="form-horizontal" role="form" action="/request_form">
-  {{ form.hidden_tag() }}
-  <br><br>
-  <div class="panel panel-default">
-    <div class="panel-heading">Request </div>
-    <div class="panel-body">
-      <br><br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="Analysis"> Analysis </label>
-	<div class="col-md-offset-1 col-md-6">
-	  <h4> {{analysis.title}}</h4>
+{% from "form_helpers.html" import render_field %}
+<div class="container">    
+    <form method="post" class="form-horizontal" role="form" action="/request_form">
+	{{ form.hidden_tag() }}
+	<br><br>
+	<div class="panel panel-default">
+	    <div class="panel-heading">Request </div>
+	    <div class="panel-body">
+		<br><br>
+		
+		<div class="form-group">
+		    <label class="control-label col-md-3" for="Analysis"> Analysis </label>
+		    <div class="col-md-offset-1 col-md-6">
+			<h4> {{analysis.title}}</h4>
+		    </div>
+		</div>
+		<br>
+		
+		{{ render_field(form.title, "Required.", "required", "fa fa-book fa-fw") }}
+		<br>
+		{{ render_field(form.model_name, "Required.", "required", "fa fa-pencil") }}
+		<br>
+		{{ render_field(form.reason_for_request, "Optional.", "", "fa fa-pencil", "rows='16'") }}
+		<br>
+		{{ render_field(form.additional_information, "Optional.", "", "fa fa-pencil", "rows='16'") }}
+		<br>
+	    </div>
 	</div>
-      </div>
-      <br>
-      <div class="form-group required">
-	<label class="control-label col-md-3" for="{{ form.title.id }}"><i class="fa fa-book fa-fw"></i>&nbsp;{{ form.title.label }} </label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.title(class='form-control') }}
-	  <p class="text-muted"><small>Required.</small></p>
+	
+	
+	<br><br>
+	<div>
+	    <div class="col-md-12">
+		<button type="button" class="btn btn-warning pull-left">
+		    <i class="glyphicon glyphicon-remove"></i>
+		    &nbsp;Cancel
+		</button>
+		
+		<button type="submit" class="btn btn-primary pull-right">
+		    <i class="glyphicon glyphicon-ok"></i>
+		    &nbsp;Submit
+		</button>		
+	    </div>
 	</div>
-      </div>
-      <br>
-      <div class="form-group required">
-	<label class="control-label col-md-3" for="{{ form.model_name.id }}">{{ form.model_name.label }} </label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.model_name(class='form-control') }}
-	  <p class="text-muted"><small>Required.</small></p>
-	</div>
-      </div>
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.reason_for_request.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.reason_for_request.label }} </label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.reason_for_request(class='form-control', rows="10") }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
-      <br>
-      <div class="form-group">
-	<label class="control-label col-md-3" for="{{ form.additional_information.id }}"><i class="fa fa-pencil"></i>&nbsp;{{ form.additional_information.label }} </label>
-	<div class="col-md-offset-1 col-md-6">
-	  {{ form.additional_information(class='form-control', rows="6") }}
-	  <p class="text-muted"><small>Optional.</small></p>
-	</div>
-      </div>
-      <br>
-    </div>
-  </div>
+	
+	<br><br>  <br><br>  <br><br>
+	
+    </form>
     
-  
-  <br><br>
-  <div>
-    <div class="col-md-12">
-      <button type="button" class="btn btn-warning pull-left"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-      <button type="submit" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-    </div>
-  </div>
-  
-  <br><br>  <br><br>  <br><br>
-
-</form>
-  
-
+    
 </div>
             
   
