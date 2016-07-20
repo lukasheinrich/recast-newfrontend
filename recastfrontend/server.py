@@ -263,14 +263,14 @@ def contact(id):
   return render_template('contact.html', form = contact_form)
 
 # Views
-@app.route('/analyses', methods=['GET', 'POST'], defaults={'ruuid': None})
-@app.route('/analyses/<string:ruuid>', methods=['GET', 'POST'])
+@app.route('/analyses', methods=['GET', 'POST'], defaults={'id': None})
+@app.route('/analyses/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def analyses(ruuid):
+def analyses(id):
 
-  if ruuid:
+  if id:
     query = db.session.query(dbmodels.Analysis).filter(
-      dbmodels.Analysis.uuid == ruuid).all()
+      dbmodels.Analysis.id == id).all()
 
     return render_template('analysis.html', analysis=query[0])
   
@@ -285,18 +285,15 @@ def analyses(ruuid):
     query = db.session.query(dbmodels.Analysis).all()
     return render_template('analyses_views.html', analyses = query)
 
-@app.route('/requests', methods=['GET', 'POST'], defaults={'ruuid': None})
-@app.route('/requests/<string:ruuid>', methods=['GET', 'POST'])
+@app.route('/requests', methods=['GET', 'POST'], defaults={'id': None})
+@app.route('/requests/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def request_views(ruuid):
+def request_views(id):
 
-  if ruuid:
+  if id:
     query = db.session.query(dbmodels.ScanRequest).filter(
-      dbmodels.ScanRequest.uuid == ruuid).all()
-    #return render_template('request.html',
-    #request = query[0],
-    #bucket_name=AWS_S3_BUCKET_NAME)
-    return render_template('prototype2.html',
+      dbmodels.ScanRequest.id == id).all()
+    return render_template('request.html',
                            request=query[0],
                            bucket_name=AWS_S3_BUCKET_NAME)
   else:    
@@ -307,27 +304,13 @@ def request_views(ruuid):
     query = db.session.query(dbmodels.ScanRequest).all()
     return render_template('request_views.html', requests = query)
 
-@app.route('/prototype1', methods=['GET', 'POST'],)
-def request_prototype1():
-  ruuid = '81ac3b2c-0f75-4d8b-8009-3012afb2c585'
-  query = db.session.query(dbmodels.ScanRequest).filter(
-    dbmodels.ScanRequest.uuid == ruuid).all()
-  return render_template('prototype.html',
-                         request = query[0])
-
-@app.route('/prototype2', methods=['GET', 'POST'])
-def request_prototype2():
-  ruuid = '81ac3b2c-0f75-4d8b-8009-3012afb2c585'
-  query = db.session.query(dbmodels.ScanRequest).filter(
-    dbmodels.ScanRequest.uuid == ruuid).all()
-  return render_template('prototype2.html',
-                         request = query[0])
-
+  
 @app.route('/subscriptions')
 @login.login_required
 def subscriptions():
   query = db.session.query(dbmodels.Subscription).all()
   return render_template('subscriptions.html', subscriptions = query)
+
 
 @app.route("/users")
 @login.login_required
@@ -645,26 +628,14 @@ def homestats():
   data['requests'] = len(requests)
   return jsonify(data)
 
-@app.route("/results/<string:ruuid>")
-def results(ruuid):
-  
-  query = db.session.query(dbmodels.PointResponse).filter(
-    dbmodels.PointResponse.uuid == ruuid).one()
-  
-  return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)
-
-@app.route("/parameter-data/<string:ruuid>")
-def parameter_data(ruuid):
+@app.route("/parameter-data/<int:id>")
+def parameter_data(id):
   
   try:
     query = db.session.query(dbmodels.PointRequest).filter(    
-      dbmodels.PointRequest.uuid == ruuid).one()
+      dbmodels.PointRequest.id == id).one()
     response = {}
-    
-    #response['data'] = render_template('parameterdata.html',
-    #pointrequest=query,
-    #bucket_name=AWS_S3_BUCKET_NAME)
-    response['data'] = render_template('new_parameter_data.html',
+    response['data'] = render_template('parameter_data.html',
                                        pointrequest=query,
                                        bucket_name=AWS_S3_BUCKET_NAME)
     response['success'] = "true"
@@ -678,17 +649,17 @@ def parameter_data(ruuid):
     #return 'No result found', status.HTTP_404_NOT_FOUND
     return abort(500)
 
-@app.route("/pointresponse-data/<string:ruuid>")
-def pointresponse_data(ruuid):
+@app.route("/point-response-data/<int:id>")
+def point_response_data(id):
 
   try:
     query = db.session.query(dbmodels.PointResponse).filter(
-      dbmodels.PointResponse.uuid == ruuid).one()
+      dbmodels.PointResponse.id == id).one()
     
     response = {}
-    response['data'] = render_template('responsedata.html',
+    response['data'] = render_template('response_data.html',
                                        pointresponse=query,
-                                     bucket_name=AWS_S3_BUCKET_NAME)
+                                       bucket_name=AWS_S3_BUCKET_NAME)
     response['success'] = "true"
     return jsonify(response)
 
@@ -701,15 +672,15 @@ def pointresponse_data(ruuid):
     #return 'No result found', status.HTTP_404_NOT_FOUND
     return abort(500)
 
-@app.route("/basicresponse-data/<string:ruuid>")
-def basicresponse_data(ruuid):
+@app.route("/basic-response-data/<int:id>")
+def basic_response_data(id):
 
   try:
     query = db.session.query(dbmodels.BasicResponse).filter(
-      dbmodels.BasicResponse.uuid == ruuid).one()
+      dbmodels.BasicResponse.id == id).one()
     
     response = {}
-    response['data'] = render_template('basicresponsedata.html',
+    response['data'] = render_template('basic_response_data.html',
                                        basicresponse=query,
                                        bucket_name=AWS_S3_BUCKET_NAME)
     response['success'] = "true"
@@ -724,12 +695,12 @@ def basicresponse_data(ruuid):
     return abort(500)
 
   
-@app.route('/download/response/<string:ruuid>/json')
-def download_response_json(ruuid):
+@app.route('/download/response/<int:id>/json')
+def download_response_json(id):
 
   try:
     query = db.session.query(dbmodels.PointResponse).filter(
-      dbmodels.PointResponse.uuid == ruuid).one()
+      dbmodels.PointResponse.id == id).one()
     query_json = synctasks.to_dict(query)
 
     if not os.path.isdir(DATA_FOLDER):
@@ -753,16 +724,15 @@ def download_response_json(ruuid):
   except NoResultFound, e:  
     return abort(500)
 
-@app.route('/download/basic-response/<string:ruuid>/json')
-def download_basic_response_json(ruuid):
+@app.route('/download/basic-response/<int:id>/json')
+def download_basic_response_json(id):
 
   print "download basic"
   try:
     query = db.session.query(dbmodels.BasicResponse).filter(
-      dbmodels.BasicResponse.uuid == ruuid).one()
+      dbmodels.BasicResponse.id == id).one()
     query_json = synctasks.to_dict(query)
 
-    print "query"
     if not os.path.isdir(DATA_FOLDER):
       # check if data folder exist
       try:
@@ -780,11 +750,11 @@ def download_basic_response_json(ruuid):
     return send_from_directory(directory=os.getcwd(), filename=filename)
 
   except MultipleResultsFound, e:
-    print "except 1"
+    print "MultipleResultsFound"
     return abort(500)
 
   except NoResultFound, e:
-    print "except 2"
+    print "No result Found"
     return abort(500)
 
   print "returning nothing"

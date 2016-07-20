@@ -1,238 +1,82 @@
 {% extends "base.html" %}
 
 {% block container %}
-
-<div class="container">
+<div class="col-md-12 sub-header">
+    <h3> {{ request.title }}
+	<span class="pull-right" ng-controller="AddParameterCtrl as ctrl">
+	    <button class="btn btn-primary" ng-click="ctrl.addParameter({{request.id}})" type="button">
+		<i class="glyphicon glyphicon-plus"></i>
+		&nbsp;Add Parameter
+		</button>
+	</span>
+    </h3>
+</div>
+<div class="container-fluid">
     <div class="row">
-
-	<div class="col-md-12">
-	    <div class="card col-md-12" style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
-		<br>
-		<h3 style="margin-top:5px" class="text-center">{{ request.title }}</h3>
-		<br>
-		<div class="text-center">
-		    <span class="badge"><i class="glyphicon glyphicon-user"></i>&nbsp; {{ request.requester.name }}</span>
-		    
-		    {% if request.post_date %}
-		    
-		    <span class="label label-default">{{ request.post_date }}</span>
-		    {% endif %}
-		    
-		    {% if request.description_of_model %}
-		    <span class="label label-primary">
-			<i class="glyphicon glyphicon-tag"></i>
-			&nbsp;<strong>Model:</strong>&nbsp;{{ request.description_of_model }}
-		    </span> 
-		    {% endif %}
-		    
-	
-      
-		    {% if request.status %}
-		    &nbsp;
-		    <span class="label label-warning">
-			<i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>Status:</strong>&nbsp;{{ request.status }}
-		    </span>
-		    {% endif %}		   
-		</div>
+	<!--First column -->
+	<div class="col-md-2 scroll-area">
+	    <br>
+	    <table class="table col-md-12 table-bordered table-hover">
 		
-		
-		<br>
-		<span class="hidden-lg hidden-md">
-		    <br><br>
-		</span>
-		
-		<div class="col-md-3 scroll-area">
-		    <table class="table col-md-12 table-bordered table-hover">
-			<thead>
-				<tr>
-				    <th class="text-center">
-					<small>Displaying {{ request.scan_points[:]|length}} parameters</small>
-				    </th>
-				</tr>
-			    </thead>
-			<tbody ng-controller="ParameterViewCtrl as ctrl">
-			    {% for pointrequest in request.scan_points %}
-			    <tr>
-				
-				
-				<td>
-					<span class="col-md-12" ng-click="ctrl.fetchParameter('{{pointrequest.uuid}}', {{loop.index0+1}})" style="cursor:pointer">
-					    
-					    <h5><strong>PARAMETER {{loop.index0+1}}</strong></h5>
+		<tbody ng-controller="ParameterViewCtrl as ctrl">
+		    {% for pointrequest in request.scan_points %}		    
+		    <tr>
+			<td>
+			    <span ng-click="ctrl.fetchParameter('{{pointrequest.id}}', {{loop.index0+1}})" style="cursor:pointer">
+				<h5><strong> POINT {{loop.index0+1}}</strong></h5>
+			    </span>
+			    			    
+			    <span class="label label-default">
+				{{ pointrequest.point_coordinates[:]|length }} coordinates
+			    </span>					    
 
-					</span>
-
-					<br><br>
-					<span class="col-md-12">
-					    <span class="col-md-6">
-						<span class="label label-default pull-left">
-						    {{ pointrequest.point_coordinates[:]|length }} coordinates
-						</span>
-					    </span>
-					    <span class="col-md-6">
-						<span class="label label-default pull-right">
-						    {{ pointrequest.requests[:]|length}} basic requests
-						</span>
-					    </span>
-					</span>
-				    </td>
-			    </tr>
-			    {% endfor %}
-			</tbody>
-		    </table>		    
-		</div>
-		<div class="col-md-9 scroll-area" ng-controller="ParameterViewCtrl as ctrl">
-		    <span class="col-md-12">			
-			<span bind-html-compile="ctrl.parameterData()"></span>
-		    </span>			 
-		</div>
-		<div class="col-md-12">
-		    <div class="col-md-3">
-			<span ng-controller="AddParameterCtrl as ctrl">
-			    <button ng-click="ctrl.addParameter({{request.id}})" type="button" class="btn btn-primary pull-left">
-				<i class="glyphicon glyphicon-plus"></i>
-				&nbsp;Add Parameter
-			    </button>		   
-			</span>
-		    </div>
-		    <div class="col-md-9"></div>
-		    <div class="col-md-12">			
-			<br><br>
-		    </div>
-		</div>
-	    </div>
+			    <span class="label label-default pull-right">
+				{{ pointrequest.requests[:]|length}} basic requests
+			    </span>			    
+			</td>
+		    </tr>
+		    {% endfor %}
+		</tbody>
+	    </table>		
 	</div>
-
-
-
 	
+	<div class="col-md-7 card-flat scroll-area" ng-controller="ParameterViewCtrl as ctrl">
+	    <span bind-html-compile="ctrl.parameterData()"></span>
+	</div>
 	
-	<div class="col-md-12">
-	    <br>      
-	    <div class="card col-md-12"  style="box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
-		<br><br>
-		<span>
-		    <strong>
-			<span>
-			    <i class="glyphicon glyphicon-pencil"></i>
-			    &nbsp;analysis&nbsp;
-			</span>
-		    </strong>
-		    <a href="{{ url_for('.analyses', ruuid=request.analysis.uuid) }}">
-			<span id="analysis-title">{{ request.analysis.title }}
-			</span>
+	<div class="col-md-3 scroll-area">
+	    <br>
+	    <span>
+		<strong>
+		    <span>
+			<i class="glyphicon glyphicon-pencil"></i>
+			&nbsp;analysis&nbsp;
+		    </span>
+		</strong>
+		<a href="{{ url_for('.analyses', id=request.analysis.id) }}">
+		    <span id="analysis-title">{{ request.analysis.title }}
+		    </span>
 		    </a>
 		    <span class="label label-primary">
 			{{ request.analysis.collaboration }}
 		    </span>
-		</span>
-		
-		<br><br>
-		<strong>Reason for request</strong>
-		<br>
-		{{ request.reason_for_request }}
-		<br>
-		<br>
-		<strong>Additional information</strong>
-		<br>
-		{{request.additional_information }}
-		<br><br>
-      
-
-            </div>      
-	</div>	
-	
-    </div>    
-</div>
-
-<div id="modal-add-basic-request" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelelledby="myModalLabel" aria-hidden="true" ng-controller="BasicRequestCtrl as ctrl">
-    <div class="modal-dialog">
-	<div class="modal-content">
-	    <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3 class="modal-title" id="coordinate-model-label">Add Coordinate</h3>
-	    </div>
+	    </span>
 	    
-	    <div class="modal-body">
-		
-		<form id="form-add-coordinate" method="post" class="form-horizontal">
-
-		    <div class="form-group required">
-			<label class="control-label col-md-4" for="zip-file">Zip File:</label>
-			
-			<div class="col-md-6">
-			    <input id="zip-file-requesst-page" file-model="ctrl.zipFile" name="zip-file" type="file">
-			    <p class="text-muted"><small>.zip extension allowed</small></p>
-			</div>
-		    </div>
-		    
-		</form>
-		
-	    </div><!-- end modal body -->
-	
-	    <div class="modal-footer">
-		<button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="coordinate-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-		<button class="btn btn-primary pull-right" id="coordinate-accept-data"  ng-click="ctrl.submit()" type="button"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-	    </div>
-
-	
-	</div>    
+	    <br><br>
+	    <strong>Reason for request</strong>
+	    <br>
+	    {{ request.reason_for_request }}
+	    <br>
+	    <br>
+	    <strong>Additional information</strong>
+	    <br>
+		{{request.additional_information }}
+	    <br><br>			
+	</div>	
     </div>
 </div>
 
-
-<!-- Modal for adding parameter point -->
-<div id="modal-add-parameter" class="modal fade slide left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="AddParameterCtrl as ctrl">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3 class="modal-title" id="modalLabel">Add Parameter</h3>
-      </div>
-      
-      <div class="modal-body">
-	  <form id="form-add-parameter-point" method="post" class="form-horizontal" novalidate
-		name="parameterForm">
-	  <div id="form-data">
-	    
-	    <div ng-repeat="item in ctrl.items()">
-	      
-	      <div class="form-group required">
-		<label class="control-label col-md-3" for="parameter-point">Coordinate:</label>
-		<div class="col-md-4">
-		  <input class="form-control" ng-model="item.name" id="coordinate-name" name="coordinate-name" type="textt" value="" placeholder="Name">		
-		  <p class="text-muted"><small>Optional name</small></p>
-		</div>	   
-		
-		<div class="col-md-4" ng-class="{ 'has-error': parameterForm.coordinate-value.$invalid }">
-		  <input class="form-control" ng-model="item.value" id="coordinate-value" name="coordinate-value" type="text" value="" placeholder="Value" required>
-		  <p class="text-muted"><small>Required value of type "float"</small></p>
-		  <span ng-show="item.value.$touched && item.value.$valid">Required value</small></p>
-		</div>		    		      
-	      </div>
-			    
-	    </div><!-- ng repeat -->
-	    
-	    <div class="col-md-12">
-	      <button class="btn btn-success btn-xs pull-right" type="button" ng-click="ctrl.addCoordinate()"><i class="glyphicon glyphicon-remove"></i>&nbsp;Add&nbsp;Coordinate</button>
-	    </div>
-	    <br>
-	    
-	  </div>
-	</form>    
-      </div><!-- end of modal body -->
-
-
-      <div class="modal-footer">
-	<button class="btn btn-warning pull-left" ng-click="ctrl.hideModal()" id="parameter-reject-data" type="button"><i class="glyphicon glyphicon-remove"></i>&nbsp;Cancel</button>
-	<button class="btn btn-primary pull-right" ng-click="ctrl.submit()" id="parameter-accept-data" type="submit"><i class="glyphicon glyphicon-ok"></i>&nbsp;Submit</button>
-      </div>
-      
-    </div><!-- end of modal data -->
-  </div>
-</div>
+{% include "modal_add_parameter.html" %}
+{% include "modal_add_basic_request.html" %}
 
 {% endblock %}
-
-

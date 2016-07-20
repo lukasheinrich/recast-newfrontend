@@ -228,7 +228,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    NProgress.inc(0.4);	    
 	    ajaxresponse.response.clear()
 	    
-	    $http.get('/pointresponse-data/'+uuid)
+	    $http.get('/point-response-data/'+uuid)
 		.success(function(response) {
 		    NProgress.inc(0.5);
 		    NProgress.done();
@@ -260,7 +260,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    NProgress.inc(0.4);
 	    ajaxresponse.basicresponse.clear();
 
-	    $http.get('/basicresponse-data/'+uuid)
+	    $http.get('/basic-response-data/'+uuid)
 		.success(function (response) {		    
 		    NProgress.inc(0.5);
 		    NProgress.done();
