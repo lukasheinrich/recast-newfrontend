@@ -5,8 +5,7 @@
     <div class="card-flat col-md-12" ng-controller="ParameterViewCtrl as ctrl">
 	<div class="col-md-12">
 	    <h4>Parameter Response
-		<span>
-		    
+		<span>		    
 		    <a class="btn btn-warning btn-sm pull-right"
 		       href="{{ url_for('.download_response_json', id=pointresponse.id)}}"
 		       target="_blank"
@@ -65,10 +64,10 @@
 
 	<div class="col-md-12">
 	    Download File
-	    {% if pointresponse.archive %}
+	    {% if pointresponse.archives %}
 	    <button type="button" class="btn btn-success btn-sm"
-		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archive.file_name }}"
-		    download = "{{ pointresponse.archive.original_file_name }}">
+		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archives.file_name }}"
+		    download = "{{ pointresponse.archives.original_file_name }}">
 		<i class="glyphicon glyphicon-download"></i>
 		&nbsp;Download File
 	    </button>
@@ -76,7 +75,7 @@
 	    <button type="button" class="btn btn-success btn-sm disabled">
 		<i class="glyphicon glyphicon-cloud-download"></i>
 		&nbsp;Download File
-	    </button>		    
+	    </button>
 	    {% endif %}
 	  
 	</div>
