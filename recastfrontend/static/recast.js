@@ -250,21 +250,20 @@ angular.module('recastApp', ['ngSanitize'])
 	    return ajaxresponse.basicresponse.hide();
 	};
 
-	self.BasicResponseData = function() {
-	    return ajaxresponse.basicresponse.get();
+	self.BasicResponseData = function(index) {
+	    return ajaxresponse.basicresponse.get(index);
 	};
 
-	self.fetchBasicResponse = function(uuid){
+	self.fetchBasicResponse = function(uuid, index){
 	    //show basic response
 	    NProgress.start();
 	    NProgress.inc(0.4);
-	    ajaxresponse.basicresponse.clear();
-
+	    ajaxresponse.basicresponse.clear(index);
 	    $http.get('/basic-response-data/'+uuid)
 		.success(function (response) {		    
 		    NProgress.inc(0.5);
 		    NProgress.done();
-		    ajaxresponse.basicresponse.set(response.data);
+		    ajaxresponse.basicresponse.set(response.data, index);
 		    ajaxresponse.basicresponse.show();
 		})
 		.error(function (err) {
@@ -384,7 +383,7 @@ angular.module('recastApp', ['ngSanitize'])
 	data = { parameter: "",
 		 response: "",
 		 show_response: 0,
-		 basic_response: "",
+		 basic_response: [],
 		 show_basic_response: 0
 	       }
 	return {
@@ -423,14 +422,14 @@ angular.module('recastApp', ['ngSanitize'])
 	    },
 	    
 	    basicresponse: {
-		get: function() {
+		get: function(index) {
 		    if ( data.show_basic_response)
-			return data.basic_response;
+			return data.basic_response[index];
 		    else
 			return "";
 		},
-		set: function(mydata) {
-		    data.basic_response = mydata;
+		set: function(mydata, index) {
+		    data.basic_response[index] = mydata;
 		},
 		hide: function() {
 		    data.show_basic_response = 0;
@@ -438,16 +437,19 @@ angular.module('recastApp', ['ngSanitize'])
 		show: function() {
 		    data.show_basic_response = 1;
 		},
-		clear: function() {
+		clear: function(index) {
+		    data.basic_response[index] = "";
+		},
+		clear_all: function() {
 		    data.show_basic_response = 0;
-		    data.basic_response = "";
+		    data.basic_response = [];
 		}
 	    },
 	    
 	    clear: function() {
 		data.parameter ="";
 		data.response = "";
-		data.basic_response = "";
+		data.basic_response = [];
 		data.show_response = 0;
 		data.show_basic_response = 0;
 	    }
