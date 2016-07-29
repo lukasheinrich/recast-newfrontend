@@ -6,7 +6,7 @@
 	<div class="col-md-12">
 	    <h4>Parameter Response
 		<span>		    
-		    <a class="btn btn-warning btn-sm pull-right"
+		    <a class="btn btn-recast-light btn-sm pull-right"
 		       href="{{ url_for('.download_response_json', id=pointresponse.id)}}"
 		       target="_blank"
 		       download="">
@@ -65,14 +65,14 @@
 	<div class="col-md-12">
 	    Download File
 	    {% if pointresponse.archives %}
-	    <button type="button" class="btn btn-success btn-sm"
+	    <button type="button" class="btn btn-recast-dark btn-sm"
 		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archives.file_name }}"
 		    download = "{{ pointresponse.archives.original_file_name }}">
 		<i class="glyphicon glyphicon-download"></i>
 		&nbsp;Download File
 	    </button>
 	    {% else %}
-	    <button type="button" class="btn btn-success btn-sm disabled">
+	    <button type="button" class="btn btn-recast-dark btn-sm disabled">
 		<i class="glyphicon glyphicon-cloud-download"></i>
 		&nbsp;Download File
 	    </button>

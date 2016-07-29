@@ -1,26 +1,28 @@
-import uuid
+from datetime import timedelta
 import os
+import uuid
 
 import json
-import requests
 import importlib
-from boto3.session import Session
-import yaml
+import re
+import requests
 
+from boto3.session import Session
 from flask import Flask, redirect, jsonify, session, abort
 from flask import request, url_for, render_template, flash, send_from_directory
 from flask.ext import login as login
 from flask.ext.api import status
-from frontendconfig import config as frontendconf
-from recastdb.database import db
-import recastdb.models as dbmodels
-import forms
 from werkzeug import secure_filename
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-import re
-
+import yaml
 
 import asynctasks
+import forms
+from frontendconfig import config as frontendconf
+from recastsearch.config import Config
+from recastdb.database import db
+import recastdb.models as dbmodels
+from recastsearch.recastelasticsearch import RecastElasticSearch
 import synctasks
 
 
@@ -41,6 +43,12 @@ ELASTIC_SEARCH_INDEX = frontendconf['ELASTIC_SEARCH_INDEX']
 ELASTIC_SEARCH_AUTH = frontendconf['ELASTIC_SEARCH_AUTH']
 AWS_S3_BUCKET_NAME = 'recast'
 DATA_FOLDER = frontendconf['DATA_FOLDER']
+
+elasticsearchconfig = Config(
+  HOST=ELASTIC_SEARCH_URL,
+  AUTH=ELASTIC_SEARCH_AUTH,
+  INDEX=ELASTIC_SEARCH_INDEX
+  )  
 
 ALLOWED_EXTENSIONS = set(['zip', 'txt'])
 
@@ -65,11 +73,24 @@ app = create_app()
 login_manager = login.LoginManager()
 login_manager.init_app(app)
 
+"""
+# asynctasks.sync(elasticsearchconfig)
+CELERYBEAT_SCHEDULE = {
+  'add-every-30-seconds': {
+    'task': 'asynctasks.sync',
+    'schedule': timedelta(seconds=30),
+    'args': (elasticsearchconfig)
+    },
+  }
+
+CELERY_TIMEZONE = 'UTC'
+"""
+  
 @app.route("/")
 def home():
   all_users = dbmodels.User.query.all()
-  #celeryapp.set_current()
-  #asynctasks.hello_world.delay()
+  # celeryapp.set_current()
+  # asynctasks.hello_world.delay()
   return render_template('home.html', user_data = all_users)
 
 

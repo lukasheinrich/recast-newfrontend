@@ -127,3 +127,14 @@ body {
     background: #3f729b none repeat scroll 0 0;
     color: #fff;
 }
+
+.btn-recast-light {
+    color: #3f729b;
+    background-color: #edf1f5;
+    border-color: #333;
+}
+
+.btn-recast-dark {
+    color: #fff;
+    background-color: #366C7A;
+}
