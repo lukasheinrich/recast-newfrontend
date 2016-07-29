@@ -13,9 +13,7 @@ angular.module('recastApp', ['ngSanitize'])
 		self.analyses = response.data.analyses;
 		self.requests = response.data.requests;
 	    });
-	
-	
-	
+		
 	$interval( function() {	    
 	    $http.get('/homestats')
 		.then(function(response) {
@@ -76,7 +74,7 @@ angular.module('recastApp', ['ngSanitize'])
 
     }])
     
-    .controller('parameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
+    .controller('AddParameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
 	/* Controller to add parameter */
 	var self = this;
 
@@ -99,8 +97,6 @@ angular.module('recastApp', ['ngSanitize'])
 	    self.hideModal();
 	    NProgress.start();
 	    var form_data = new FormData();
-	    //form_data.append('file', self.zipFile);
-
 	    for (var k in self.items()){
 		parameter = {};
 		parameter.name = self.items()[k].name;
@@ -173,6 +169,115 @@ angular.module('recastApp', ['ngSanitize'])
 	};
     }])
 
+    .controller('ParameterViewCtrl', ['$http', 'ParameterDataService','IDService', function($http, ajaxresponse, parameterIndex)  {
+	/* Controller to handle display of parameter data and response */
+	var self = this;
+
+	self.parameterData = function() {
+	    return ajaxresponse.parameter.get();
+	};
+
+	self.parIndex = function() {
+	    return parameterIndex.getID();
+	};
+
+	self.accord = function() {
+	    console.log('accordion clicked');
+	};
+	    	
+	self.fetchParameter = function(uuid, index) {
+	    // show parameter data i.e: coords, basic requests, request buttons, etc.
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    
+	    ajaxresponse.clear();
+
+	    ajaxresponse.parameter.set("<h3>Loading...</h3>");
+	    parameterIndex.setID(index);
+	    NProgress.inc(0.3);
+
+	    $http.get('/parameter-data/'+uuid)
+		.success(function(response) {
+		    NProgress.inc(0.5);
+		    NProgress.done();
+		    ajaxresponse.parameter.set(response.data);
+		})
+		.error(function(err) {
+		    NProgress.done();
+		    //console.log(err);
+		    console.log(err);
+		    ajaxresponse.parameter.set("<h3 class='text-center has-error'>Error loading</h3>" + err);
+		});
+	};
+
+	//\\\\\\\\\\\\\\\\\\\\\\\\\\ Response \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////
+	self.hideResponse = function() {
+	    NProgress.start();
+	    NProgress.inc(0.7);
+	    NProgress.done();
+	    return ajaxresponse.response.hide();
+	}
+
+	self.responseData = function() {
+	    return ajaxresponse.response.get();
+	};
+	    
+	self.fetchResponse = function(uuid) {
+	    //show response data
+	    NProgress.start();
+	    NProgress.inc(0.4);	    
+	    ajaxresponse.response.clear()
+	    
+	    $http.get('/point-response-data/'+uuid)
+		.success(function(response) {
+		    NProgress.inc(0.5);
+		    NProgress.done();
+		    ajaxresponse.response.set(response.data);
+		    ajaxresponse.response.show();
+		})
+		.error(function(err) {
+		    NProgress.done();
+		    ajaxresponse.response.set("<h3 class='text-center'> Error loading</h3>"+err);
+		    ajaxresponse.response.show();
+		});
+	};
+
+	//\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ Basic \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/////
+	self.hideBasicResponse = function() {
+	    NProgress.start();
+	    NProgress.inc(0.7);
+	    NProgress.done();
+	    return ajaxresponse.basicresponse.hide();
+	};
+
+	self.BasicResponseData = function(index) {
+	    return ajaxresponse.basicresponse.get(index);
+	};
+
+	self.fetchBasicResponse = function(uuid, index){
+	    //show basic response
+	    NProgress.start();
+	    NProgress.inc(0.4);
+	    ajaxresponse.basicresponse.clear(index);
+	    $http.get('/basic-response-data/'+uuid)
+		.success(function (response) {		    
+		    NProgress.inc(0.5);
+		    NProgress.done();
+		    ajaxresponse.basicresponse.set(response.data, index);
+		    ajaxresponse.basicresponse.show();
+		})
+		.error(function (err) {
+		    NProgress.done();
+		    ajaxresponse.basicresponse.set("<h3 class='text-center'> Error loading</h3>"+err)
+		    ajaxresponse.basicresponse.show();
+		});
+	};
+
+    }])
+	
+		     
+					  
+
     .controller('SearchCtrl', ['$http', function($http) {
 	/* Controller to search */
 	var self = this;
@@ -181,83 +286,10 @@ angular.module('recastApp', ['ngSanitize'])
 	};
 
 	self.analysis = function(search_term) {
-	    console.log('analysis');
-		    
-	};
-
-	console.log("search page");
-
-    }])
-
-    .controller('showParameterCtrl', ['$http', 'DataService', 'IDService', function($http, ajaxresponse, parameterIndex) {
-	/* controller to show parameter data on request page */
-
-	var self = this;
-	ajaxresponse.set("");
-	parameterIndex.setID(0);
-	
-	self.mydata = function() {
-	    return ajaxresponse.get();
-	};
-
-	self.parNumber = function() {
-	    return parameterIndex.getID();
-	};
-	
-	self.showParameter = function(uuid, index) {
-	    NProgress.start();
-	    NProgress.inc(0.4);
-	    ajaxresponse.set("<h3>Loading...</h3>");
-	    parameterIndex.setID(index);
-	    NProgress.inc(0.3);
-	    $http.get('/parameter-data/'+uuid)
-		.success(function(response) {
-		    NProgress.inc(0.5);
-		    NProgress.done();		    
-		    ajaxresponse.set(response.data);
-		    console.log(response.data);
-		})
-		.error(function(err) {
-		    NProgress.done();
-		    //error handling
-		});	    
+	    console.log('analysis');		    
 	};
 
     }])
-
-    .controller('ParameterResponseCtrl', ['$http', 'DataService', function($http, ajaxresponse){
-	/* Controller to fecth Point response data */
-	var self = this;
-	self.mydata = function() {
-	    return ajaxresponse.getresponsedata();
-	};
-
-	self.hideresponse = function() {
-	    NProgress.start();
-	    NProgress.inc(0.7);	    
-	    NProgress.done();
-	    return ajaxresponse.hide();
-	};
-
-	self.fetchresponse = function(uuid) {
-	    NProgress.start();
-	    NProgress.inc(0.4);
-	    ajaxresponse.clear();
-	    $http.get('/pointresponse-data/'+uuid)
-		.success(function(response) {
-		    NProgress.inc(0.5);
-		    NProgress.done();
-		    console.log("fetched response data");
-		    ajaxresponse.setresponsedata(response.data);
-		    ajaxresponse.show();
-		})
-		.error(function(err) {
-		    //error handling
-		});
-	};
-	
-    }])
-
 
     .controller('coordinateCtrl', ['$http', 'IDService', function($http, prs) {
 	/* Controller to add coordinate on request page */
@@ -336,58 +368,90 @@ angular.module('recastApp', ['ngSanitize'])
     }])
 
     .factory('DataService', [function() {
-	mydata = "";
-	responsedata = {show: 0, data: ""};
+	data = "";
 	return {
 	    get: function() {
-		return mydata;
+		return data;
 	    },
 	    set: function(val) {
-		mydata = val;
-	    },
-	    show: function() {
-		responsedata.show = 1;
-	    },
-	    hide: function() {
-		responsedata.show = 0;
-	    },
-	    getresponsedata: function() {
-		if (responsedata.show){
-		    return responsedata.data;
-		}else {
-		    return "";
-		}
-	    },
-	    setresponsedata: function(mydata) {
-		responsedata.data = mydata;
-	    },
-	    clear: function() {
-		responsedata.show = 0;
-		responsedata.data = "";
-	    }	   
+		data = val;
+	   }
 	};	
     }])
 
-    .factory('AnalysisService', [function() {
-	data = "";
+    .factory('ParameterDataService', [function() {
+	data = { parameter: "",
+		 response: "",
+		 show_response: 0,
+		 basic_response: [],
+		 show_basic_response: 0
+	       }
 	return {
-	    get: function() {
-		return data;
+	    parameter : {
+		get: function() {
+		    return data.parameter;
+		},
+		set: function(mydata) {
+		    data.parameter = mydata;
+		},
+		clear: function(mydata) {
+		    data.parameter = "";
+		}
 	    },
-	    set: function(val) {
-		data = val;
-	    }	    
-	};
-    }])
-
-    .factory('RequestService', [function() {
-	data = "";
-	return {
-	    get: function() {
-		return data;
+	    
+	    response: {		
+		get: function() {
+		    if (data.show_response)
+			return data.response;
+		    else
+			return "";
+		},
+		set: function(mydata) {
+		    data.response = mydata;
+		},
+		hide: function() {
+		    data.show_response = 0;
+		},
+		show: function() {
+		    data.show_response = 1;
+		},
+		clear: function() {
+		    data.show_response = 0;
+		    data.response = "";
+		}
 	    },
-	    set: function(val) {
-		data = val;
+	    
+	    basicresponse: {
+		get: function(index) {
+		    if ( data.show_basic_response)
+			return data.basic_response[index];
+		    else
+			return "";
+		},
+		set: function(mydata, index) {
+		    data.basic_response[index] = mydata;
+		},
+		hide: function() {
+		    data.show_basic_response = 0;
+		},
+		show: function() {
+		    data.show_basic_response = 1;
+		},
+		clear: function(index) {
+		    data.basic_response[index] = "";
+		},
+		clear_all: function() {
+		    data.show_basic_response = 0;
+		    data.basic_response = [];
+		}
+	    },
+	    
+	    clear: function() {
+		data.parameter ="";
+		data.response = "";
+		data.basic_response = [];
+		data.show_response = 0;
+		data.show_basic_response = 0;
 	    }
 	};
     }])
@@ -425,8 +489,10 @@ function RecastAddParameterPoint(e){
     return;
 }
 
-function shortStr(str, max_chars, min_thresh=10){
+function shortStr(str, max_chars, min_thresh){
     /* returns shortened string  */
+    if (min_thresh == 0) min_thresh = 10;
+    
     if (str.length > min_thresh){
 	return (str.substring(0, max_chars)+"...");
     }else{

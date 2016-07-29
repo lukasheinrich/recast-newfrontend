@@ -1,79 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RECAST - An Analysis Reinterpretation Framework</title>
-  
-<!-- Latest compiled and minified CSS -->
-<!--- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
-<link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/base.css">
-    <link rel="stylesheet" href="../static/home.css">
-<!--<link rel="stylesheet" href="../static/bootstrap.min.css"> -->
+    <head>
 
-<link rel="stylesheet" 
-      href="../static/card.css">
-
-<link rel="stylesheet"
-      href="https://cdn.rawgit.com/marianoguerra/json.human.js/master/css/json.human.css">
-
-<!-- font awesome for icons -->
-<!--<link rel="stylesheet" 
-      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-  -->
-
-<script src="https://use.fontawesome.com/53761399c2.js"></script>
-<link rel="stylesheet"
-      href="https://cdn.rawgit.com/ScoopThemes/Oleose/master/assets/css/font-awesome.min.css">
-
-<script type="text/javascript" src="../static/sweetalert.min.js"></script>
-<link rel="stylesheet" href="../static/sweetalert.css">
-
-<script type="text/javascript" src="../static/nprogress.js"></script>
-<link rel="stylesheet" href="../static/nprogress.css">
-    <link rel="stylesheet" href="../static/base.css">
-
-<!-- jQuery -->
-<script
-   src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js">
-</script>
-
-<!-- Latest compiled and minified JavaScript -->
-<script
-   src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-</script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js">
-</script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-sanitize.js"></script>
-</head>
+	{% include "head.html" %}
+    </head>
 
 <body ng-app="recastApp">
 
 {% include "nav.html" %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
 <div class="container">
-
-    <div class="row col-md-12">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category,message in messages %}
-                <div class="alert alert-{{category}}" role="alert">{{message}}</div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+  <div class="row col-md-12" style="padding: 0; padding-top: 80px; margin-bottom:-60px;">
+    {% for category,message in messages %}
+    <div class="alert alert-{{category}}" role="alert">
+      <strong> {{message}} </strong>
     </div>
+    {% endfor %}
+    {% endif %}
+  </div>
 </div>
+{% endwith %}
 
-<div class="container-fluid" style="padding-top: 70px;">
-    {% block container %}
     
+<div style="padding: 0; padding-top: 70px;">
+        
+    {% block container %}
     {% endblock %}
-</div>
 
+</div>
 
 <br><br><br><br>
 
@@ -81,23 +37,11 @@
 
 <script type="text/javascript">
     
-$(document).ready(function(e){
-    $('.search-panel .dropdown-menu').find('a').click(function(e) {
-	e.preventDefault();
-	var param = $(this).attr("href").replace("#","");
-	var concept = $(this).text();
-	$('.search-panel span#search_concept').text(concept);
-	$('.input-group #search_param').val(param);
-	 document.getElementById("filter").value = concept;
-    });
-    
     $('#nav').affix({
 	offset: {
 	    top: $('header').height()
 	}
     });
-    
-});
  
 </script>
 <script type="text/javascript" src="../static/recast.js"></script>

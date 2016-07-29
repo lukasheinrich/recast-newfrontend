@@ -1,15 +1,18 @@
 {% block container %}
 
-<div class="col-md-12">
-
-    <div class="card card-on-deck card-info col-md-12" ng-controller="ParameterResponseCtrl as ctrl">
+<div class="col-md-12 response-border">
+    <div class="col-md-12"><br></div>
+    <div class="card-flat col-md-12" ng-controller="ParameterViewCtrl as ctrl">
 	<div class="col-md-12">
 	    <h4>Parameter Response
-		<span>
-		    
-		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideresponse()">
-			Hide
-		    </button>
+		<span>		    
+		    <a class="btn btn-recast-light btn-sm pull-right"
+		       href="{{ url_for('.download_response_json', id=pointresponse.id)}}"
+		       target="_blank"
+		       download="">
+			<i class="glyphicon glyphicon-cloud-download"></i>
+			&nbsp;Download
+		    </a>
 		    <span>
 			<br>
 		    </span>
@@ -57,22 +60,22 @@
 
 		</tbody>
 	    </table>
-		</div>
+	</div>
 
 	<div class="col-md-12">
 	    Download File
-	    {% if pointresponse.archive %}
-	    <button type="button" class="btn btn-success"
-		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archive.file_name }}"
-		    download = "{{ pointresponse.archive.original_file_name }}">
+	    {% if pointresponse.archives %}
+	    <button type="button" class="btn btn-recast-dark btn-sm"
+		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + pointresponse.archives.file_name }}"
+		    download = "{{ pointresponse.archives.original_file_name }}">
 		<i class="glyphicon glyphicon-download"></i>
 		&nbsp;Download File
 	    </button>
 	    {% else %}
-	    <button type="button" class="btn btn-success btn-sm disabled">
+	    <button type="button" class="btn btn-recast-dark btn-sm disabled">
 		<i class="glyphicon glyphicon-cloud-download"></i>
 		&nbsp;Download File
-	    </button>		    
+	    </button>
 	    {% endif %}
 	  
 	</div>
@@ -81,8 +84,7 @@
 	</div>
 	
     </div>
-    
 </div>
-
+<div class="col-md-12"><br></div>
 {% endblock %}
 	

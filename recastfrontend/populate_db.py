@@ -20,6 +20,23 @@ db.session.add(user1)
 db.session.commit()
 
 
+user2 = models.User(
+    name='Admin',
+    email='admin@recast',
+    orcid_id = 'example123'
+    )
+db.session.add(user2)
+db.session.commit()
+
+token = models.AccessToken(
+    token = 'abcdef',
+    token_name = 'master token',
+    user_id = user2.id
+    )
+db.session.add(user2)
+db.session.commit()
+    
+
 run_condition1 = models.RunCondition(
     name='7TeV',
     description='2.2/fb'
@@ -65,8 +82,7 @@ request2 = models.ScanRequest(
     additional_information='Stealth SUSY is described in: 1105.5135 and 1201.4875. Existing LHC searches require photons (1210.2052) and/or leptons (1411.7255) or displaced decays (1504.03634), there have been no searches for the challenging case of prompt purely hadronic topologies. An LHE file will be provided upon request (contact: ruderman@nyu.edu). The first topology to consider is gluino decay to gluon + singlino, singlino decay to two jets plus soft gravitino (the left topology of figure 10 of 1201.4875). The parameters to vary are the gluino and singlino masses (fixing the singlet mass near the singlino mass). This leads to 3 jets on each side, but with different kinematics than the gluino > 3jet RPV topology. Additional topologies with more jets can also be considered. ', 
     analysis_id=analysis2.id,
     requester_id=user1.id, 
-    zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request2)
 db.session.commit()
@@ -102,6 +118,61 @@ zip_file2 = models.RequestArchive(
 db.session.add(zip_file2)
 db.session.commit()
 
+scan_response2 = models.ScanResponse(
+    scan_request_id = request2.id
+    )
+db.session.add(scan_response2)
+db.session.commit()
+
+parameter_response2 = models.PointResponse(
+    lower_1sig_expected_CLs = 1.2,
+    lower_2sig_expected_CLs = 0.2,
+    expected_CLs = 21.1,
+    upper_1sig_expected_CLs = 21.2,
+    upper_2sig_expected_CLs = 12.1,
+    observed_CLs = 21.3,
+    log_likelihood_at_reference = 21.1,
+    scan_response_id = scan_response2.id,
+    point_request_id = point_request2.id
+    )
+db.session.add(parameter_response2)
+db.session.commit()
+
+
+basic_response2 = models.BasicResponse(
+    lower_1sig_expected_CLs = 9.2,
+    lower_2sig_expected_CLs = 121.12,
+    expected_CLs = 21.1,
+    upper_1sig_expected_CLs = 1.1,
+    upper_2sig_expected_CLs = 1.4,
+    observed_CLs = 21.2,
+    log_likelihood_at_reference = 3.21,
+    point_response_id =  parameter_response2.id,
+    basic_request_id = basic_request2.id
+    )
+db.session.add(basic_response2)
+db.session.commit()
+
+parameter_archive2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_response_file.txt",
+    point_response_id = parameter_response2.id
+    )
+db.session.add(parameter_archive2)
+db.session.commit()
+
+basic_archive2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_response_file.txt",
+    basic_response_id = basic_response2.id
+    )
+db.session.add(basic_archive2)
+db.session.commit()
+    
+
+
 ##
 run_condition3 = models.RunCondition(
     name='8TeV',
@@ -131,8 +202,7 @@ request3 = models.ScanRequest(
     additional_information='Additional files can be provided upon request.', 
     analysis_id=analysis3.id, 
     requester_id=user1.id,
-    zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request3)
 db.session.commit()
@@ -146,14 +216,14 @@ db.session.commit()
 
 point_coordinate3  = models.PointCoordinate(
     value = 121.131,
-    point_request_id = point_request3.id
+    point_request_id = point_request3.id,
     )
 db.session.add(point_coordinate3)
 db.session.commit()
 
 basic_request3 = models.BasicRequest(
     point_request_id=point_request3.id, 
-    requester_id=user1.id
+    requester_id=user1.id,
     )
 db.session.add(basic_request3)
 db.session.commit()
@@ -195,8 +265,7 @@ request4 = models.ScanRequest(
     additional_information='I will provide ZIP files upon request', 
     analysis_id=analysis4.id, 
     requester_id=user1.id, 
-    zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request4)
 db.session.commit()
@@ -232,6 +301,58 @@ zip_file4 = models.RequestArchive(
 db.session.add(zip_file4)
 db.session.commit()
 
+scan_response4 = models.ScanResponse(
+    scan_request_id = request4.id
+    )
+db.session.add(scan_response4)
+db.session.commit()
+
+parameter_response4 = models.PointResponse(
+    lower_1sig_expected_CLs = 12.1,
+    lower_2sig_expected_CLs = 21.4,
+    expected_CLs = 0.1,
+    upper_1sig_expected_CLs = 14.12,
+    upper_2sig_expected_CLs = 32.1,
+    observed_CLs = 21.1,
+    log_likelihood_at_reference = 21.2,
+    scan_response_id = scan_response4.id,
+    point_request_id = point_coordinate4.id
+    )
+db.session.add(parameter_response4)
+db.session.commit()
+
+basic_response4 = models.BasicResponse(
+    lower_1sig_expected_CLs = 1.2,
+    lower_2sig_expected_CLs = 21.3,
+    expected_CLs = 21.3,
+    upper_1sig_expected_CLs = 3.3,
+    upper_2sig_expected_CLs = 32.3,
+    observed_CLs = 32.3,
+    log_likelihood_at_reference = 32.3,
+    point_response_id = parameter_response4.id,
+    basic_request_id = basic_request4.id
+    )
+db.session.add(basic_response4)
+db.session.commit()
+
+parameter_archive4 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    point_response_id = parameter_response4.id
+    )
+db.session.add(parameter_archive4)
+db.session.commit()
+
+basic_archive4 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    basic_response_id = basic_response4.id
+    )
+db.session.add(basic_archive4)
+db.session.commit()
+
 
 request4_2 = models.ScanRequest(
     title="title for request 4.2",
@@ -240,8 +361,7 @@ request4_2 = models.ScanRequest(
     additional_information='Request follows http://arxiv.org/abs/1202.6616', 
     analysis_id=analysis4.id, 
     requester_id=user1.id, 
-    zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request4_2)
 db.session.commit()
@@ -276,6 +396,59 @@ zip_file4_2 = models.RequestArchive(
 db.session.add(zip_file4_2)
 db.session.commit()
 
+scan_response4_2 = models.ScanResponse(
+    scan_request_id = request4_2.id
+    )
+db.session.add(scan_response4_2)
+db.session.commit()
+
+parameter_response4_2 = models.PointResponse(
+    lower_1sig_expected_CLs = 12.2,
+    lower_2sig_expected_CLs = 10.1,
+    expected_CLs = 32.1,
+    upper_1sig_expected_CLs = 32.3,
+    upper_2sig_expected_CLs = 43.4,
+    observed_CLs = 32.3,
+    log_likelihood_at_reference = 21.2,
+    scan_response_id = scan_response4_2.id,
+    point_request_id = point_request4_2.id
+    )
+db.session.add(parameter_response4_2)
+db.session.commit()
+
+basic_response4_2 = models.BasicResponse(
+    lower_1sig_expected_CLs = 21.2,
+    lower_2sig_expected_CLs = 32.1,
+    expected_CLs = 32.2,
+    upper_1sig_expected_CLs = 32.2,
+    upper_2sig_expected_CLs = 45.3,
+    observed_CLs = 32.2,
+    log_likelihood_at_reference = 32.1,
+    point_response_id = parameter_response4_2.id,
+    basic_request_id = basic_request4_2.id
+    )
+db.session.add(basic_response4_2)
+db.session.commit()
+
+parameter_archive4_2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "sample_file.txt",
+    point_response_id = parameter_response4_2.id
+    )
+db.session.add(parameter_archive4_2)
+db.session.commit()
+
+basic_archive4_2 = models.ResponseArchive(
+    file_name = "999f6d26-1171-11e6-a07c-3a398e598637",
+    file_path = './',
+    original_file_name = "db_populate_sample.txt",
+    basic_response_id = basic_response4_2.id
+    )
+db.session.add(basic_archive4_2)
+db.session.commit()
+
+
 ##
 run_condition5 = models.RunCondition(
     name='7TeV'
@@ -303,8 +476,7 @@ request5 = models.ScanRequest(
     additional_information='I will provide LHE files upon request', 
     analysis_id=analysis5.id, 
     requester_id=user1.id,
-    zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request5)
 db.session.commit()
@@ -347,8 +519,7 @@ request5_2 = models.ScanRequest(
     additional_information='Request follows http://arxiv.org/abs/1202.6616',
     analysis_id=analysis5.id,
     requester_id=user1.id,
-    zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request5_2)
 db.session.commit()
@@ -411,8 +582,7 @@ request6 = models.ScanRequest(
     additional_information='I will provide LHE files on request.',
     analysis_id=analysis6.id,
     requester_id=user1.id,
-    zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request6)
 db.session.commit()
@@ -455,8 +625,7 @@ request6_2 = models.ScanRequest(
     additional_information='No information available',
     analysis_id=analysis6.id,
     requester_id=user1.id,
-    zenodo_deposition_id="110959",
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request6_2)
 db.session.commit()
@@ -499,8 +668,7 @@ request6_3 = models.ScanRequest(
     additional_information='Useful initial results could assume that the LKP mass is much less than the KK squark or KK gluon masses. In this regime the bounds are roughly independent of the precise LKP mass. The production cross sections will be larger for the KK particles than for SUSY analogues, because they contain more spin degrees of freedom, and the efficiencies for detecting the signal events are likely to be somewhat different from SUSY analogues because of the differing spins. ',
     analysis_id=analysis6.id,
     requester_id=user1.id,
-    zenodo_deposition_id="110959", 
-    uuid=str(uuid.uuid1())
+    zenodo_deposition_id="110959"
     )
 db.session.add(request6_3)
 db.session.commit()

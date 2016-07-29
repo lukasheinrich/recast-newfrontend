@@ -13,12 +13,14 @@ setup(
     'Flask-Login',
     'Flask-SQLAlchemy',
     'Flask-WTF',
+    'flask-api',
     'click',
     'pyyaml',
     'celery',
     'redis',
     'IPython',
     'recast-database',
+    'recast-search',
     'requests',
     'boto3',
     'elasticsearch',
@@ -32,5 +34,6 @@ setup(
   },
   dependency_links = [
     'https://github.com/recast-hep/recast-database/tarball/master#egg=recast-database-0.0.1',
+    'https://github.com/cbora/recast-search/tarball/master#egg=recast-search-0.0.1',
   ]
 )

@@ -1,15 +1,19 @@
 {% block container %}
 
-<div class="col-md-12">
-
-    <div class="card card-on-deck card-info col-md-12" ng-controller="ParameterResponseCtrl as ctrl">
+<div class="col-md-12 response-border">
+    <br>
+    <div class="card-flat col-md-12" ng-controller="ParameterViewCtrl as ctrl">
 	<div class="col-md-12">
 	    <h4>Basic response
 		<span>
 		    
-		    <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.hideresponse()">
-			Hide
-		    </button>
+		    <a class="btn btn-recast-light btn-sm pull-right"
+		       href="{{ url_for('.download_basic_response_json', id=basicresponse.id)}}"
+		       target="_blank"
+		       download="">
+			<i class="glyphicon glyphicon-cloud-download"></i>
+			&nbsp;Download
+		    </a>
 		    <span>
 			<br>
 		    </span>
@@ -59,9 +63,28 @@
 	    </table>
 	</div>
 
+	<div class="col-md-12">
+	    Download File
+	    {% if basicresponse.archives %}
+	    <a type="button" class="btn btn-recast-dark btn-sm"
+		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + basicresponse.archives.file_name }}"
+		    download="{{ basicresponse.archives.original_file_name }}">
+		<i class="glyphicon glyphicon-download"></i>
+		&nbsp;Download
+	    </a>
+	    {% else %}
+	    <button type="button" class="btn btn-recast-dark btn-sm disabled">
+		<i class="glyphicon glyphicon-cloud-download"></i>
+		&nbsp;Download
+	    </button>
+	    {% endif %}
+	</div>
+	<div class="col-md-12">
+	    <br><br>
+	</div>	
     </div>
-    
-</div>
 
+</div>
+<div class="col-md-12"><br></div>
 {% endblock %}
 	

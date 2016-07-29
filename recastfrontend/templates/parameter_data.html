@@ -1,0 +1,136 @@
+<div class="col-md-12">
+    <h3> Point <span ng-bind="ctrl.parIndex()"></span>
+	<span class="pull-right" ng-controller="BasicRequestCtrl as brCtrl">
+	    <button class="btn btn-primary" ng-click="brCtrl.addBasicRequest({{pointrequest.id}})">
+		<i class="glyphicon glyphicon-plus"></i>
+		&nbsp;Add Basic Request
+	    </button>
+	</span>
+    </h3>
+</div>
+<div class="col-md-12">
+    <br>
+</div>
+
+<div class="col-md-12">
+    <table class="table-striped">
+	<tbody>
+	    {% for coordinate in pointrequest.point_coordinates %}
+	    <tr>
+		<td class="col-md-8">
+		    {% if coordinate.title %}
+		    <strong>{{ coordinate.title }}</strong>
+		    {% else %}
+		    <strong>coord {{ loop.index0 }}</strong>
+		    {% endif %}
+		</td>
+		<td class="col-md-4" style="background-color:white;">
+		    {{ coordinate.value }}
+		</td>
+	    </tr>		
+	    {% endfor %}
+	</tbody>
+    </table>	
+</div>
+
+<div class="col-md-12">
+    <br>
+    {% if pointrequest.point_responses %}
+    <div class="panel panel-default">
+	<a data-toggle="collapse" href="#response" aria-expanded="true" aria-controls="response" ng-click="ctrl.fetchResponse('{{pointrequest.point_responses.id}}')">
+	    <div class="panel-heading">
+		<h4 class="panel-title">
+		    <strong> Point Response </strong>
+		</h4>
+	    </div>
+    	</a>
+	
+	<div id="response" class="panel-collapse collapse" role="tabpanel" aria-labelledby="response">
+	    <span bind-html-compile="ctrl.responseData()"></span>
+	</div>
+    </div>
+    {% else %}
+
+    <div class="panel panel-default">
+	<a data-toggle="collapse" href="#NoResponse" aria-expanded="true" aria-controls="NoResponse">
+	    <div class="panel-heading">
+		<h4 class="panel-title">
+		    <strong> Point Response </strong>
+		</h4>
+	    </div>
+    	</a>
+	
+	<div id="NoResponse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="NoResponse">
+	    <h4 class="text-center text-danger">No parameter response available <h4>
+	</div>
+    </div>
+
+    {% endif %}
+</div>
+
+
+		
+{% for basicrequest in pointrequest.requests %}
+<div class="col-md-3">
+
+{% if basicrequest.file_name.file_name %}		
+    <a class="btn btn-default"
+       href="{{'https://s3.amazonaws.com/' + bucket_name + '/' + basicrequest.file_name.file_name }}"
+       download="{{basicrequest.file_name.original_file_name}}">
+	<i class="glyphicon glyphicon-cloud-download"></i>
+	&nbsp;Basic Request
+    </a>
+
+    {% else %}
+    <a class="btn btn-default btn-sm disabled">
+	<i class="glyphicon glyphicon-cloud-download disabled"></i>
+	&nbsp;Basic Request
+    </a>    
+    {% endif %}
+</div>
+    
+<div class="col-md-9">
+    {% if basicrequest.basic_responses[0] %}
+
+    <div class="panel panel-default">
+	<a data-toggle="collapse"
+	   href="#collapseBasic-{{loop.index0}}" aria-expanded="false" aria-controls="collapseBasic-{{loop.index0}}"
+	   ng-click="ctrl.fetchBasicResponse('{{basicrequest.basic_responses[0].id}}', '{{loop.index0}}')">
+	<div class="panel-heading">
+	    <h4 class="panel-title">
+		<strong> Basic Response {{ loop.index0 }} </strong>
+	    </h4>
+	</div>
+	</a>
+	
+	<div id="collapseBasic-{{loop.index0}}"
+	     class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseBasic-{{loop.index0}}">
+	    <span bind-html-compile="ctrl.BasicResponseData('{{ loop.index0 }}')"></span>
+	</div>
+    </div>
+    {% else %}
+    <div class="panel panel-default">
+	<a data-toggle="collapse"
+	   href="#collapseBasic-{{ loop.index0 }}" aria-expanded="false" aria-controls="collapseBasic-{{loop.index0}}">
+	    <div class="panel-heading">
+		<h4 class="panel-title">
+		    <strong> Basic Response {{ loop.index0 }} </strong>
+		</h4>
+	</div>
+	</a>
+
+
+	    
+	<div id="collapseBasic-{{ loop.index0 }}"
+	class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseBasic-{{loop.index0}}">    
+	    <h4 class="text-center text-danger"> No response available </h4>
+
+	</div>
+    </div>	
+    {% endif %}
+
+</div>
+{% endfor %}
+
+
+

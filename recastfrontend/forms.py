@@ -4,76 +4,66 @@ from wtforms.validators import DataRequired
 from flask_wtf.file import FileField
 
 class RunConditionSubmitForm(Form):
-    name  = StringField('Title of run condition', validators=[DataRequired()])
+    name  = StringField('Title of run condition',
+                        validators=[DataRequired(message="Name required")])
     description = TextAreaField('Description')
 
 class AnalysisSubmitForm(Form):
-    title = StringField('Title', validators=[DataRequired()])
-    collaboration = SelectField('Collaboration')
+    title = StringField('Title',
+                        validators=[DataRequired(message="Analysis title required")])
+    collaboration = SelectField('Collaboration',
+                                validators=[DataRequired(message="Collaboration required")])
+    description = TextAreaField('Description',
+                                validators=[DataRequired(message="Description required")])
     e_print = StringField('E print')
     journal = StringField('Journal')
     doi = StringField('DOI')
     inspire_URL = StringField('URL')
-    description = TextAreaField('Description')
 
 class UserSubmitForm(Form):
     name = StringField('user name', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired()])
-    
-class ModelSubmitForm(Form):
-    model_description = StringField('description', validators=[DataRequired()])
-    
-class ScanRequestSubmitForm(Form):
-    description_of_model = StringField('description of model', validators=[DataRequired()])
-    analysis_choice = SelectField('Select Analysis')
-    model_choice = SelectField('Select Model')
-    requester_choice = SelectField('Select User')
-
-class PointRequestSubmitForm(Form):
-    model_choice = SelectField('select model')
-    scan_request_choice = SelectField('select request')
-
-class BasicRequestSubmitForm(Form):
-    number_of_events = IntegerField("Number of Events", validators=[DataRequired()])
-    reference_cross_section = IntegerField("Reference cross section")
-    conditions_description = IntegerField("Conditions description")
 
 class RequestSubmitForm(Form):
     analysis_id = IntegerField('Analysis')
-    title = StringField('Request Title', validators=[DataRequired(message="Request title required")])
-    model_name = StringField('Model Name', validators=[DataRequired(message="Model Name required")])
+    title = StringField('Request title', validators=[DataRequired(message="Title required")])
+    model_name = StringField('Model name', validators=[DataRequired(message="Model required")])
     reason_for_request = TextAreaField('Reason for request')
     additional_information = TextAreaField('Additional information')
     zenodo_deposition_id = StringField('Zenodo id')
     uuid = StringField('UUUID')
-
-
-class RequestParameterPointsSubmitForm(Form):
-    value_point_coordinate = StringField(label='Parameter 1', validators=[DataRequired()], id="value_point_coordinate_1-1", description="Point coordinate value")
-    name_point_coordinate = StringField(label='Name', validators=[DataRequired()], description="parameter point name", id='name_point_coordinate')
-    zip_file = FileField(label='Zip File 1', id="zip_file_1", description="Recast file")
-    zenodo_file_id = StringField('Zenodo file id')
-    uuid = StringField('UUID')
 
 class MultipleCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
 class SubscribeSubmitForm(Form):
-    subscription_type= RadioField('Subscription Type', choices=[('Provider', 'Provider'), ('Provider', 'Observer')], validators=[DataRequired()])
+    subscription_type= RadioField('Subscription type',
+                                  choices=[('Provider', 'Provider'),
+                                           ('Provider', 'Observer')],
+                                  validators=[DataRequired(message="Subscription type required")])
     description = TextAreaField('Description')
     requirements = TextAreaField('Requirements')
-    notifications = MultipleCheckboxField('Notifications', choices=[('Recast Requests', 'Recast Requests'), ('Recast Responses', 'Recast Responses'), ('New Subscribers to Analysis', 'New Subscribers to Analysis')])
+    notifications = MultipleCheckboxField('Notifications',
+                                          choices=[('Recast Requests', 'Recast Requests'),
+                                                   ('Recast Responses', 'Recast Responses'),
+                                                   ('New Subscribers to Analysis',
+                                                    'New Subscribers to Analysis')]
+                                          )
     authoritative = BooleanField('Authoritative')
     analysis_id = IntegerField('Analysis')
 
 class ContactSubmitForm(Form):
-    name = StringField('Your name', validators=[DataRequired()])
-    email = StringField('Your e-mail address', validators=[DataRequired()])
+    name = StringField('Your name',
+                       validators=[DataRequired(message="Name required")])
+    email = StringField('Your e-mail address',
+                        validators=[DataRequired(message="Email required")])
     responder = StringField('To')
     responder_email = StringField('To (email)')
     subject = StringField('Subject')
-    message = TextAreaField('Message', validators=[DataRequired()])
+    message = TextAreaField('Message',
+                            validators=[DataRequired(message="Message required")])
 
 class SignupSubmitForm(Form):
-    email = StringField('Email address', validators=[DataRequired()])
+    email = StringField('Email address',
+                        validators=[DataRequired(message="Email required")])

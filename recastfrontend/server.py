@@ -1,24 +1,31 @@
+from datetime import timedelta
+import os
+import uuid
+
 import json
-import requests
 import importlib
+import re
+import requests
+
 from boto3.session import Session
-
-import asynctasks
-import synctasks
-
-from flask import Flask, redirect, jsonify, session
-from flask import request, url_for, render_template, flash
+from flask import Flask, redirect, jsonify, session, abort
+from flask import request, url_for, render_template, flash, send_from_directory
 from flask.ext import login as login
-from frontendconfig import config as frontendconf
-from recastdb.database import db
-import recastdb.models as dbmodels
-import forms
+from flask.ext.api import status
 from werkzeug import secure_filename
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-import re
+import yaml
+
+import asynctasks
+import forms
+from frontendconfig import config as frontendconf
+from recastsearch.config import Config
+from recastdb.database import db
+import recastdb.models as dbmodels
+from recastsearch.recastelasticsearch import RecastElasticSearch
+import synctasks
 
 
-import uuid
 
 celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
 
@@ -35,6 +42,13 @@ ELASTIC_SEARCH_URL = frontendconf['ELASTIC_SEARCH_URL']
 ELASTIC_SEARCH_INDEX = frontendconf['ELASTIC_SEARCH_INDEX']
 ELASTIC_SEARCH_AUTH = frontendconf['ELASTIC_SEARCH_AUTH']
 AWS_S3_BUCKET_NAME = 'recast'
+DATA_FOLDER = frontendconf['DATA_FOLDER']
+
+elasticsearchconfig = Config(
+  HOST=ELASTIC_SEARCH_URL,
+  AUTH=ELASTIC_SEARCH_AUTH,
+  INDEX=ELASTIC_SEARCH_INDEX
+  )  
 
 ALLOWED_EXTENSIONS = set(['zip', 'txt'])
 
@@ -59,12 +73,24 @@ app = create_app()
 login_manager = login.LoginManager()
 login_manager.init_app(app)
 
+"""
+# asynctasks.sync(elasticsearchconfig)
+CELERYBEAT_SCHEDULE = {
+  'add-every-30-seconds': {
+    'task': 'asynctasks.sync',
+    'schedule': timedelta(seconds=30),
+    'args': (elasticsearchconfig)
+    },
+  }
+
+CELERY_TIMEZONE = 'UTC'
+"""
+  
 @app.route("/")
 def home():
   all_users = dbmodels.User.query.all()
-  #celeryapp.set_current()
-  #asynctasks.hello_world.delay()
-  #return render_template('new-home.html')
+  # celeryapp.set_current()
+  # asynctasks.hello_world.delay()
   return render_template('home.html', user_data = all_users)
 
 
@@ -223,8 +249,7 @@ def request_form(id):
   
     elif request_form.is_submitted():
       print request_form.errors
-      flash(request_form.errors, 'failure')
-      filename = None
+      flash('failure! form did not validate and was not processed','danger')
     
   return render_template('request_form.html', form=request_form,
                          analysis = analysis[0])
@@ -259,14 +284,14 @@ def contact(id):
   return render_template('contact.html', form = contact_form)
 
 # Views
-@app.route('/analyses', methods=['GET', 'POST'], defaults={'ruuid': None})
-@app.route('/analyses/<string:ruuid>', methods=['GET', 'POST'])
+@app.route('/analyses', methods=['GET', 'POST'], defaults={'id': None})
+@app.route('/analyses/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def analyses(ruuid):
+def analyses(id):
 
-  if ruuid:
+  if id:
     query = db.session.query(dbmodels.Analysis).filter(
-      dbmodels.Analysis.uuid == ruuid).all()
+      dbmodels.Analysis.id == id).all()
 
     return render_template('analysis.html', analysis=query[0])
   
@@ -281,18 +306,17 @@ def analyses(ruuid):
     query = db.session.query(dbmodels.Analysis).all()
     return render_template('analyses_views.html', analyses = query)
 
-@app.route('/requests', methods=['GET', 'POST'], defaults={'ruuid': None})
-@app.route('/requests/<string:ruuid>', methods=['GET', 'POST'])
+@app.route('/requests', methods=['GET', 'POST'], defaults={'id': None})
+@app.route('/requests/<int:id>', methods=['GET', 'POST'])
 @login.login_required
-def request_views(ruuid):
+def request_views(id):
 
-  if ruuid:
+  if id:
     query = db.session.query(dbmodels.ScanRequest).filter(
-      dbmodels.ScanRequest.uuid == ruuid).all()
-    return newrequest(ruuid)
-    #return render_template('request.html',
-    #request = query[0],
-    #bucket_name=AWS_S3_BUCKET_NAME)
+      dbmodels.ScanRequest.id == id).all()
+    return render_template('request.html',
+                           request=query[0],
+                           bucket_name=AWS_S3_BUCKET_NAME)
   else:    
     if request.args.has_key('sort'):
       query = db.session.query(dbmodels.ScanRequest).order_by(dbmodels.ScanRequest.title).all()
@@ -301,24 +325,13 @@ def request_views(ruuid):
     query = db.session.query(dbmodels.ScanRequest).all()
     return render_template('request_views.html', requests = query)
 
-@app.route('/newrequests', methods=['GET', 'POST'], defaults={'ruuid': 'a545f3d2-ca5c-496e-abeb-3f9f6e597010'})  
-@app.route('/newrequests/<string:ruuid>', methods=['GET', 'POST'])
-def newrequest(ruuid):
-  if id:
-    query = db.session.query(dbmodels.ScanRequest).filter(
-      dbmodels.ScanRequest.uuid == ruuid).all()
-    return render_template('newrequest.html',
-                           request = query[0],
-                           bucket_name = AWS_S3_BUCKET_NAME)
-  
-                           
-  
   
 @app.route('/subscriptions')
 @login.login_required
 def subscriptions():
   query = db.session.query(dbmodels.Subscription).all()
   return render_template('subscriptions.html', subscriptions = query)
+
 
 @app.route("/users")
 @login.login_required
@@ -636,38 +649,136 @@ def homestats():
   data['requests'] = len(requests)
   return jsonify(data)
 
-@app.route("/results/<string:ruuid>")
-def results(ruuid):
+@app.route("/parameter-data/<int:id>")
+def parameter_data(id):
   
-  query = db.session.query(dbmodels.PointResponse).filter(
-    dbmodels.PointResponse.uuid == ruuid).one()
+  try:
+    query = db.session.query(dbmodels.PointRequest).filter(    
+      dbmodels.PointRequest.id == id).one()
+    response = {}
+    response['data'] = render_template('parameter_data.html',
+                                       pointrequest=query,
+                                       bucket_name=AWS_S3_BUCKET_NAME)
+    response['success'] = "true"
+    return jsonify(response)
+
+  except MultipleResultsFound, e:
+    #return 'Multiple choices found', status.HTTP_300_MULTIPLE_CHOICES
+    return abort(500)
+
+  except NoResultFound, e:
+    #return 'No result found', status.HTTP_404_NOT_FOUND
+    return abort(500)
+
+@app.route("/point-response-data/<int:id>")
+def point_response_data(id):
+
+  try:
+    query = db.session.query(dbmodels.PointResponse).filter(
+      dbmodels.PointResponse.id == id).one()
+    
+    response = {}
+    response['data'] = render_template('response_data.html',
+                                       pointresponse=query,
+                                       bucket_name=AWS_S3_BUCKET_NAME)
+    response['success'] = "true"
+    return jsonify(response)
+
+  except MultipleResultsFound, e:
+    #return 'Multiple choices found', status.HTTP_300_MULTIPLE_CHOICES
+    return abort(500)
+  
+
+  except NoResultFound, e:
+    #return 'No result found', status.HTTP_404_NOT_FOUND
+    return abort(500)
+
+@app.route("/basic-response-data/<int:id>")
+def basic_response_data(id):
+
+  try:
+    query = db.session.query(dbmodels.BasicResponse).filter(
+      dbmodels.BasicResponse.id == id).one()
+    
+    response = {}
+    response['data'] = render_template('basic_response_data.html',
+                                       basicresponse=query,
+                                       bucket_name=AWS_S3_BUCKET_NAME)
+    response['success'] = "true"
+    return jsonify(response)
+
+  except MultipleResultsFound, e:
+    #return 'Multiple choices dound', status.HTTP_300_MULTIPLE_CHOICES
+    return abort(500)
+
+  except NoResultFound, e:
+    #return 'No result found', status.HTTP_404_NOT_FOUND
+    return abort(500)
 
   
-  return render_template('response.html', pointresponse=query, bucket_name=AWS_S3_BUCKET_NAME)
+@app.route('/download/response/<int:id>/json')
+def download_response_json(id):
 
-@app.route("/parameter-data/<string:ruuid>")
-def parameter_data(ruuid):
-  query = db.session.query(dbmodels.PointRequest).filter(    
-    dbmodels.PointRequest.uuid == ruuid).one()
-  response = {}
+  try:
+    query = db.session.query(dbmodels.PointResponse).filter(
+      dbmodels.PointResponse.id == id).one()
+    query_json = synctasks.to_dict(query)
 
-  response['data'] = render_template('parameterdata.html',
-                                     pointrequest=query,
-                                     bucket_name=AWS_S3_BUCKET_NAME)
+    if not os.path.isdir(DATA_FOLDER):
+      # check if data folder exist else create one
+      try:
+        os.makedirs(DATA_FOLDER)
+      except Exception, e:
+        # cannot create directory, so return server error to user
+        abort(500)
 
-  response['success'] = "true"
-  return jsonify(response)
+    name = str(uuid.uuid1())
+    filename = '{}/{}.json'.format(DATA_FOLDER, name)
+    target = open(filename, 'w')    
+    target.write(yaml.dump(query_json, default_style=False))
+    target.close()
+    return send_from_directory(directory=os.getcwd(), filename=filename)
+    
+  except MultipleResultsFound, e:
+    return abort(500)
+  
+  except NoResultFound, e:  
+    return abort(500)
 
-@app.route("/pointresponse-data/<string:ruuid>")
-def pointresponse_data(ruuid):
-  query = db.session.query(dbmodels.PointResponse).filter(
-    dbmodels.PointResponse.uuid == ruuid).one()
+@app.route('/download/basic-response/<int:id>/json')
+def download_basic_response_json(id):
 
-  response = {}
-  response['data'] = render_template('responsedata.html',
-                                     pointresponse=query)
-  response['success'] = "true"
-  return jsonify(response)
+  print "download basic"
+  try:
+    query = db.session.query(dbmodels.BasicResponse).filter(
+      dbmodels.BasicResponse.id == id).one()
+    query_json = synctasks.to_dict(query)
+
+    if not os.path.isdir(DATA_FOLDER):
+      # check if data folder exist
+      try:
+        os.makedirs(DATA_FOLDER)
+      except Exception, e:
+        # abort, server error
+        abort(500)
+    name = str(uuid.uuid1())
+    filename = '{}/{}.json'.format(DATA_FOLDER, name)
+    print filename
+    target = open(filename, 'w')
+    target.write(yaml.dump(query_json, default_style=False))
+    target.close()
+
+    return send_from_directory(directory=os.getcwd(), filename=filename)
+
+  except MultipleResultsFound, e:
+    print "MultipleResultsFound"
+    return abort(500)
+
+  except NoResultFound, e:
+    print "No result Found"
+    return abort(500)
+
+  print "returning nothing"
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -729,3 +840,4 @@ def search_requests(query):
   response['success'] = True
   
   return jsonify(response)
+

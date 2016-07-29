@@ -5,49 +5,127 @@
 <div class="container">
 <div class="row">
 
-  <div class="col-md-2">
-    <br><br><br>
-    
-    
-    <div class="panel panel-info">
-    <div class="pannel-content">
-      
-      <ul class="nav nav-pills nav-stacked">
-	<li><a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">Subscriptions&nbsp;<span class="badge pull-right">{{ analysis.subscriptions[:]|length }}</span></a></li>
-	<li><a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">Requests&nbsp;<span class="badge pull-right">{{ analysis.scan_requests[:]|length }}</span></a></li>
-	<li><a href="{{ url_for('.request_form', id=analysis.id) }}">Add Request</a></li>
-	<li><a href="{{ url_for('.subscribe', id=analysis.id) }}">Subscribe</a></li>
-	<li class="disabled"><a href="#">Edit</a></li>
-      </ul>
+    <div class="col-md-2">
+	<br><br><br>
+	
+	
+	<div class="panel panel-info">
+	    <div class="pannel-content">
+		
+		<ul class="nav nav-pills nav-stacked">
+		    {% if analysis.subscriptions[:] %}
+		    <li>
+			<a href="{{ url_for('.list_subscriptions', analysis_id=analysis.id) }}">
+			    Subscriptions&nbsp;
+			    <span class="badge pull-right">
+				{{ analysis.subscriptions[:]|length }}
+			    </span>
+			</a>
+		    </li>
+		    {% else %}
+		    <li>
+			<a href="" class="disabled">
+			    Subscriptions&nbsp;
+			    <span class="badge pull-right">
+				{{ analysis.subscriptions[:]|length }}
+			    </span>
+			</a>
+		    </li>
+		    {% endif %}
+		    
+		    {% if analysis.scan_requests[:] %}
+		    <li>
+			<a href="{{ url_for('.list_requests', analysis_id=analysis.id) }}">
+			    Requests&nbsp;
+			    <span class="badge pull-right">
+				{{ analysis.scan_requests[:]|length }}
+			    </span>
+			</a>
+		    </li>
+		    {% else %}
+		    <li>
+			<a href="" class="disabled">
+			    Requests&nbsp;
+			    <span class="badge pull-right">
+				{{ analysis.scan_requests[:]|length }}
+			    </span>
+			</a>
+		    </li>
+		    {% endif %}
+		    
+		    <li>
+			<a href="{{ url_for('.request_form', id=analysis.id) }}">
+			    Add Request
+			</a>
+		    </li>
+		    <li>
+			<a href="{{ url_for('.subscribe', id=analysis.id) }}">
+			    Subscribe
+			</a>
+		    </li>
+		    <li class="disabled">
+			<a href="#">
+			    Edit
+			</a>
+		    </li>
+		</ul>
+	    </div>
+	</div>
+	
     </div>
-    </div>
-    
-  </div>
   
-  <div class="col-md-8">
-    <br><br><br>
-    
-    <div class="card col-md-12">
-      <br>
-      <h3 class="card-title" style="margin-top:5px;">{{ analysis.title }} </h3>
-      <br>
-      <span class="badge"> <i class="glyphicon glyphicon-user"></i>&nbsp; {{ analysis.user.name }} </span>&nbsp;&nbsp;&nbsp;<span class="label label-primary" style="font-size:13px;">{{ analysis.collaboration }}</span>
+    <div class="col-md-8">
+	<br><br><br>
+	
+	<div class="card col-md-12">
+	    <br>
+	    <h3 class="card-title" style="margin-top:5px;">{{ analysis.title }} </h3>
+	    <br>
+	    <span class="badge">
+		<i class="glyphicon glyphicon-user"></i>
+		&nbsp; {{ analysis.user.name }}
+	    </span>
+	    &nbsp;&nbsp;&nbsp;
+	    <span class="label label-primary" style="font-size:13px;">
+		{{ analysis.collaboration }}
+	    </span>
 	    <br><br>
 	    {% if analysis.e_print %}
-	    <span class="label label-default"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>E print:</strong>&nbsp;{{ analysis.e_print }}</span>
+	    <span class="label label-default">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;
+		<strong>E print:</strong>
+		&nbsp;{{ analysis.e_print }}
+	    </span>
 	    {% endif %}
 	    {% if analysis.doi %}
-	    <span class="label label-default"><i class="glyphicon glyphicon-tag"></i>&nbsp;<strong>DOI:</strong>&nbsp;{{ analysis.doi }}</span>
+	    &nbsp;<span class="label label-default">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;
+		<strong>DOI:</strong>
+		&nbsp;{{ analysis.doi }}
+	    </span>
 	    {% endif %}
 	    {% if analysis.journal %}
-	    <span class="label label-default"><i class="glyphicon glyphicon-book"></i>&nbsp;<strong>Journal:</strong>&nbsp;{{ analysis.journal }}</span>
+	    &nbsp;<span class="label label-default">
+		<i class="glyphicon glyphicon-book"></i>
+		&nbsp;
+		<strong>Journal:</strong>
+		&nbsp;{{ analysis.journal }}
+	    </span>
 	    {% endif %}
 
 	    <br><br>
 	    <strong>run condition</strong>
-	    <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;{{ analysis.run_condition.name }}</span>
+	    <span class="label label-primary">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;{{ analysis.run_condition.name }}
+	    </span>
 	    {% if analysis.run_condition.description %}
-	    <span class="label label-primary"><i class="glyphicon glyphicon-tag"></i>&nbsp;{{ analysis.run_condition.description }}</span>
+	    &nbsp;<span class="label label-primary">
+		<i class="glyphicon glyphicon-tag"></i>
+		&nbsp;{{ analysis.run_condition.description }}
+	    </span>
 	    {% endif %}
 	    <br><br>
 	    <strong>Abstract(analysis description)</strong>

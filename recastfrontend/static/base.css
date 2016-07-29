@@ -7,11 +7,11 @@ body, h6, h5, h4, h3, h2, h1, html {
 body {
     background-color: white;
 }
-
-.badge {
-    background-color: #777;
+.response-border {
+    border-width: 0 1px 1px 1px;
+    border-color: #edf1f5;
+    border-style: solid;
 }
-
 .form-group.required .control-label:after {
     content: " *";
     color: red;
@@ -107,5 +107,34 @@ body {
 
 .scroll-area {
     overflow: auto;
-    height: 300px;
+    height: 600px;
+}
+
+.sub-header {
+    background-color: #edf1f5;
+    border-bottom: 1px solid #d0d8df;
+    margin-top: -5px;
+}
+
+.badge {
+    background: #e4e9ee none repeat scroll 0 0;
+    color: #0d3244;
+    border-style: solid;
+    border-width: 0.2px;
+}
+
+.label-default {
+    background: #3f729b none repeat scroll 0 0;
+    color: #fff;
+}
+
+.btn-recast-light {
+    color: #3f729b;
+    background-color: #edf1f5;
+    border-color: #333;
+}
+
+.btn-recast-dark {
+    color: #fff;
+    background-color: #366C7A;
 }
