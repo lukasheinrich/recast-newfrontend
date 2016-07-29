@@ -1,14 +1,12 @@
-#from celery import shared_task, task
+from celery import shared_task, task
 from recastsearch.sync import SyncService
-from celeryapp import app
 
-# @shared_task
-@app.task
+@shared_task
 def hello_world():
   print "hello world"
   print "*"*200
   
-# @shared_task
+@shared_task
 def upload_to_zenodo(current_user, ORCID, reason_for_request, lhe_file):
   url = "https://zenodo.org/api/deposit/depositions/?access_token={}".format(ZENODO_ACCESS_TOKEN)
 
@@ -39,7 +37,7 @@ def upload_to_zenodo(current_user, ORCID, reason_for_request, lhe_file):
   deposition_file_response = requests.post(url_deposition_file, data=deposition_file_data, files=files)
   
       
-# @shared_task
+@shared_task
 def sync_elasticsearch(elasticsearchconfig):
   sync = SyncService(elasticsearchconfig)
   sync.sync()
