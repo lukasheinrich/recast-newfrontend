@@ -1,6 +1,9 @@
 import click
 import os
 import subprocess
+import logging
+
+logging.basicConfig(level = logging.INFO)
 
 @click.group()
 def frontendcli():
@@ -14,7 +17,7 @@ def server(config):
   from server import app
   port = int(os.environ.get("PORT", 5000))
   app.run(host='0.0.0.0', port=port)
-    
+
 @frontendcli.command()
 @click.option('--config','-c')
 def celery(config):

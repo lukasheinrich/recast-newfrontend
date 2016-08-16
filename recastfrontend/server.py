@@ -6,6 +6,9 @@ import json
 import importlib
 import re
 import requests
+import logging
+
+log = logging.getLogger(__name__)
 
 from boto3.session import Session
 from flask import Flask, redirect, jsonify, session, abort
@@ -111,14 +114,14 @@ def login_user():
   data = {'client_id':ORCID_APPID,'client_secret':ORCID_SECRET,'grant_type':'authorization_code','code':auth_code}
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
-  print r
-  print r.content
   login_details = json.loads(r.content)
+
 
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
 
   confirmUserInDB(user)
+  log.warning('has email: %s',hasEmail(user))
   if not hasEmail(user):
     return redirect(url_for('signup'))
 
@@ -142,16 +145,16 @@ def confirmOrcid(user_query):
     db.session.commit()
 
 def hasEmail(user):
-  try:
-    user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
-    if not user_query.email:
-      return False
-  except MultipleResultsFound, e:
-    pass
-  except NoResultFound, e:
-    pass
-
-  return True
+    try:
+        user_query = dbmodels.User.query.filter(dbmodels.User.name == user.name()).one()
+        if not user_query.email:
+            return False
+    except MultipleResultsFound, e:
+        pass
+    except NoResultFound, e:
+        pass
+    log.info('email for user %s is %s',user,user_query.email)
+    return True
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
