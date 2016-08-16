@@ -107,18 +107,18 @@ arxiv_1405_7875 = models.Analysis(
 db.session.add(arxiv_1405_7875)
 db.session.commit()
 
-arxiv_1405_7875 = models.Analysis(
-    title='',
-    collaboration='ATLAS',
-    e_print='',
-    description='''
-    '''.strip('\n').replace('\n',' '),
-    owner_id=lukas_heinrich.id,
-    run_condition_id=runcondition_ATLAS_8TeV_pp.id,
-    doi=''
-    )
-db.session.add(arxiv_1405_7875)
-db.session.commit()
+# arxiv_1405_7875 = models.Analysis(
+#     title='',
+#     collaboration='ATLAS',
+#     e_print='',
+#     description='''
+#     '''.strip('\n').replace('\n',' '),
+#     owner_id=lukas_heinrich.id,
+#     run_condition_id=runcondition_ATLAS_8TeV_pp.id,
+#     doi=''
+#     )
+# db.session.add(arxiv_1405_7875)
+# db.session.commit()
 
 
 arxiv_1403_5294 = models.Analysis(
