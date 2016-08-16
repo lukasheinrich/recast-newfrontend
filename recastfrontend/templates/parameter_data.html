@@ -27,10 +27,10 @@
 		<td class="col-md-4" style="background-color:white;">
 		    {{ coordinate.value }}
 		</td>
-	    </tr>		
+	    </tr>
 	    {% endfor %}
 	</tbody>
-    </table>	
+    </table>
 </div>
 
 <div class="col-md-12">
@@ -44,7 +44,7 @@
 		</h4>
 	    </div>
     	</a>
-	
+
 	<div id="response" class="panel-collapse collapse" role="tabpanel" aria-labelledby="response">
 	    <span bind-html-compile="ctrl.responseData()"></span>
 	</div>
@@ -59,9 +59,9 @@
 		</h4>
 	    </div>
     	</a>
-	
+
 	<div id="NoResponse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="NoResponse">
-	    <h4 class="text-center text-danger">No parameter response available <h4>
+	    <h4 class="text-center text-danger">No overall point response available <h4>
 	</div>
     </div>
 
@@ -69,11 +69,11 @@
 </div>
 
 
-		
+
 {% for basicrequest in pointrequest.requests %}
 <div class="col-md-3">
 
-{% if basicrequest.file_name.file_name %}		
+{% if basicrequest.file_name.file_name %}
     <a class="btn btn-default"
        href="{{'https://s3.amazonaws.com/' + bucket_name + '/' + basicrequest.file_name.file_name }}"
        download="{{basicrequest.file_name.original_file_name}}">
@@ -85,10 +85,10 @@
     <a class="btn btn-default btn-sm disabled">
 	<i class="glyphicon glyphicon-cloud-download disabled"></i>
 	&nbsp;Basic Request
-    </a>    
+    </a>
     {% endif %}
 </div>
-    
+
 <div class="col-md-9">
     {% if basicrequest.basic_responses[0] %}
 
@@ -102,7 +102,7 @@
 	    </h4>
 	</div>
 	</a>
-	
+
 	<div id="collapseBasic-{{loop.index0}}"
 	     class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseBasic-{{loop.index0}}">
 	    <span bind-html-compile="ctrl.BasicResponseData('{{ loop.index0 }}')"></span>
@@ -120,17 +120,14 @@
 	</a>
 
 
-	    
+
 	<div id="collapseBasic-{{ loop.index0 }}"
-	class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseBasic-{{loop.index0}}">    
-	    <h4 class="text-center text-danger"> No response available </h4>
+	class="panel-collapse collapse" role="tabpanel" aria-labelledby="collapseBasic-{{loop.index0}}">
+	    <h4 class="text-center text-danger"> No basic response available.</h4>
 
 	</div>
-    </div>	
+    </div>
     {% endif %}
 
 </div>
 {% endfor %}
-
-
-
