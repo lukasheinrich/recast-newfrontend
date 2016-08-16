@@ -206,6 +206,22 @@ db.session.add(ewk_point_1_basic_file)
 db.session.commit()
 
 ################################################################################
+### for kicks, we add the GGM scan but without any points
+GGM_pMSSM_request_one = models.ScanRequest(
+    title="General Gauge Mediated Models recast of arXiv:1403.5294",
+    description_of_model='GGM SUSY',
+    reason_for_request='''Previous limits placed on GGM models have been applied to scenarios with both electroweak and strong production, but none have covered electroweak production with a wino-higgsino like neutralino next-to-lightest-sparticle (NLSP). In addition to presenting complete results for the sensitivity to these models with the existing Run 1 data and analyses, this study aims to identify regions of the parameter space which would benefit from targeted analysis in Run 2.''',
+    additional_information='''
+    Fine scans of the GGM parameter space were conducted with constraints from EWSB breaking conditions, the Higgs boson mass of 125 GeV (never previously applied in this way) and requiring a tachyon-free spectrum
+    '''.strip('\n'),
+    analysis_id=arxiv_1403_5294.id,
+    requester_id=theo_rist.id,
+    )
+db.session.add(GGM_pMSSM_request_one)
+db.session.commit()
+
+
+################################################################################
 
 josh_request_one = models.ScanRequest(
     title="Stealth SUSY of ATLAS multijet search arXiv:1502.05686",
