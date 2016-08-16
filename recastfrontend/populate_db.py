@@ -244,10 +244,10 @@ db.session.add(josh_point_1)
 db.session.commit()
 
 josh_coord_mgluino = models.PointCoordinate(
-    title = 'Mgluino', value = 250.0, point_request_id=ewk_point_1.id
+    title = 'Mgluino', value = 250.0, point_request_id=josh_point_1.id
 )
 josh_coord_msinglino = models.PointCoordinate(
-    title = 'Msinglino', value = 350.0, point_request_id=ewk_point_1.id
+    title = 'Msinglino', value = 350.0, point_request_id=josh_point_1.id
 )
 db.session.add(josh_coord_mgluino)
 db.session.add(josh_coord_msinglino)
