@@ -5,6 +5,8 @@ from frontendconfig import config as frontendconf
 import uuid
 import os
 
+if 'RECAST_MASTERTOKEN' not in os.environ:
+    raise RuntimeError('need RECAST_MASTERTOKEN')
 
 
 
@@ -206,51 +208,63 @@ GGM_pMSSM_request_one = models.ScanRequest(
 db.session.add(GGM_pMSSM_request_one)
 db.session.commit()
 
-GGM_point_1 = models.PointRequest(
-    scan_request_id=GGM_pMSSM_request_one.id,
-    requester_id=theo_rist.id
-)
-db.session.add(GGM_point_1)
-db.session.commit()
 
-ggm_coord_m1 = models.PointCoordinate(
-    title = 'M1', value = 3000.0, point_request_id=GGM_point_1.id
-)
-ggm_coord_m2 = models.PointCoordinate(
-    title = 'M2', value = 150.0, point_request_id=GGM_point_1.id
-)
-ggm_coord_tan_beta = models.PointCoordinate(
-    title = 'tan_beta', value = 20.0, point_request_id=GGM_point_1.id
-)
-ggm_coord_mu = models.PointCoordinate(
-    title = 'mu', value = 500.0, point_request_id=GGM_point_1.id
-)
-db.session.add(ggm_coord_m1)
-db.session.add(ggm_coord_m2)
-db.session.add(ggm_coord_tan_beta)
-db.session.add(ggm_coord_mu)
-db.session.commit()
+import pkg_resources
+import csv
+r = csv.reader(pkg_resources.resource_stream('recastfrontend',
+        'resources/testdb_data/GGMmap.txt'))
+ggm_keys = [x.strip() for x in r.next()]
+ggm_data = [dict(zip(ggm_keys[1:],map(float,x[1:]))) for x in r]
+
+ggm_points = []
+
+for x in ggm_data:
+    GGM_point = models.PointRequest(
+        scan_request_id=GGM_pMSSM_request_one.id,
+        requester_id=theo_rist.id
+    )
+    ggm_points.append(GGM_point)
+    db.session.add(GGM_point)
+    db.session.commit()
+
+    ggm_coord_m1 = models.PointCoordinate(
+        title = 'M1', value = 3000.0, point_request_id=GGM_point.id
+    )
+    ggm_coord_m2 = models.PointCoordinate(
+        title = 'M2', value = x['M2'], point_request_id=GGM_point.id
+    )
+    ggm_coord_tan_beta = models.PointCoordinate(
+        title = 'tan_beta', value = x['tan_beta'], point_request_id=GGM_point.id
+    )
+    ggm_coord_mu = models.PointCoordinate(
+        title = 'mu', value = x['mu'], point_request_id=GGM_point.id
+    )
+    db.session.add(ggm_coord_m1)
+    db.session.add(ggm_coord_m2)
+    db.session.add(ggm_coord_tan_beta)
+    db.session.add(ggm_coord_mu)
+    db.session.commit()
 
 
 ### for this point we will have a basic request:
 
-GGM_point_1_basic = models.BasicRequest(
-    point_request_id=GGM_point_1.id,
+GGM_point_255125_basic = models.BasicRequest(
+    point_request_id=ggm_points[24].id,
     requester_id=theo_rist.id
 )
-db.session.add(GGM_point_1_basic)
+db.session.add(GGM_point_255125_basic)
 db.session.commit()
 
 ### for which we have a file stored on AWS
 
-GGM_point_1_basic_file = models.RequestArchive(
+GGM_point_255125_basic_file = models.RequestArchive(
     file_name = "0000-0000-recastdilepton-255125-testfile-0001",
     path = '',
     zenodo_file_id = '',
     original_file_name = '255125.zip',
-    basic_request_id = GGM_point_1_basic.id
+    basic_request_id = GGM_point_255125_basic.id
     )
-db.session.add(GGM_point_1_basic_file)
+db.session.add(GGM_point_255125_basic_file)
 db.session.commit()
 
 

@@ -75,7 +75,7 @@
 
 {% if basicrequest.file_name.file_name %}
     <a class="btn btn-default"
-       href="{{'https://s3.amazonaws.com/' + bucket_name + '/' + basicrequest.file_name.file_name }}"
+       href="/stored_file/{{basicrequest.file_name.file_name }}"
        download="{{basicrequest.file_name.original_file_name}}">
 	<i class="glyphicon glyphicon-cloud-download"></i>
 	&nbsp;Basic Request

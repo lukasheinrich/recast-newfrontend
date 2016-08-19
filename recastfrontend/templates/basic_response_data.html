@@ -6,7 +6,7 @@
 	<div class="col-md-12">
 	    <h4>Basic response
 		<span>
-		    
+
 		    <a class="btn btn-recast-light btn-sm pull-right"
 		       href="{{ url_for('.download_basic_response_json', id=basicresponse.id)}}"
 		       target="_blank"
@@ -20,7 +20,7 @@
 		</span>
 	    </h4>
 	</div>
-	
+
 	<div class="table-responsive col-md-12">
 	    <table class="table col-md-12 table-hover table-bordered">
 		<tbody>
@@ -67,8 +67,8 @@
 	    Download File
 	    {% if basicresponse.archives %}
 	    <a type="button" class="btn btn-recast-dark btn-sm"
-		    href="{{'https://s3.amazonaws.com/'+ bucket_name + '/' + basicresponse.archives.file_name }}"
-		    download="{{ basicresponse.archives.original_file_name }}">
+		    href="/stored_file/{{basicresponse.archives.file_name}}"
+		    download="{{basicresponse.archives.original_file_name}}">
 		<i class="glyphicon glyphicon-download"></i>
 		&nbsp;Download
 	    </a>
@@ -81,10 +81,9 @@
 	</div>
 	<div class="col-md-12">
 	    <br><br>
-	</div>	
+	</div>
     </div>
 
 </div>
 <div class="col-md-12"><br></div>
 {% endblock %}
-	

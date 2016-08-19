@@ -22,36 +22,22 @@ import yaml
 import asynctasks
 import forms
 from frontendconfig import config as frontendconf
-from recastsearch.config import Config
 from recastdb.database import db
 import recastdb.models as dbmodels
-from recastsearch.recastelasticsearch import RecastElasticSearch
 import synctasks
 
 
 
-celeryapp  = importlib.import_module(frontendconf['CELERYAPP']).app
+celeryapp  = importlib.import_module(frontendconf['RECAST_CELERYAPP']).app
 
-ORCID_APPID = frontendconf['ORCID_APPID']
-ORCID_REDIRECT_URI = frontendconf['ORCID_REDIRECT_URI']
-ORCID_SECRET = frontendconf['ORCID_SECRET']
-ORCID_TOKEN_REDIRECT_URI = frontendconf['ORCID_TOKEN_REDIRECT_URI']
-AWS_ACCESS_KEY_ID = frontendconf['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = frontendconf['AWS_SECRET_ACCESS_KEY']
-ZENODO_CLIENT_ID = frontendconf['ZENODO_CLIENT_ID']
-ZENODO_CLIENT_SECRET = frontendconf['ZENODO_CLIENT_SECRET']
-ZENODO_ACCESS_TOKEN = frontendconf['ZENODO_ACCESS_TOKEN']
-ELASTIC_SEARCH_URL = frontendconf['ELASTIC_SEARCH_URL']
-ELASTIC_SEARCH_INDEX = frontendconf['ELASTIC_SEARCH_INDEX']
-ELASTIC_SEARCH_AUTH = frontendconf['ELASTIC_SEARCH_AUTH']
-AWS_S3_BUCKET_NAME = 'recast'
-DATA_FOLDER = frontendconf['DATA_FOLDER']
-
-elasticsearchconfig = Config(
-  HOST=ELASTIC_SEARCH_URL,
-  AUTH=ELASTIC_SEARCH_AUTH,
-  INDEX=ELASTIC_SEARCH_INDEX
-  )
+ORCID_APPID = frontendconf['RECAST_ORCID_APPID']
+ORCID_REDIRECT_URI = frontendconf['RECAST_ORCID_REDIRECT_URI']
+ORCID_SECRET = frontendconf['RECAST_ORCID_SECRET']
+ORCID_TOKEN_REDIRECT_URI = frontendconf['RECAST_ORCID_TOKEN_REDIRECT_URI']
+AWS_ACCESS_KEY_ID = frontendconf['RECAST_AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = frontendconf['RECAST_AWS_SECRET_ACCESS_KEY']
+DATA_FOLDER = frontendconf['RECAST_DATA_FOLDER']
+AWS_S3_BUCKET_NAME = frontendconf['RECAST_AWS_S3_BUCKET_NAME']
 
 ALLOWED_EXTENSIONS = set(['zip', 'txt'])
 
@@ -66,7 +52,7 @@ class User(login.UserMixin):
 
 def create_app():
   app = Flask(__name__)
-  app.config.from_object(frontendconf['FLASKCONFIG'])
+  app.config.from_object(frontendconf['RECAST_FLASKCONFIG'])
   app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
   db.init_app(app)
   return app
@@ -76,24 +62,9 @@ app = create_app()
 login_manager = login.LoginManager()
 login_manager.init_app(app)
 
-"""
-# asynctasks.sync(elasticsearchconfig)
-CELERYBEAT_SCHEDULE = {
-  'add-every-30-seconds': {
-    'task': 'asynctasks.sync',
-    'schedule': timedelta(seconds=30),
-    'args': (elasticsearchconfig)
-    },
-  }
-
-CELERY_TIMEZONE = 'UTC'
-"""
-
 @app.route("/")
 def home():
   all_users = dbmodels.User.query.all()
-  # celeryapp.set_current()
-  # asynctasks.hello_world.delay()
   return render_template('home.html', user_data = all_users)
 
 
@@ -115,7 +86,6 @@ def login_user():
 
   r = requests.post('https://pub.orcid.org/oauth/token', data = data)
   login_details = json.loads(r.content)
-
 
   user = User(orcid = login_details['orcid'], fullname = login_details['name'], authenticated = True)
   login.login_user(user)
@@ -843,3 +813,12 @@ def search_requests(query):
   response['success'] = True
 
   return jsonify(response)
+
+@app.route('/stored_file/<path:path>')
+def static_proxy(path):
+    import boto3
+    from flask import Response
+    s3 = boto3.Session(AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY).resource('s3')
+    obj = s3.Object(AWS_S3_BUCKET_NAME,path)
+    response = obj.get()
+    return Response(response['Body'].read(), headers=response['ResponseMetadata']['HTTPHeaders'])

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-  name = 'recast-newfrontend',
+  name = 'recast-flask-frontend',
   description = 'new frontend for the RECAST project',
   url = 'https://github.com/lukasheinrich/recast-newfrontend',
   author = 'Lukas Heinrich',
@@ -20,7 +20,6 @@ setup(
     'redis',
     'IPython',
     'recast-database',
-    'recast-search',
     'requests',
     'boto3',
     'elasticsearch',
