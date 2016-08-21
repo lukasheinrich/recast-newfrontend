@@ -17,34 +17,34 @@
 	<div class="col-md-2 scroll-area">
 	    <br>
 	    <table class="table col-md-12 table-bordered table-hover">
-		
+
 		<tbody ng-controller="ParameterViewCtrl as ctrl">
-		    {% for pointrequest in request.scan_points %}		    
+		    {% for pointrequest in request.scan_points %}
 		    <tr>
 			<td>
 			    <span ng-click="ctrl.fetchParameter('{{pointrequest.id}}', {{loop.index0+1}})" style="cursor:pointer">
 				<h5><strong> POINT {{loop.index0+1}}</strong></h5>
 			    </span>
-			    			    
+
 			    <span class="label label-default">
 				{{ pointrequest.point_coordinates[:]|length }} coordinates
-			    </span>					    
+			    </span>
 
 			    <span class="label label-default pull-right">
 				{{ pointrequest.requests[:]|length}} basic requests
-			    </span>			    
+			    </span>
 			</td>
 		    </tr>
 		    {% endfor %}
 		</tbody>
-	    </table>		
+	    </table>
 	</div>
-	
-	<div class="col-md-7 card-flat scroll-area" ng-controller="ParameterViewCtrl as ctrl">
+
+	<div class="col-md-6 card-flat scroll-area" ng-controller="ParameterViewCtrl as ctrl">
 	    <span bind-html-compile="ctrl.parameterData()"></span>
 	</div>
-	
-	<div class="col-md-3 scroll-area">
+
+	<div class="col-md-2 scroll-area">
 	    <br>
 	    <span>
 		<strong>
@@ -61,7 +61,7 @@
 			{{ request.analysis.collaboration }}
 		    </span>
 	    </span>
-	    
+
 	    <br><br>
 	    <strong>Reason for request</strong>
 	    <br>
@@ -71,8 +71,8 @@
 	    <strong>Additional information</strong>
 	    <br>
 		{{request.additional_information }}
-	    <br><br>			
-	</div>	
+	    <br><br>
+	</div>
     </div>
 </div>
 

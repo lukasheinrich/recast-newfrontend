@@ -18,19 +18,19 @@
 	  <tbody>
 	    <tr>
 	      <td class="bg-success">Lower 1 sig expected CLs</td>
-	      <td>{{ pointresponse.lower_1sig_expected_CLs }}</td>	      
+	      <td>{{ pointresponse.lower_1sig_expected_CLs }}</td>
 	    </tr>
-	    
+
 	    <tr>
 	      <td class="bg-success">Lower 2 sig expected CLs</td>
 	      <td>{{ pointresponse.lower_2sig_expected_CLs }}</td>
 	    </tr>
-	    
+
 	    <tr>
 	      <td class="bg-success">Expected CLs</td>
 	      <td>{{ pointresponse.expected_CLs }}</td>
 	    </tr>
-	    
+
 	    <tr>
 	      <td class="bg-success">Upper 1 sig expected CLs</td>
 	      <td>{{ pointresponse.upper_1sig_expected_CLs }}</td>
@@ -40,17 +40,17 @@
 	      <td class="bg-success">Upper 2 sig expected CLs</td>
 	      <td>{{ pointresponse.upper_2sig_expected_CLs }}</td>
 	    </tr>
-	    
+
 	    <tr>
 	      <td class="bg-success">Observed CLs</td>
 	      <td>{{ pointresponse.observed_CLs }}</td>
 	    </tr>
-	    
+
 	    <tr>
 	      <td class="bg-success">Log likelihood at reference</td>
 	      <td>{{ pointresponse.log_likelihood_at_reference }}</td>
 	    </tr>
-	    
+
 	  </tbody>
 	</table>
       </div>
@@ -59,21 +59,21 @@
 	{% if pointresponse.archives[:] %}
 	<h4> File of the point response </h4>
 
-	
+
 	<a download="{{pointresponse.archives[0].original_file_name}}"
 	   class="btn btn-success btn-sm"
-	   href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ pointresponse.archives[0].file_name}}"	  
+	   href="{{'https://s3.amazonaws.com/'+ bucket_name +'/'+ pointresponse.archives[0].file_name}}"
 	   >
 	  <i class="glyphicon glyphicon-download"></i>&nbsp;Download File
 	</a>
 	{% endif %}
-	   
-	
+
+
       </div>
     </div>
 
-    
-    {% if pointresponse.basic_answers[:] %}    
+
+    {% if pointresponse.basic_answers[:] %}
     <div class="col-md-6">
       <h3> Basic Request </h3>
       {% for basicresponse in pointresponse.basic_answers %}
@@ -83,19 +83,19 @@
 	<tbody>
 	  <tr>
 	    <td class="bg-success">Lower 1 sig expected CLs</td>
-	    <td>{{ pointresponse.lower_1sig_expected_CLs }}</td>	      
+	    <td>{{ pointresponse.lower_1sig_expected_CLs }}</td>
 	  </tr>
-	  
+
 	  <tr>
 	    <td class="bg-success">Lower 2 sig expected CLs</td>
 	    <td>{{ pointresponse.lower_2sig_expected_CLs }}</td>
 	  </tr>
-	  
+
 	  <tr>
 	    <td class="bg-success">Expected CLs</td>
 	    <td>{{ pointresponse.expected_CLs }}</td>
 	  </tr>
-	  
+
 	  <tr>
 	    <td class="bg-success">Upper 1 sig expected CLs</td>
 	    <td>{{ pointresponse.upper_1sig_expected_CLs }}</td>
@@ -105,26 +105,26 @@
 	    <td class="bg-success">Upper 2 sig expected CLs</td>
 	    <td>{{ pointresponse.upper_2sig_expected_CLs }}</td>
 	  </tr>
-	  
+
 	  <tr>
 	    <td class="bg-success">Observed CLs</td>
 	    <td>{{ pointresponse.observed_CLs }}</td>
 	  </tr>
-	  
+
 	  <tr>
 	    <td class="bg-success text-weight-bold">Log likelihood at reference</td>
 	    <td>{{ pointresponse.log_likelihood_at_reference }}</td>
 	  </tr>
-	    
+
 	</tbody>
       </table>
-      
+
       {% endfor %}
     </div>
-    
+
     <div class="col-md-6">
-      
-    </div>	
+
+    </div>
     {% endif %}
   </div>
 </div>

@@ -1,89 +1,27 @@
-{% block container %}
+<div class="col-md-8">
+  <div class="col-md-12" ng-controller="ParameterViewCtrl as ctrl">
+    <div class="col-md-12">
+  	    <table class="table">
+          <thead>
+            <td>-2σ</td>
+            <td>-1σ</td>
+            <td>CLs exp.</td>
+            <td>+1σ</td>
+            <td>+2σ</td>
+            <td>CLs obs.</td>
+            <td>LogL</td>
+          </thead>
+      		<tbody>
+        			<td>{{ basicresponse.lower_2sig_expected_CLs }}</td>
+        			<td>{{ basicresponse.lower_1sig_expected_CLs }}</td>
+        			<td>{{ basicresponse.expected_CLs }}</td>
+        			<td>{{ basicresponse.upper_1sig_expected_CLs }}</td>
+        			<td>{{ basicresponse.upper_2sig_expected_CLs }}</td>
+        			<td>{{ basicresponse.observed_CLs }}</td>
+        			<td>{{ basicresponse.log_likelihood_at_reference }}</td>
+      		</tbody>
+  	    </table>
+  	</div>
 
-<div class="col-md-12 response-border">
-    <br>
-    <div class="card-flat col-md-12" ng-controller="ParameterViewCtrl as ctrl">
-	<div class="col-md-12">
-	    <h4>Basic response
-		<span>
-
-		    <a class="btn btn-recast-light btn-sm pull-right"
-		       href="{{ url_for('.download_basic_response_json', id=basicresponse.id)}}"
-		       target="_blank"
-		       download="">
-			<i class="glyphicon glyphicon-cloud-download"></i>
-			&nbsp;Download
-		    </a>
-		    <span>
-			<br>
-		    </span>
-		</span>
-	    </h4>
-	</div>
-
-	<div class="table-responsive col-md-12">
-	    <table class="table col-md-12 table-hover table-bordered">
-		<tbody>
-		    <tr>
-			<td><strong>lower 1 sig expected CLs</strong></td>
-			<td>{{ basicresponse.lower_1sig_expected_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>lower 2 sig expected CLs</strong></td>
-			<td>{{ basicresponse.lower_2sig_expected_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>expected CLs</strong></td>
-			<td>{{ basicresponse.expected_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>upper 1 sig expected CLs</strong></td>
-			<td>{{ basicresponse.upper_1sig_expected_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>upper 2 sig expected CLs</strong></td>
-			<td>{{ basicresponse.upper_2sig_expected_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>Observed CLs</strong></td>
-			<td>{{ basicresponse.observed_CLs }}</td>
-		    </tr>
-
-		    <tr>
-			<td><strong>log likelihood at references</strong></td>
-			<td>{{ basicresponse.log_likelihood_at_reference }}</td>
-		    </tr>
-
-		</tbody>
-	    </table>
-	</div>
-
-	<div class="col-md-12">
-	    Download File
-	    {% if basicresponse.archives %}
-	    <a type="button" class="btn btn-recast-dark btn-sm"
-		    href="/stored_file/{{basicresponse.archives.file_name}}"
-		    download="{{basicresponse.archives.original_file_name}}">
-		<i class="glyphicon glyphicon-download"></i>
-		&nbsp;Download
-	    </a>
-	    {% else %}
-	    <button type="button" class="btn btn-recast-dark btn-sm disabled">
-		<i class="glyphicon glyphicon-cloud-download"></i>
-		&nbsp;Download
-	    </button>
-	    {% endif %}
-	</div>
-	<div class="col-md-12">
-	    <br><br>
-	</div>
-    </div>
-
+  </div>
 </div>
-<div class="col-md-12"><br></div>
-{% endblock %}

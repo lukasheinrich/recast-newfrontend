@@ -7,14 +7,14 @@ angular.module('recastApp', ['ngSanitize'])
 	var self = this;
 	self.analyses = "-";
 	self.requests = "-";
-	
+
 	$http.get('/homestats')
 	    .then(function(response) {
 		self.analyses = response.data.analyses;
 		self.requests = response.data.requests;
 	    });
-		
-	$interval( function() {	    
+
+	$interval( function() {
 	    $http.get('/homestats')
 		.then(function(response) {
 		    self.analyses = response.data.analyses;
@@ -25,11 +25,11 @@ angular.module('recastApp', ['ngSanitize'])
 
     .directive('fileModel', ['$parse', function($parse) {
 	/* Directive to allow to easily upload a  file
-	   using AngularJS $http service, and provides 
-	   binding to angular file directive 
-	     source: 
+	   using AngularJS $http service, and provides
+	   binding to angular file directive
+	     source:
 	     https://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
-	     */  
+	     */
 	return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -73,7 +73,7 @@ angular.module('recastApp', ['ngSanitize'])
 	};
 
     }])
-    
+
     .controller('AddParameterCtrl', ['$http', 'IDService', 'ItemService', function($http, ris, coordinates) {
 	/* Controller to add parameter */
 	var self = this;
@@ -90,7 +90,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    ris.setID(rid);
 	    coordinates.clear();
 	    coordinates.push();
-	    $('#modal-add-parameter').modal('show');	    
+	    $('#modal-add-parameter').modal('show');
 	};
 
 	self.submit = function() {
@@ -105,11 +105,11 @@ angular.module('recastApp', ['ngSanitize'])
 		form_data.append(k, par);
 	    }
 	    NProgress.inc(0.4);
-	    
+
 	    $http({
 		method: 'POST',
 		url:'/add-parameter/'+ris.getID(),
-		data: form_data,		
+		data: form_data,
 		headers: {'Content-Type': undefined},
 		transformRequest: angular.identity
 	    })
@@ -133,20 +133,20 @@ angular.module('recastApp', ['ngSanitize'])
 	/* Controller to add file on request page */
 	var self = this;
 	self.addBasicRequest = function(pid) {
-	    console.log('add basic request modal');	   
+	    console.log('add basic request modal');
 	    prs.setID(pid);
 	    $('#zip-file-request-page').val('');
 	    $('#modal-add-basic-request').modal('show');
 	};
 
-	    
+
 	self.submit = function() {
 	    self.hideModal();
-	    NProgress.start();	    
+	    NProgress.start();
 	    var form_data = new FormData();
 	    form_data.append('file', self.zipFile);
 	    NProgress.inc(0.4);
-	    
+
 	    $http({
 		'method': 'POST',
 		url: '/add-basic-request/'+prs.getID(),
@@ -156,7 +156,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    })
 		.success(function(response){
 		    NProgress.inc(0.5);
-		    NProgress.done();		   
+		    NProgress.done();
 		    location.reload();
 		})
 		.error(function(err){
@@ -184,12 +184,12 @@ angular.module('recastApp', ['ngSanitize'])
 	self.accord = function() {
 	    console.log('accordion clicked');
 	};
-	    	
+
 	self.fetchParameter = function(uuid, index) {
 	    // show parameter data i.e: coords, basic requests, request buttons, etc.
 	    NProgress.start();
 	    NProgress.inc(0.4);
-	    
+
 	    ajaxresponse.clear();
 
 	    ajaxresponse.parameter.set("<h3>Loading...</h3>");
@@ -221,13 +221,13 @@ angular.module('recastApp', ['ngSanitize'])
 	self.responseData = function() {
 	    return ajaxresponse.response.get();
 	};
-	    
+
 	self.fetchResponse = function(uuid) {
 	    //show response data
 	    NProgress.start();
-	    NProgress.inc(0.4);	    
+	    NProgress.inc(0.4);
 	    ajaxresponse.response.clear()
-	    
+
 	    $http.get('/point-response-data/'+uuid)
 		.success(function(response) {
 		    NProgress.inc(0.5);
@@ -260,7 +260,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    NProgress.inc(0.4);
 	    ajaxresponse.basicresponse.clear(index);
 	    $http.get('/basic-response-data/'+uuid)
-		.success(function (response) {		    
+		.success(function (response) {
 		    NProgress.inc(0.5);
 		    NProgress.done();
 		    ajaxresponse.basicresponse.set(response.data, index);
@@ -274,9 +274,9 @@ angular.module('recastApp', ['ngSanitize'])
 	};
 
     }])
-	
-		     
-					  
+
+
+
 
     .controller('SearchCtrl', ['$http', function($http) {
 	/* Controller to search */
@@ -286,7 +286,7 @@ angular.module('recastApp', ['ngSanitize'])
 	};
 
 	self.analysis = function(search_term) {
-	    console.log('analysis');		    
+	    console.log('analysis');
 	};
 
     }])
@@ -296,7 +296,7 @@ angular.module('recastApp', ['ngSanitize'])
 	var self = this;
 	self.addCoordinate = function(pid) {
 	    prs.setID(pid);
-	    $('#modal-add-coordinate').modal('show');	    
+	    $('#modal-add-coordinate').modal('show');
 	};
 	self.submit = function() {
 	    self.hideModal();
@@ -306,7 +306,7 @@ angular.module('recastApp', ['ngSanitize'])
 		.then(function(reponse) {
 		    NProgress.inc(0.5);
 		    self.coordinate = {};
-		    NProgress.done();		    
+		    NProgress.done();
 		    location.reload();
 		});
 	};
@@ -317,7 +317,7 @@ angular.module('recastApp', ['ngSanitize'])
 
 
     .controller('arxivImportCtrl', ['$http', 'IDService', function($http, id_service) {
-	
+
 	var self = this;
 	self.arxiv_id;
 	self.example = "this";
@@ -326,7 +326,7 @@ angular.module('recastApp', ['ngSanitize'])
 	self.collaboration = "";
 	self.doi = "";
 	self.abstract = "";
-	
+
 	self.import = function() {
 	    console.log("clicked");
 	    console.log(self.arxiv_id);
@@ -337,7 +337,7 @@ angular.module('recastApp', ['ngSanitize'])
 		    self.title = response.data['title'];
 		    self.collaboration = response.data['collaboration'];
 		    self.doi = response.data['doi'];
-		    self.abstract = response.data['description'];	
+		    self.abstract = response.data['description'];
 		    console.log(self.title);
 		    console.log(self.collaboration);
 		    console.log(self.doi);
@@ -376,7 +376,7 @@ angular.module('recastApp', ['ngSanitize'])
 	    set: function(val) {
 		data = val;
 	   }
-	};	
+	};
     }])
 
     .factory('ParameterDataService', [function() {
@@ -398,8 +398,8 @@ angular.module('recastApp', ['ngSanitize'])
 		    data.parameter = "";
 		}
 	    },
-	    
-	    response: {		
+
+	    response: {
 		get: function() {
 		    if (data.show_response)
 			return data.response;
@@ -420,13 +420,13 @@ angular.module('recastApp', ['ngSanitize'])
 		    data.response = "";
 		}
 	    },
-	    
+
 	    basicresponse: {
 		get: function(index) {
 		    if ( data.show_basic_response)
-			return data.basic_response[index];
+			     return data.basic_response[index];
 		    else
-			return "";
+			     return "";
 		},
 		set: function(mydata, index) {
 		    data.basic_response[index] = mydata;
@@ -445,7 +445,7 @@ angular.module('recastApp', ['ngSanitize'])
 		    data.basic_response = [];
 		}
 	    },
-	    
+
 	    clear: function() {
 		data.parameter ="";
 		data.response = "";
@@ -466,11 +466,11 @@ angular.module('recastApp', ['ngSanitize'])
 	    getID: function() {
 		return variable_id;
 	    }
-	};	     
+	};
     }]);
 
 
-    
+
 
 
 window.onload = prepareLinks;
@@ -492,7 +492,7 @@ function RecastAddParameterPoint(e){
 function shortStr(str, max_chars, min_thresh){
     /* returns shortened string  */
     if (min_thresh == 0) min_thresh = 10;
-    
+
     if (str.length > min_thresh){
 	return (str.substring(0, max_chars)+"...");
     }else{
@@ -501,13 +501,13 @@ function shortStr(str, max_chars, min_thresh){
 }
 
 function validateFloatValues(val) {
-    
+
     //return false if the value is not float
     return;
 }
 
 function validateIntValues(val) {
-    
+
     /* return false if value is not of type integer */
     return;
 }
@@ -531,7 +531,7 @@ function RecastValidateExtension(e){
     var txt = "";
     if (!(fileExtension == validFileExtension)){
 	txt += "file type extension not allowed \n";
-	txt += "ONly zip files are allowed";	
+	txt += "ONly zip files are allowed";
     }
 
     if (fileSize > validFileSize){
