@@ -548,6 +548,9 @@ def add_basic_request(point_request_id):
         file_uuid = str(uuid.uuid4())
         zip_file.save(zip_file.filename)
 
+        synctasks.createBasicRequestWithArchive(
+            app, login.current_user, point_request_id, file_uuid, zip_file.filename
+        )
         synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
                               AWS_SECRET_ACCESS_KEY,
                               AWS_S3_BUCKET_NAME,
