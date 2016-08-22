@@ -196,36 +196,24 @@ def edit_request(id):
 @app.route('/request_form/<int:id>', methods=['GET', 'POST'])
 @login.login_required
 def request_form(id):
-  request_form = forms.RequestSubmitForm()
+    request_form = forms.RequestSubmitForm()
 
-  analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
-  request_form.analysis_id.data = analysis[0].id
+    analysis = db.session.query(dbmodels.Analysis).filter(dbmodels.Analysis.id == id).all()
+    request_form.analysis_id.data = analysis[0].id
 
-  if request.method == 'POST':
-    if request_form.validate_on_submit():
+    if request.method == 'POST':
+        if request_form.validate_on_submit():
+            request_uuid = str(uuid.uuid4())
+            request_form.uuid.data = request_uuid
+            request_id = synctasks.createRequest(app,request_form,login.current_user)
+            flash('success!', 'success')
+            return redirect(url_for('analyses'))
 
-      request_uuid = str(uuid.uuid1())
-      deposition_id = synctasks.createDeposition(ZENODO_ACCESS_TOKEN,
-                                                 request_uuid,
-                                                 login.current_user,
-                                                 request_form.reason_for_request.data,
-                                                 request_form.title.data)
+        elif request_form.is_submitted():
+            print request_form.errors
+            flash('failure! form did not validate and was not processed','danger')
 
-      request_form.uuid.data = request_uuid
-      request_form.zenodo_deposition_id.data = deposition_id
-
-      request_id = synctasks.createRequest(app,
-                                           request_form,
-                                           login.current_user)
-      flash('success!', 'success')
-      return redirect(url_for('analyses'))
-
-    elif request_form.is_submitted():
-      print request_form.errors
-      flash('failure! form did not validate and was not processed','danger')
-
-  return render_template('request_form.html', form=request_form,
-                         analysis = analysis[0])
+     return render_template('request_form.html', form=request_form, analysis = analysis[0])
 
 
 @app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
@@ -545,50 +533,32 @@ def add_parameter_point(request_id):
   return jsonify(response)
 
 
-@app.route("/add-basic-request/<int:point_request_id>", methods=['GET', 'POST'])
+@app.route("/add-basic-request/<int:point_request_id>", methods=['POST'])
 @login.login_required
 def add_basic_request(point_request_id):
-
-  if request.method == 'POST':
-
     point_request_query = db.session.query(dbmodels.PointRequest).filter(
-      dbmodels.PointRequest.id == point_request_id).one()
+        dbmodels.PointRequest.id == point_request_id).one()
 
     request_query = db.session.query(dbmodels.ScanRequest).filter(
-      dbmodels.ScanRequest.id == point_request_query.scan_request_id).one()
-
-    zenodo_deposition_id = request_query.zenodo_deposition_id
+        dbmodels.ScanRequest.id == point_request_query.scan_request_id).one()
 
     if request.files['file']:
-      zip_file = request.files['file']
+        zip_file = request.files['file']
 
-      file_uuid = str(uuid.uuid1())
-      zip_file.save(zip_file.filename)
+        file_uuid = str(uuid.uuid4())
+        zip_file.save(zip_file.filename)
 
-      synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
-                            AWS_SECRET_ACCESS_KEY,
-                            AWS_S3_BUCKET_NAME,
-                            zip_file,
-                            file_uuid)
+        synctasks.uploadToAWS(AWS_ACCESS_KEY_ID,
+                              AWS_SECRET_ACCESS_KEY,
+                              AWS_S3_BUCKET_NAME,
+                              zip_file,
+                              file_uuid)
 
-      deposition_file_id = synctasks.uploadToZenodo(ZENODO_ACCESS_TOKEN,
-                                                    zenodo_deposition_id,
-                                                    file_uuid,
-                                                    zip_file)
-
-      synctasks.createRequestArchive(app,
-                                     login.current_user,
-                                     point_request_id,
-                                     file_uuid,
-                                     deposition_file_id,
-                                     zip_file.filename)
-      response = {}
-      response['success'] = True
-      return jsonify(response)
+        response = {}
+        response['success'] = True
+        return jsonify(response)
     else:
       return
-  else:
-    return
 
 @app.route("/add-coordinate", methods=['GET', 'POST'])
 @app.route("/add-coordinate/<int:point_request_id>", methods=['GET', 'POST'])
