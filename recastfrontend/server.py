@@ -213,7 +213,7 @@ def request_form(id):
             print request_form.errors
             flash('failure! form did not validate and was not processed','danger')
 
-     return render_template('request_form.html', form=request_form, analysis = analysis[0])
+    return render_template('request_form.html', form=request_form, analysis = analysis[0])
 
 
 @app.route("/subscribe", methods=('GET', 'POST'), defaults={'id': 1})
