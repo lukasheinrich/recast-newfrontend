@@ -69,13 +69,10 @@ def createRequest(app, request_form, current_user):
       reason_for_request = request_form.reason_for_request.data,
       additional_information = request_form.additional_information.data,
       analysis_id = request_form.analysis_id.data,
-      zenodo_deposition_id = request_form.zenodo_deposition_id.data,
-      uuid = request_form.uuid.data,
       post_date = datetime.date.today()
     )
     db.session.add(scan_request)
     db.session.commit()
-
     return scan_request.id
 
 def createPointRequest(app, request_id, current_user):
