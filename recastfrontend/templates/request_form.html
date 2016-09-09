@@ -2,15 +2,15 @@
 
 {% block container %}
 {% from "form_helpers.html" import render_field %}
-<div class="container">    
-    <form method="post" class="form-horizontal" role="form" action="/request_form">
+<div class="container">
+    <form method="post" class="form-horizontal" role="form" action="/request_form/{{analysis.id}}">
 	{{ form.hidden_tag() }}
 	<br><br>
 	<div class="panel panel-default">
 	    <div class="panel-heading">Request </div>
 	    <div class="panel-body">
 		<br><br>
-		
+
 		<div class="form-group">
 		    <label class="control-label col-md-3" for="Analysis"> Analysis </label>
 		    <div class="col-md-offset-1 col-md-6">
@@ -18,7 +18,7 @@
 		    </div>
 		</div>
 		<br>
-		
+
 		{{ render_field(form.title, "Required.", "required", "fa fa-book fa-fw") }}
 		<br>
 		{{ render_field(form.model_name, "Required.", "required", "fa fa-pencil") }}
@@ -29,8 +29,8 @@
 		<br>
 	    </div>
 	</div>
-	
-	
+
+
 	<br><br>
 	<div>
 	    <div class="col-md-12">
@@ -38,22 +38,21 @@
 		    <i class="glyphicon glyphicon-remove"></i>
 		    &nbsp;Cancel
 		</button>
-		
+
 		<button type="submit" class="btn btn-primary pull-right">
 		    <i class="glyphicon glyphicon-ok"></i>
 		    &nbsp;Submit
-		</button>		
+		</button>
 	    </div>
 	</div>
-	
+
 	<br><br>  <br><br>  <br><br>
-	
+
     </form>
-    
-    
+
+
 </div>
-            
-  
+
+
 
 {% endblock %}
-
