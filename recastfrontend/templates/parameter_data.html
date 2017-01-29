@@ -71,7 +71,7 @@
           <td class="col-md-12">
             <div>
               <a  href="/stored_file/{{basicrequest.file_name.file_name }}"
-                  download="{{basicrequest.file_name.original_file_name}}">
+                  download="basic_request.zip">
                 <button type="button" class="btn btn-primary btn-xs">Request Archive</button>
               </a>
 
@@ -80,7 +80,7 @@
               {% set basicresponse = basicrequest.basic_responses[0] %}
               {% if basicresponse.archives %}
                 <a href="/stored_file/{{basicresponse.archives.file_name}}"
-		               download="{{basicresponse.archives.original_file_name}}">
+		               download="basic_response.zip">
                     <button type="button" class="btn btn-primary btn-xs">Response Archive</button>
 	              </a>
               {% else %}

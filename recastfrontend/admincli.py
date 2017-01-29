@@ -11,7 +11,7 @@ def set_config(config):
 
 @click.group()
 def admincli():
-  pass
+    pass
 
 @admincli.command()
 @click.option('--config','-c')

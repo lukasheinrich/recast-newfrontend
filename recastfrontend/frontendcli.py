@@ -7,7 +7,7 @@ logging.basicConfig(level = logging.INFO)
 
 @click.group()
 def frontendcli():
-  pass
+	pass
 
 @frontendcli.command()
 @click.option('--config','-c')

@@ -4,7 +4,7 @@ import yaml
 import logging
 log = logging.getLogger(__name__)
 def default_config():
-  return yaml.load(open(pkg_resources.resource_filename('recastfrontend','resources/defaultconfig.yaml')))
+    return yaml.load(open(pkg_resources.resource_filename('recastfrontend','resources/defaultconfig.yaml')))
 
 def mk_config():
     the_config = default_config()
