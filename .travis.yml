@@ -1,9 +1,14 @@
 language: python
 python:
-  - "2.7"
-
+- '2.7'
 install:
-  - pip install -e . --process-dependency-links
-
+- pip install -e . --process-dependency-links
 script:
-  - tests/run_test.sh
+- tests/run_test.sh
+- docker build -t recast/control-center:git-"$TRAVIS_BRANCH" .
+- docker login -u $DOCKERLOGIN -p $DOCKERPW
+- docker push recast/control-center:git-"$TRAVIS_BRANCH"
+env:
+  global:
+  - secure: lX7STjG4Y4jA3MS5wMICVWH23/QlTG5a55iq6nRAJPoLxPhhvD4T/gdmLVWmQi5HU2omgaG3sSj8PFbgNbTo8ATQbaojP/hhkl7jfkvbAht/6Sv0DUwH8fO3Z2H00P6QjGQHTq+9yvSJKZNLhE7/zSsRtG4l0qm6lp0jTSking36I9kMQ1MJXcH0YUOE+b7L35mjoGXumuRNxiIAVhHqpNmxtSU1wSQX3bSJXWmig6Mvoox05KVHpTs3Hjuld+dGjxELjEJwHlOFD1EqqHD8kOoNR41plObp3Mbz6KJGGUkL4eFlLoXT5/dycEb2q93OjsaJ3f1XPvAVMfcrEeE6N+1pfvPSDV6yS6yfG2y1RZFVDAZDRj2jCCLAs9ebW79lk3irV+DuCX3h9uSfEbr8KYEmm90w75rEhPKuF9tZU0PxZ6gKZavWJ99s9rSnqgdtmJQTHMjgtuYjz86cHlgl4AHuHUFTZ5i7lFpa73wchung/0nXLwWnWEUT84L2zVNgmOMP8R+OycAQ2Vw08+R1Iwjk6d8tHbacllFnX2cQYNRFt/CXwO8GrxN7sS7CMoscv3srYGRCZ8KgKc1UuufFs1iTQyaHawD3Z/63m2N/sJ/swbPyaYYN+e3JcxIxNLuK8qBPADC0WhHZopLfTV9PiQMgszHguw6ZBp4AqLHh5IY=
+  - secure: s+PTYR7VBk6kHMeTsHiPszLhvAsMchJKV/cs737LkKXn4ORpw5wvWfy7E8XWnh/tmHJDXJVglwFGaPX7nk1UtaWocmBiZNp0DYgt97W32bkA9TtbDSv/INcpxed/CU5k0XlZ7AZfWIRAOAsHj6PQtF4UU1DYEUVJtaEJ5gc4iBrop1acmmuAk/h7HFN6ED9qYI+FILoqrIBjM42J0R1q9G6AopuZHVUZ2N3WQf4eSrC2QwqvBmc+Vs0UW+vDjxsVCquID+41xdTN7CJMa6q+hFsxAJ9xlmJhDUt3ezwxPx6rTCfMe5rl9M9TYhQ5lxIBX9sUlRPjeKSfURwjMYcwuKDipQTaX2Dj6o7N8KfsKL/3Wrv0fveZBFLVl9j9oK7vkH6CNb27+T53kvGWNCFusDj85r6eKBGA7UMa52rmN0y8gljI7Klle/DtfFexqgFruVSIOpc3CA6vQCdo0Wo2n34FcfBJ8CLZY6lzyJ8ODxv+B+wnRxtwYFnQMwjLxiotmg76ZOr8V9Wd8staR3yp+lkGJw84WrgJz1Kh0mw33eLB1FUeZ5JVejacLuZLcnyhfn+4MfZNNnNkA5X+B2aAFrYjuWOUHTLvFsnkkcbgcdQXUO1l0Ru4+BbikAiKUecxwhTj9nBlsyfpLa99wQIaVs6QuGWmYU6VdlSw+U1stR8=
