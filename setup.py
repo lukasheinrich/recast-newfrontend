@@ -18,7 +18,7 @@ setup(
     'pyyaml',
     'celery',
     'redis',
-    'IPython',
+    'IPython==5.1.0',
     'recast-database',
     'requests',
     'boto3',
