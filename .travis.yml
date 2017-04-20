@@ -5,13 +5,13 @@ services:
 language: python
 python:
 - '2.7'
-install:
-- pip install -e . --process-dependency-links
+install: []
+#- pip install -e . --process-dependency-links
 script:
 #- tests/run_test.sh
-- docker build -t recast/control-center:git-"$TRAVIS_BRANCH" .
+- docker build -t recast/frontend:git-"$TRAVIS_BRANCH" .
 - docker login -u $DOCKERLOGIN -p $DOCKERPW
-- docker push recast/control-center:git-"$TRAVIS_BRANCH"
+- docker push recast/frontend:git-"$TRAVIS_BRANCH"
 env:
   global:
   - secure: lX7STjG4Y4jA3MS5wMICVWH23/QlTG5a55iq6nRAJPoLxPhhvD4T/gdmLVWmQi5HU2omgaG3sSj8PFbgNbTo8ATQbaojP/hhkl7jfkvbAht/6Sv0DUwH8fO3Z2H00P6QjGQHTq+9yvSJKZNLhE7/zSsRtG4l0qm6lp0jTSking36I9kMQ1MJXcH0YUOE+b7L35mjoGXumuRNxiIAVhHqpNmxtSU1wSQX3bSJXWmig6Mvoox05KVHpTs3Hjuld+dGjxELjEJwHlOFD1EqqHD8kOoNR41plObp3Mbz6KJGGUkL4eFlLoXT5/dycEb2q93OjsaJ3f1XPvAVMfcrEeE6N+1pfvPSDV6yS6yfG2y1RZFVDAZDRj2jCCLAs9ebW79lk3irV+DuCX3h9uSfEbr8KYEmm90w75rEhPKuF9tZU0PxZ6gKZavWJ99s9rSnqgdtmJQTHMjgtuYjz86cHlgl4AHuHUFTZ5i7lFpa73wchung/0nXLwWnWEUT84L2zVNgmOMP8R+OycAQ2Vw08+R1Iwjk6d8tHbacllFnX2cQYNRFt/CXwO8GrxN7sS7CMoscv3srYGRCZ8KgKc1UuufFs1iTQyaHawD3Z/63m2N/sJ/swbPyaYYN+e3JcxIxNLuK8qBPADC0WhHZopLfTV9PiQMgszHguw6ZBp4AqLHh5IY=
