@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/cbora/recast-newfrontend.svg?branch=master)](https://travis-ci.org/cbora/recast-newfrontend)
+[![Build Status](https://travis-ci.org/recast-hep/recast-flask-frontend.svg?branch=master)](https://travis-ci.org/recast-hep/recast-flask-frontend)
 
 # recast-newfrontend  
 attempt at a new frontend for RECAST live at: http://recast-frontend.herokuapp.com/
