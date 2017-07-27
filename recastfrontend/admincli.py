@@ -46,18 +46,15 @@ def drop_db(config):
 @admincli.command()
 @click.option('--config', '-c')
 def fill_db(config):
-    if config:
-        os.environ['RECASTFRONTEND_CONFIG'] = config
-        import populate_db
-        from recastfrontend.server import db
-        click.secho('filled database at: {}'.format(db.engine.url), fg='green')
+    set_config(config)
+    import populate_db
+    from recastfrontend.server import db
+    click.secho('filled database at: {}'.format(db.engine.url), fg='green')
 
 @admincli.command()
 @click.option('--config', '-c')
 def test(config):
     set_config(config)
-    if config:
-        os.environ['RECASTFRONTEND_CONFIG'] = config
-        import unittest
-        tests = unittest.TestLoader().discover('tests')
-        unittest.TextTestRunner(verbosity=2).run(tests)
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
