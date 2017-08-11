@@ -61,50 +61,73 @@
   </div>
 </div>
 
+<hr/>
 <div class="row">
   <div class="col-md-12">
-    <table class="table">
-      <tbody>
         {% for basicrequest in pointrequest.requests %}
-        <tr>
-          <td>{{loop.index}}</td>
-          <td class="col-md-12">
-            <div>
-              <a  href="/stored_file/{{basicrequest.file_name.file_name }}"
+        {% set basicrequest_loop = loop %}
+        <div class="row">
+          <div class="col-md-12">
+
+              <h4> Request {{loop.index}} </h4>
+
+              <dl class="dl-horizontal">
+                <dt>Format</dt>
+                <dd>{{basicrequest.request_format}}</dd>
+                <dt>Archive</dt>
+                <dd>
+                  <a  href="/stored_file/{{basicrequest.file_name.file_name }}"
                   download="basic_request.zip">
-                <button type="button" class="btn btn-primary btn-xs">Request Archive</button>
-              </a>
+                  <button type="button" class="btn btn-primary btn-xs">Request Archive</button>
+                  </a>
+                </dd>
+              </dl>
 
 
-              {% if basicrequest.basic_responses[0] %}
-              {% set basicresponse = basicrequest.basic_responses[0] %}
-              {% if basicresponse.archives %}
-                <a href="/stored_file/{{basicresponse.archives.file_name}}"
-		               download="basic_response.zip">
-                    <button type="button" class="btn btn-primary btn-xs">Response Archive</button>
-	              </a>
-              {% else %}
-                <button type="button" class="btn btn-primary btn-xs disabled">Response Archive</button>
-              {% endif %}
 
-                <a ng-click="showBasicResponse_{{loop.index0}} =!showBasicResponse_{{loop.index0}};ctrl.fetchBasicResponse('{{basicrequest.basic_responses[0].id}}', '{{loop.index0}}')">
-                  <button type="button" class="btn btn-primary btn-xs">Show Response Data</button>
-                </a>
-              {% else %}
-              <button type="button" class="btn btn-primary btn-xs disabled">Response Archive</button>
-              <a>
-                <button type="button" class="btn btn-primary btn-xs disabled">Show Response Data</button>
-              </a>
-              {% endif %}
-            </div>
+              <ul>
+                  {% for basicresponse in basicrequest.basic_responses %}
+                  <li>
 
-            <div>
-                <span ng-show="showBasicResponse_{{loop.index0}}" bind-html-compile="ctrl.BasicResponseData('{{ loop.index0 }}')"></span>
-            </div>
 
-          </td>
-        </tr>
+                  <div class="col-md-12">
+                  <h5> Response {{loop.index}} </h5>
+                  <p>{{basicresponse.description}}</p>
+
+                  <p>
+                  {% if basicresponse.archives %}
+                    <a href="/stored_file/{{basicresponse.archives.file_name}}"
+                       download="basic_response.zip">
+                        <button type="button" class="btn btn-primary btn-xs">Response Archive</button>
+                    </a>
+                  {% else %}
+                    <button type="button" class="btn btn-primary btn-xs disabled">Response Archive</button>
+                  {% endif %}
+
+                  {% if basicrequest.basic_responses[0] %}
+                    <a ng-click="showBasicResponse_{{basicrequest_loop.index0}}_{{loop.index0}} =!showBasicResponse_{{basicrequest_loop.index0}}_{{loop.index0}};ctrl.fetchBasicResponse('{{basicresponse.id}}', '{{loop.index0}}')">
+                      <button type="button" class="btn btn-primary btn-xs">Show Response Data</button>
+                    </a>
+                  {% else %}
+                  <button type="button" class="btn btn-primary btn-xs disabled">Response Archive</button>
+                  <a>
+                    <button type="button" class="btn btn-primary btn-xs disabled">Show Response Data</button>
+                  </a>
+                  {% endif %}
+
+                  </p>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div ng-show="showBasicResponse_{{basicrequest_loop.index0}}_{{loop.index0}}" bind-html-compile="ctrl.BasicResponseData('{{ loop.index0 }}')">
+                    </div>
+                  </div>
+
+                  <hr/>
+                  </li>
+                  {% endfor %}
+              </ul>
+          </div>
+        </div>
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
+</div>

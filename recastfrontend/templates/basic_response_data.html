@@ -1,27 +1,20 @@
-<div class="col-md-8">
-  <div class="col-md-12" ng-controller="ParameterViewCtrl as ctrl">
-    <div class="col-md-12">
-  	    <table class="table">
-          <thead>
-            <td>-2σ</td>
-            <td>-1σ</td>
-            <td>CLs exp.</td>
-            <td>+1σ</td>
-            <td>+2σ</td>
-            <td>CLs obs.</td>
-            <td>LogL</td>
-          </thead>
-      		<tbody>
-        			<td>{{ basicresponse.lower_2sig_expected_CLs }}</td>
-        			<td>{{ basicresponse.lower_1sig_expected_CLs }}</td>
-        			<td>{{ basicresponse.expected_CLs }}</td>
-        			<td>{{ basicresponse.upper_1sig_expected_CLs }}</td>
-        			<td>{{ basicresponse.upper_2sig_expected_CLs }}</td>
-        			<td>{{ basicresponse.observed_CLs }}</td>
-        			<td>{{ basicresponse.log_likelihood_at_reference }}</td>
-      		</tbody>
-  	    </table>
-  	</div>
-
-  </div>
-</div>
+<table class="table">
+  <thead>
+    <td>-2σ</td>
+    <td>-1σ</td>
+    <td>CLs exp.</td>
+    <td>+1σ</td>
+    <td>+2σ</td>
+    <td>CLs obs.</td>
+    <td>LogL</td>
+  </thead>
+	<tbody>
+			<td>{{ basicresponse.lower_2sig_expected_CLs }}</td>
+			<td>{{ basicresponse.lower_1sig_expected_CLs }}</td>
+			<td>{{ basicresponse.expected_CLs }}</td>
+			<td>{{ basicresponse.upper_1sig_expected_CLs }}</td>
+			<td>{{ basicresponse.upper_2sig_expected_CLs }}</td>
+			<td>{{ basicresponse.observed_CLs }}</td>
+			<td>{{ basicresponse.log_likelihood_at_reference }}</td>
+	</tbody>
+</table>

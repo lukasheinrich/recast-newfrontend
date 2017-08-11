@@ -6,7 +6,7 @@
 	<span class="pull-right" ng-controller="AddParameterCtrl as ctrl">
 	    <button class="btn btn-primary" ng-click="ctrl.addParameter({{request.id}})" type="button">
 		<i class="glyphicon glyphicon-plus"></i>
-		&nbsp;Add Parameter
+		&nbsp;Add Parameter Point
 		</button>
 	</span>
     </h3>
@@ -24,16 +24,11 @@
 		    <tr>
 			<td>
 			    <span ng-click="ctrl.fetchParameter('{{pointrequest.id}}', {{loop.index0+1}})" style="cursor:pointer">
-				<h5><strong> POINT {{loop.index0+1}}</strong></h5>
+				<h5><strong> Point {{loop.index0+1}}</strong></h5>
 			    </span>
 
-			    <span class="label label-default">
-				{{ pointrequest.point_coordinates[:]|length }} coordinates
-			    </span>
-
-			    <span class="label label-default pull-right">
-				{{ pointrequest.requests[:]|length}} basic requests
-			    </span>
+			    <span class="label label-default">{{ pointrequest.point_coordinates[:]|length }} coordinates</span>
+			    <span class="label label-default">{{ pointrequest.requests[:]|length}} basic requests</span>
 			</td>
 		    </tr>
 		    {% endfor %}

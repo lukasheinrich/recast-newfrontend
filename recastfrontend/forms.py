@@ -15,10 +15,10 @@ class AnalysisSubmitForm(Form):
                                 validators=[DataRequired(message="Collaboration required")])
     description = TextAreaField('Description',
                                 validators=[DataRequired(message="Description required")])
-    e_print = StringField('E print')
-    journal = StringField('Journal')
+    arxiv_id = StringField('ArXiv Id')
     doi = StringField('DOI')
-    inspire_URL = StringField('URL')
+    inspire_id = StringField('INSPIRE ID')
+    cds_id = StringField('CDS ID')
 
 class UserSubmitForm(Form):
     name = StringField('user name', validators=[DataRequired()])

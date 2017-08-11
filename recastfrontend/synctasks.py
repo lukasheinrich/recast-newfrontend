@@ -11,23 +11,25 @@ def createAnalysisFromForm(app,form,current_user, run_condition_form):
     with app.app_context():
         user_query = dbmodels.User.query.filter(dbmodels.User.name == current_user.name()).all()
         assert len(user_query)==1
-        run_condition = dbmodels.RunCondition(name = run_condition_form.name.data,
-                                          description = run_condition_form.description.data
-                                          )
+        run_condition = dbmodels.RunCondition(
+                                    name = run_condition_form.name.data,
+                                    description = run_condition_form.description.data
+                                )
 
         db.session.add(run_condition)
         db.session.commit()
 
-        analysis = dbmodels.Analysis(owner_id = user_query[0].id,
-                                 title = form.title.data,
-                                 collaboration = form.collaboration.data,
-                                 e_print = form.e_print.data,
-                                 journal = form.journal.data,
-                                 doi = form.doi.data,
-                                 inspire_URL = form.inspire_URL.data,
-                                 description = form.description.data,
-                                 run_condition_id = run_condition.id
-                                 )
+        analysis = dbmodels.Analysis(
+                                owner_id = user_query[0].id,
+                                title = form.title.data,
+                                collaboration = form.collaboration.data,
+                                arxiv_id = form.arxiv_id.data,
+                                doi = form.doi.data,
+                                inspire_id = form.inpire_id.data,
+                                cds_id = form.cds_id.data,
+                                description = form.description.data,
+                                run_condition_id = run_condition.id
+                                )
 
         db.session.add(analysis)
         db.session.commit()
@@ -49,9 +51,10 @@ def createModelFromForm(app, form, current_user):
 
 def createRunConditionFromForm(app, form, current_user):
     with app.app_context():
-        run_condition = dbmodels.RunCondition(name = form.name.data,
-                                              description = form.description.data
-                                              )
+        run_condition = dbmodels.RunCondition(
+                    name = form.name.data,
+                    description = form.description.data
+                    )
 
         db.session.add(run_condition)
         db.session.commit()

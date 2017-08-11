@@ -71,8 +71,8 @@ def about():
 
 @app.route('/login')
 def login_user():
-    if 'RECAST_DUMMYLOGIN' in os.environ:
-        user = User(orcid = os.environ['RECAST_ORCID'], fullname = 'Lukas Heinrich', authenticated = True)
+    if 'RECAST_DUMMYLOGIN' in frontendconf:
+        user = User(orcid = frontendconf['RECAST_ORCID'], authenticated = True)
         login.login_user(user)
         return redirect(url_for('home'))
 
