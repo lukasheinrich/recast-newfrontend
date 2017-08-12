@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name = 'recast-flask-frontend',
+  version = '0.0.1',
   description = 'new frontend for the RECAST project',
   url = 'https://github.com/lukasheinrich/recast-newfrontend',
   author = 'Lukas Heinrich',
